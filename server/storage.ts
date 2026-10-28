@@ -112,6 +112,8 @@ export interface IStorage {
   getQuestionsCount(subject: string, difficulty?: string): Promise<number>;
   getDistinctSubjects(): Promise<string[]>;
   createQuestion(question: InsertQuestion): Promise<QuestionBank>;
+  updateQuestion(id: number, data: Partial<InsertQuestion>): Promise<QuestionBank>;
+  deleteQuestion(id: number): Promise<boolean>;
   getQuestionsByIds(ids: number[]): Promise<QuestionBank[]>;
   getQuestionsByTopic(topicId: number): Promise<QuestionBank[]>;
 
@@ -140,7 +142,7 @@ export interface IStorage {
   // Notifications
   getNotifications(userId: number): Promise<Notification[]>;
   createNotification(notification: InsertNotification): Promise<Notification>;
-  markNotificationAsRead(id: number): Promise<void>;
+  markNotificationAsRead(id: number, userId?: number): Promise<void>;
   markAllNotificationsAsRead(userId: number): Promise<void>;
 
   // Academic OS & Courses
@@ -753,6 +755,17 @@ export class DatabaseStorage implements IStorage {
     return newQuestion;
   }
 
+  async updateQuestion(id: number, data: Partial<InsertQuestion>): Promise<QuestionBank> {
+    const [updated] = await db.update(questions).set(data).where(eq(questions.id, id)).returning();
+    if (!updated) throw new Error("Question not found");
+    return updated;
+  }
+
+  async deleteQuestion(id: number): Promise<boolean> {
+    const res = await db.delete(questions).where(eq(questions.id, id)).returning();
+    return res.length > 0;
+  }
+
   async getQuestionsByIds(ids: number[]): Promise<QuestionBank[]> {
     if (ids.length === 0) return [];
     return await db.select().from(questions).where(inArray(questions.id, ids));
@@ -1067,10 +1080,14 @@ export class DatabaseStorage implements IStorage {
     return result;
   }
 
-  async markNotificationAsRead(id: number): Promise<void> {
+  async markNotificationAsRead(id: number, userId?: number): Promise<void> {
+    const conditions = [eq(notifications.id, id)];
+    if (userId) {
+      conditions.push(eq(notifications.userId, userId));
+    }
     await db.update(notifications)
       .set({ isRead: true })
-      .where(eq(notifications.id, id));
+      .where(and(...conditions));
   }
 
   async markAllNotificationsAsRead(userId: number): Promise<void> {

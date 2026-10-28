@@ -20,7 +20,7 @@ router.patch("/:id/read", async (req, res) => {
   if (!req.isAuthenticated()) return res.sendStatus(401);
   try {
     const { id } = req.params;
-    await storage.markNotificationAsRead(Number(id));
+    await storage.markNotificationAsRead(Number(id), (req.user as any).id);
     res.sendStatus(200);
   } catch (err) {
     console.error("[NOTIFICATIONS] Failed to mark as read:", err);
