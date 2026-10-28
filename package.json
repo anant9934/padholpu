@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "NODE_ENV=development npx tsx --env-file=.env server/index.ts",
     "build": "node script/build.js",
+    "build:client": "node script/build-client.js",
+    "build:server": "node script/build-server.js",
     "build:pwa": "npm run build && npx cap sync",
     "app:sync": "npx cap sync",
     "app:open:android": "npx cap open android",
