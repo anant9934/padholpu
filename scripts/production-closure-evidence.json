@@ -1,0 +1,280 @@
+[
+  {
+    "step": "1.1 User A Login on Deployed Production",
+    "status": "PASS",
+    "evidence": {
+      "status": 200,
+      "username": "prod_test_alpha",
+      "id": 567,
+      "goldCoins": 5,
+      "silverCoins": 63
+    }
+  },
+  {
+    "step": "1.2 Dashboard Renders 'Preparation Readiness' with Tooltip",
+    "status": "PASS",
+    "evidence": {
+      "hasPreparationReadiness": true,
+      "hasOldExamReadiness": false,
+      "tooltipFound": true,
+      "tooltipText": "An estimate based on your syllabus coverage, recent practice, mastery, mock performance and consistency.",
+      "nbaRendered": true
+    }
+  },
+  {
+    "step": "1.3 NBA Click Dispatches NEXT_ACTION_CLICKED Telemetry",
+    "status": "PASS",
+    "evidence": {
+      "status": 201,
+      "eventId": 14,
+      "eventType": "NEXT_ACTION_CLICKED"
+    }
+  },
+  {
+    "step": "2.1 Practice Page Loads Question Sets Dynamically",
+    "status": "PASS",
+    "evidence": {
+      "pageLoaded": true,
+      "containsDrills": true
+    }
+  },
+  {
+    "step": "2.2 Start Quiz & Submit Answers via Browser API",
+    "status": "PASS",
+    "evidence": {
+      "status": 201,
+      "attemptId": 275,
+      "score": 0,
+      "percentage": 0,
+      "earnedSlo": 1
+    }
+  },
+  {
+    "step": "2.3 Dashboard State Updates Dynamically Without Hard Reload",
+    "status": "PASS",
+    "evidence": {
+      "totalAttempts": 4,
+      "averageScore": 0,
+      "updatedReadiness": 53,
+      "nextBestActionTitle": "Revise Unit 1 — Unit 1"
+    }
+  },
+  {
+    "step": "3.1 Generate & Start Exam Session (Logs EXAM_STARTED)",
+    "status": "PASS",
+    "evidence": {
+      "status": 201,
+      "sessionId": 36,
+      "totalQuestions": 1,
+      "subject": "CSE111"
+    }
+  },
+  {
+    "step": "3.2 Submit Exam Answers (Logs EXAM_COMPLETED)",
+    "status": "PASS",
+    "evidence": {
+      "status": 200,
+      "score": "1.00",
+      "percentage": 100,
+      "correctCount": 1
+    }
+  },
+  {
+    "step": "3.3 Preparation Readiness Recalculates in Academic OS",
+    "status": "PASS",
+    "evidence": {
+      "overallReadiness": 56,
+      "nextBestAction": "Revise Unit 1 — Unit 1"
+    }
+  },
+  {
+    "step": "4.1 Check Pre-Conversion Wallet Balance",
+    "status": "PASS",
+    "evidence": {
+      "credits": 5,
+      "points": 63,
+      "conversionRate": 30,
+      "canConvert": true,
+      "creditsLabel": "SLO Credits",
+      "pointsLabel": "Study Points",
+      "summaryText": "5 SLO Credits · 63 Study Points"
+    }
+  },
+  {
+    "step": "4.2 Convert 30 Study Points to 1 SLO Credit",
+    "status": "PASS",
+    "evidence": {
+      "success": true,
+      "silverCoins": 33,
+      "goldCoins": 6,
+      "message": "Successfully exchanged 30 Silver for 1 Gold!"
+    }
+  },
+  {
+    "step": "4.3 Verify DB Ledger Contains Immutable Audit Record",
+    "status": "PASS",
+    "evidence": {
+      "ledgerRecords": [
+        {
+          "id": "ebed53e7-cf89-4cd4-8ea3-3ee018492e15",
+          "user_id": 567,
+          "amount": 1,
+          "currency": "GOLD",
+          "type": "CREDIT",
+          "reference_id": "exchange_1789204082.260115",
+          "created_at": "2026-09-12T03:38:02.260Z"
+        },
+        {
+          "id": "bfc5843c-700c-4d00-8ae9-3d2b06d0de78",
+          "user_id": 567,
+          "amount": 1,
+          "currency": "SILVER",
+          "type": "CREDIT",
+          "reference_id": "quiz_completion_2_2026-09-12",
+          "created_at": "2026-09-12T03:31:19.951Z"
+        }
+      ]
+    }
+  },
+  {
+    "step": "4.4 Hard Page Refresh Preserves Exact Balance",
+    "status": "PASS",
+    "evidence": {
+      "verifiedBalance": {
+        "credits": 6,
+        "points": 33,
+        "conversionRate": 30,
+        "canConvert": true,
+        "creditsLabel": "SLO Credits",
+        "pointsLabel": "Study Points",
+        "summaryText": "6 SLO Credits · 33 Study Points"
+      },
+      "preservedAfterRefresh": true
+    }
+  },
+  {
+    "step": "5.1 Logout User A & Clean Client State",
+    "status": "PASS",
+    "evidence": {
+      "status": 200,
+      "ok": true
+    }
+  },
+  {
+    "step": "5.2 Login User B (prod_test_beta)",
+    "status": "PASS",
+    "evidence": {
+      "status": 200,
+      "username": "prod_test_beta",
+      "id": 568
+    }
+  },
+  {
+    "step": "5.3 Verify Zero User A State Appears for User B",
+    "status": "PASS",
+    "evidence": {
+      "activeUser": "prod_test_beta",
+      "userBWalletCredits": 0,
+      "userBWalletPoints": 1,
+      "userBQuizAttemptsCount": 0,
+      "userALeakInRenderedDOM": false,
+      "localStorageKeys": [
+        "cookie-consent"
+      ]
+    }
+  },
+  {
+    "step": "6.1 Query PostgreSQL student_activity_events for Real Stored Records",
+    "status": "PASS",
+    "evidence": {
+      "allRequiredEventsPresent": true,
+      "eventVerificationMatrix": [
+        {
+          "event": "PRACTICE_STARTED",
+          "storedInDB": true
+        },
+        {
+          "event": "PRACTICE_COMPLETED",
+          "storedInDB": true
+        },
+        {
+          "event": "EXAM_STARTED",
+          "storedInDB": true
+        },
+        {
+          "event": "EXAM_COMPLETED",
+          "storedInDB": true
+        },
+        {
+          "event": "NEXT_ACTION_CLICKED",
+          "storedInDB": true
+        }
+      ],
+      "latestStoredRecords": [
+        {
+          "id": 18,
+          "user_id": 567,
+          "event_type": "EXAM_COMPLETED",
+          "reference_id": "36",
+          "metadata": {
+            "score": "1.00",
+            "subject": "CSE111",
+            "percentage": 100,
+            "correctCount": 1,
+            "totalQuestions": 1
+          },
+          "created_at": "2026-09-12T03:38:01.099Z"
+        },
+        {
+          "id": 17,
+          "user_id": 567,
+          "event_type": "EXAM_STARTED",
+          "reference_id": "36",
+          "metadata": {
+            "subject": "CSE111",
+            "totalQuestions": 1
+          },
+          "created_at": "2026-09-12T03:37:59.902Z"
+        },
+        {
+          "id": 16,
+          "user_id": 567,
+          "event_type": "PRACTICE_COMPLETED",
+          "reference_id": "2",
+          "metadata": {
+            "score": 0,
+            "subject": "Python",
+            "quizTitle": "Python Fundamentals",
+            "percentage": 0,
+            "totalQuestions": 2
+          },
+          "created_at": "2026-09-12T03:37:50.401Z"
+        },
+        {
+          "id": 15,
+          "user_id": 567,
+          "event_type": "PRACTICE_STARTED",
+          "reference_id": "2",
+          "metadata": {
+            "subject": "Python",
+            "quizTitle": "Python Fundamentals",
+            "difficulty": "Medium"
+          },
+          "created_at": "2026-09-12T03:37:49.584Z"
+        },
+        {
+          "id": 14,
+          "user_id": 567,
+          "event_type": "NEXT_ACTION_CLICKED",
+          "reference_id": "CHE110 Diagnostic",
+          "metadata": {
+            "course": "CHE110",
+            "priority": 1,
+            "destination": "/practice"
+          },
+          "created_at": "2026-09-12T03:37:45.656Z"
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "endpoint": "/api/courses",
+    "coldTimingMs": 1016,
+    "warmSamples": 9,
+    "warmP50Ms": 378,
+    "warmP95Ms": 401,
+    "warmMinMs": 368,
+    "warmMaxMs": 401,
+    "errorRate": 0,
+    "status": 200,
+    "payloadBytes": 1665
+  },
+  {
+    "endpoint": "/api/quizzes",
+    "coldTimingMs": 551,
+    "warmSamples": 9,
+    "warmP50Ms": 481,
+    "warmP95Ms": 601,
+    "warmMinMs": 474,
+    "warmMaxMs": 601,
+    "errorRate": 0,
+    "status": 200,
+    "payloadBytes": 28393
+  },
+  {
+    "endpoint": "/api/resources",
+    "coldTimingMs": 1786,
+    "warmSamples": 9,
+    "warmP50Ms": 454,
+    "warmP95Ms": 526,
+    "warmMinMs": 433,
+    "warmMaxMs": 526,
+    "errorRate": 0,
+    "status": 200,
+    "payloadBytes": 14323
+  },
+  {
+    "endpoint": "/api/search?q=CSE",
+    "coldTimingMs": 479,
+    "warmSamples": 9,
+    "warmP50Ms": 480,
+    "warmP95Ms": 604,
+    "warmMinMs": 468,
+    "warmMaxMs": 604,
+    "errorRate": 0,
+    "status": 200,
+    "payloadBytes": 2449
+  },
+  {
+    "endpoint": "/api/wallet/config",
+    "coldTimingMs": 372,
+    "warmSamples": 9,
+    "warmP50Ms": 385,
+    "warmP95Ms": 420,
+    "warmMinMs": 371,
+    "warmMaxMs": 420,
+    "errorRate": 0,
+    "status": 200,
+    "payloadBytes": 112
+  }
+]

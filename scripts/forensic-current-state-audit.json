@@ -1,0 +1,202 @@
+{
+  "timestamp": "2026-09-29T09:12:49.429Z",
+  "brand": {
+    "active": "Padho LPU",
+    "legacy": "Study LPU Online",
+    "primaryDomain": "https://padholpu.online",
+    "secondaryDomain": "https://padholpu.info",
+    "oldDomain": "https://studylpu.online"
+  },
+  "databaseEntities": {
+    "totalSubjects": 12,
+    "totalUnits": 54,
+    "totalTopics": 240,
+    "totalResources": 20,
+    "totalQuizzes": 138,
+    "totalQuestions": 536,
+    "totalUsers": 526,
+    "subjectsBreakdown": [
+      {
+        "id": 1,
+        "name": "CHE110",
+        "code": "CHE110",
+        "total_units": 4,
+        "unit_count": "4",
+        "question_count": "21"
+      },
+      {
+        "id": 2,
+        "name": "MTH166",
+        "code": "MTH166",
+        "total_units": 11,
+        "unit_count": "11",
+        "question_count": "22"
+      },
+      {
+        "id": 3,
+        "name": "CSE111",
+        "code": "CSE111",
+        "total_units": 3,
+        "unit_count": "3",
+        "question_count": "10"
+      },
+      {
+        "id": 4,
+        "name": "ECE249",
+        "code": "ECE249",
+        "total_units": 12,
+        "unit_count": "12",
+        "question_count": "337"
+      },
+      {
+        "id": 5,
+        "name": "INT306",
+        "code": "INT306",
+        "total_units": 3,
+        "unit_count": "3",
+        "question_count": "3"
+      },
+      {
+        "id": 6,
+        "name": "CSE320",
+        "code": "CSE320",
+        "total_units": 8,
+        "unit_count": "8",
+        "question_count": "119"
+      },
+      {
+        "id": 7,
+        "name": "CSE326",
+        "code": "CSE326",
+        "total_units": 1,
+        "unit_count": "1",
+        "question_count": "1"
+      },
+      {
+        "id": 8,
+        "name": "MTH165",
+        "code": "MTH165",
+        "total_units": 1,
+        "unit_count": "1",
+        "question_count": "1"
+      },
+      {
+        "id": 9,
+        "name": "PHY110",
+        "code": "PHY110",
+        "total_units": 2,
+        "unit_count": "2",
+        "question_count": "2"
+      },
+      {
+        "id": 10,
+        "name": "MEC136",
+        "code": "MEC136",
+        "total_units": 7,
+        "unit_count": "7",
+        "question_count": "18"
+      },
+      {
+        "id": 11,
+        "name": "PHY110kd",
+        "code": "PHY110KD",
+        "total_units": 1,
+        "unit_count": "1",
+        "question_count": "1"
+      },
+      {
+        "id": 12,
+        "name": "testsubject",
+        "code": "TESTSUBJECT",
+        "total_units": 1,
+        "unit_count": "1",
+        "question_count": "1"
+      }
+    ]
+  },
+  "sitemapAudit": {
+    "currentCount": 16,
+    "isStaticOnly": true,
+    "currentUrls": [
+      "https://padholpu.online/",
+      "https://padholpu.online/learn",
+      "https://padholpu.online/resources",
+      "https://padholpu.online/quizzes",
+      "https://padholpu.online/practice",
+      "https://padholpu.online/exams",
+      "https://padholpu.online/exams/midterm",
+      "https://padholpu.online/exams/end-term",
+      "https://padholpu.online/exams/ca",
+      "https://padholpu.online/rankings",
+      "https://padholpu.online/leaderboard",
+      "https://padholpu.online/about",
+      "https://padholpu.online/contact",
+      "https://padholpu.online/privacy",
+      "https://padholpu.online/terms",
+      "https://padholpu.online/cookie-policy"
+    ],
+    "gap": "Sitemap currently contains only 16 static URLs, excluding 10 public academic subjects, 20 public educational resources, and 138 public quizzes."
+  },
+  "routingAudit": {
+    "publicPillars": [
+      "/",
+      "/learn",
+      "/resources",
+      "/quizzes",
+      "/practice",
+      "/exams",
+      "/exams/midterm",
+      "/exams/end-term",
+      "/exams/ca",
+      "/rankings",
+      "/leaderboard",
+      "/about",
+      "/contact",
+      "/privacy",
+      "/terms",
+      "/cookie-policy"
+    ],
+    "missingDedicatedPublicRoutes": [
+      "/subjects/:code",
+      "/subjects/:code/units/:unitNumber",
+      "/resources/:id",
+      "/quizzes/:id/info"
+    ],
+    "protectedRoutesOverreach": [
+      "/exams (currently behind ProtectedRoute, prevents crawler indexing of exam hubs)"
+    ],
+    "redirects": {
+      "netlify301Rules": 4,
+      "expressRuntime301": true
+    }
+  },
+  "monetizationAudit": {
+    "zeroAdRoutesVerified": [
+      "/",
+      "/quiz/:id",
+      "/exam/start/*",
+      "/auth",
+      "/login",
+      "/register",
+      "/admin/*",
+      "/wallet",
+      "/payment-status",
+      "/contact",
+      "/privacy",
+      "/terms",
+      "/cookie-policy",
+      "/profile/edit",
+      "/upload",
+      "/contribute"
+    ],
+    "adDensityEngineCurrent": "Single slot per page",
+    "adDensityTarget": "Content-aware (Short: 0-1, Medium: 1-2, Long: 2-3)",
+    "interactiveControlProtection": "google-anno-skip active on navigation & interactive buttons"
+  },
+  "coreWebVitalsTarget": {
+    "LCP": "< 2.5s",
+    "INP": "< 200ms",
+    "CLS": "< 0.1",
+    "TTFB": "< 800ms"
+  }
+}
