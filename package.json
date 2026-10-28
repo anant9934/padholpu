@@ -19,6 +19,7 @@
     "test:redis": "npx tsx tests/redis-cache-suite.ts",
     "test:db": "npx tsx tests/dynamic-product-integration.ts && npx tsx tests/testimonial-flow.ts",
     "db:push": "npx tsx scripts/db-push.ts",
+    "db:migrate:academic": "npx tsx --env-file=.env scripts/migrate-academic.ts",
     "db:seed": "tsx --env-file=.env.local server/scripts/seed-questions.ts",
     "db:cleanup": "tsx --env-file=.env.local server/scripts/cleanup-data.ts"
   },
