@@ -57,6 +57,7 @@ import { EmailTemplatesManager } from "@/components/admin/EmailTemplatesManager"
 import { AdminTotpManager } from "@/components/admin/AdminTotpManager";
 import { TestimonialsManager } from "@/components/admin/TestimonialsManager";
 import { NotesModerationQueue } from "@/components/admin/NotesModerationQueue";
+import { AcademicContentReportsTable } from "@/components/admin/AcademicContentReportsTable";
 
 
 export default function AdminDashboard() {
@@ -406,6 +407,8 @@ export default function AdminDashboard() {
                 />
               </CardContent>
             </Card>
+
+            <AcademicContentReportsTable />
           </TabsContent>
 
           {/* NOTE SUBMISSIONS MODERATION */}

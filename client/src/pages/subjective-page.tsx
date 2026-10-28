@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
@@ -20,7 +20,9 @@ import {
   Layers,
   Search,
   BookOpen,
-  HelpCircle
+  HelpCircle,
+  Flag,
+  AlertTriangle
 } from "lucide-react";
 
 interface SubjectiveQuestion {
@@ -50,6 +52,13 @@ export default function SubjectivePage() {
   const [studentAnswers, setStudentAnswers] = useState<Record<number, string>>({});
   const [savedAnswers, setSavedAnswers] = useState<Record<number, boolean>>({});
   const [bookmarkedIds, setBookmarkedIds] = useState<Record<number, boolean>>({});
+
+  // Report Academic Issue State
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [reportingQuestion, setReportingQuestion] = useState<SubjectiveQuestion | null>(null);
+  const [reportIssueType, setReportIssueType] = useState<string>("INCORRECT_ANSWER");
+  const [reportDescription, setReportDescription] = useState<string>("");
+  const [isSubmittingReport, setIsSubmittingReport] = useState<boolean>(false);
 
   // AI Explainer State
   const [aiModalOpen, setAiModalOpen] = useState(false);
@@ -158,6 +167,61 @@ export default function SubjectivePage() {
     }
   };
 
+  // Open Report Academic Issue Dialog
+  const handleOpenReport = (q: SubjectiveQuestion) => {
+    if (!user) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to report academic issues or question inaccuracies.",
+        variant: "destructive"
+      });
+      return;
+    }
+    setReportingQuestion(q);
+    setReportIssueType("INCORRECT_ANSWER");
+    setReportDescription("");
+    setReportModalOpen(true);
+  };
+
+  // Submit Content Issue Report
+  const submitContentReport = async () => {
+    if (!reportingQuestion) return;
+    if (!reportDescription.trim()) {
+      toast({ title: "Description required", description: "Please explain the issue with this question.", variant: "destructive" });
+      return;
+    }
+
+    setIsSubmittingReport(true);
+    try {
+      const res = await fetch("/api/ecosystem/feedback/report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contentType: "SUBJECTIVE",
+          contentId: reportingQuestion.id,
+          issueType: reportIssueType,
+          description: reportDescription.trim(),
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Failed to submit report");
+      }
+
+      setReportModalOpen(false);
+      setReportingQuestion(null);
+      toast({
+        title: "Report Submitted 🛡️",
+        description: "Our academic team has received your report and will verify the question.",
+      });
+    } catch (error: any) {
+      toast({ title: "Submission Failed", description: error.message, variant: "destructive" });
+    } finally {
+      setIsSubmittingReport(false);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
       {/* Header Banner */}
@@ -263,8 +327,18 @@ export default function SubjectivePage() {
                         size="icon"
                         onClick={() => toggleBookmark(q)}
                         className={`h-8 w-8 ${isBookmarked ? "text-orange-600 fill-orange-600" : "text-muted-foreground"}`}
+                        title="Bookmark Question"
                       >
                         <Bookmark className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleOpenReport(q)}
+                        className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30"
+                        title="Report Question Issue"
+                      >
+                        <Flag className="w-4 h-4" />
                       </Button>
                     </div>
                   </div>
@@ -414,6 +488,77 @@ export default function SubjectivePage() {
               </div>
             ) : null}
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Report Academic Issue Modal */}
+      <Dialog open={reportModalOpen} onOpenChange={setReportModalOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <div className="flex items-center gap-2 text-red-600 mb-1">
+              <AlertTriangle className="w-5 h-5" />
+              <DialogTitle className="text-lg font-bold">Report Academic Issue</DialogTitle>
+            </div>
+            <DialogDescription className="text-xs text-muted-foreground">
+              Help us maintain university examination accuracy. Flag typos, incorrect marking keys, or syllabus mismatches.
+            </DialogDescription>
+          </DialogHeader>
+
+          {reportingQuestion && (
+            <div className="space-y-4 py-2">
+              <div className="bg-muted/40 p-3 rounded-lg border text-xs text-foreground/80 line-clamp-3">
+                <span className="font-semibold text-foreground">Question: </span>
+                {reportingQuestion.questionText}
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-foreground mb-1 block">Issue Category</label>
+                <Select value={reportIssueType} onValueChange={setReportIssueType}>
+                  <SelectTrigger className="text-xs">
+                    <SelectValue placeholder="Select issue type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="INCORRECT_ANSWER">Incorrect Model Answer / Marking Scheme</SelectItem>
+                    <SelectItem value="SYLLABUS_MISMATCH">Syllabus or Unit Mismatch</SelectItem>
+                    <SelectItem value="TYPO_FORMATTING">Typo, Missing Diagram or Formatting Error</SelectItem>
+                    <SelectItem value="OUTDATED_CONTENT">Outdated University Exam Pattern</SelectItem>
+                    <SelectItem value="OTHER">Other Academic Concern</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-foreground mb-1 block">
+                  Detailed Explanation <span className="text-red-500">*</span>
+                </label>
+                <Textarea
+                  placeholder="Explain why this question or answer is flawed and cite correct textbook reference if known..."
+                  value={reportDescription}
+                  onChange={(e) => setReportDescription(e.target.value)}
+                  className="min-h-[100px] text-xs"
+                />
+              </div>
+
+              <DialogFooter className="flex items-center justify-end gap-2 pt-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setReportModalOpen(false)}
+                  disabled={isSubmittingReport}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={submitContentReport}
+                  disabled={isSubmittingReport}
+                  className="bg-red-600 hover:bg-red-700 text-white gap-1.5"
+                >
+                  {isSubmittingReport ? "Submitting..." : "Submit Report"}
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
