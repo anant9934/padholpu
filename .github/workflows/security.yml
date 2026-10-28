@@ -31,12 +31,27 @@ jobs:
       - name: TypeScript Type Check
         run: npm run check
 
-      - name: Run Security & Integration Test Suites
-        run: npx tsx tests/seo-brand-audit.ts && npx tsx tests/adversarial-suite.ts
+      - name: Run Unit & Security Test Suites
+        run: npm run test:unit
         env:
           NODE_ENV: test
           JWT_SECRET: test_ci_jwt_secret_must_be_sufficiently_long_and_complex_12345
           ADMIN_PASSCODE: test_ci_admin_passcode_for_security_suite_verification
+
+      - name: Verify Decoupled Frontend Build (Vercel Target)
+        run: npm run build:client
+
+      - name: Verify Decoupled Backend Build (Render Target)
+        run: npm run build:server
+
+      - name: Verify Full Production Build
+        run: npm run build
+
+      - name: Repository Secret & Sensitive File Verification
+        run: |
+          echo "Verifying no local .env files or credentials are tracked in Git..."
+          ! git ls-files | grep -E '(^\.env$|^\.env\.local$|^\.env\.production$|\.pem$|\.key$)' || (echo "Sensitive file committed!" && exit 1)
+          echo "Repository integrity verified: zero sensitive files tracked."
       
   codeql-analysis:
     name: CodeQL (SAST)
