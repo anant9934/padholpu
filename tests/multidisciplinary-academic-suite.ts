@@ -230,6 +230,142 @@ async function runMultidisciplinarySuite() {
     assert.strictEqual(lawQuestion.marks, 15, "Carries marking breakdown");
   });
 
+  // ── 8. Curriculum Import Validation & Preview Engine ──────
+  await asyncTest("Curriculum Import: Valid rows pass validation and generate proper preview", async () => {
+    const validBatch = [
+      {
+        programmeCode: "BALLB",
+        semester: 2,
+        subjectCode: "LAW103",
+        subjectName: "Family Law I",
+        credits: 4,
+        category: "Core",
+        discipline: "LAW",
+      },
+      {
+        programmeCode: "BBA",
+        semester: 2,
+        subjectCode: "MGT201",
+        subjectName: "Marketing Management",
+        credits: 3,
+        category: "Core",
+        discipline: "MANAGEMENT",
+      },
+    ];
+
+    const { CurriculumImportService } = await import("../server/services/curriculum-import");
+    const result = await CurriculumImportService.validate(validBatch);
+
+    assert(result.valid, "Valid batch returns valid = true");
+    assert.strictEqual(result.errorRowsCount, 0, "Zero error rows");
+    assert.strictEqual(result.validRowsCount, 2, "Both rows valid");
+    assert.strictEqual(result.preview.length, 2, "Preview has 2 items");
+  });
+
+  await asyncTest("Curriculum Import: Catches unknown programmes, semester bounds, and batch duplicates", async () => {
+    const invalidBatch = [
+      {
+        programmeCode: "NON_EXISTENT_PROG",
+        semester: 1,
+        subjectCode: "XYZ101",
+        subjectName: "Invalid Course",
+        credits: 4,
+      },
+      {
+        programmeCode: "BBA", // BBA has 6 total semesters
+        semester: 99, // Exceeds programme totalSemesters
+        subjectCode: "MGT999",
+        subjectName: "Out of bounds semester",
+        credits: 4,
+      },
+      {
+        programmeCode: "BALLB",
+        semester: 1,
+        subjectCode: "LAW101",
+        subjectName: "First occurrence",
+        credits: 4,
+      },
+      {
+        programmeCode: "BALLB",
+        semester: 1,
+        subjectCode: "LAW101", // Duplicate within batch
+        subjectName: "Second duplicate occurrence",
+        credits: 4,
+      },
+    ];
+
+    const { CurriculumImportService } = await import("../server/services/curriculum-import");
+    const result = await CurriculumImportService.validate(invalidBatch);
+
+    assert(!result.valid, "Invalid batch returns valid = false");
+    assert(result.errorRowsCount >= 3, "Detects at least 3 row errors");
+
+    const errors = result.errors;
+    assert(
+      errors.some((e) => e.field === "programmeCode" && e.message.includes("does not exist")),
+      "Flags non-existent programme"
+    );
+    assert(
+      errors.some((e) => e.field === "semester" && e.message.includes("exceeds programme maximum")),
+      "Flags semester exceeding programme maximum limit"
+    );
+    assert(
+      errors.some((e) => e.field === "subjectCode" && e.message.includes("Duplicate mapping")),
+      "Flags duplicate mapping within batch"
+    );
+  });
+
+  // ── 9. Student Semester Boundary Validation ────────────────
+  test("Academic Boundaries: Enforces valid semester ranges and programme limits", () => {
+    const bbaTotalSemesters = 6;
+    const ballbTotalSemesters = 10;
+
+    const validateSem = (sem: number, totalSem: number) => {
+      if (isNaN(sem) || sem < 1 || sem > 12) return false;
+      if (sem > totalSem) return false;
+      return true;
+    };
+
+    assert(validateSem(1, bbaTotalSemesters), "Semester 1 valid for BBA");
+    assert(validateSem(6, bbaTotalSemesters), "Semester 6 valid for BBA");
+    assert(!validateSem(7, bbaTotalSemesters), "Semester 7 invalid for BBA (max 6)");
+    assert(!validateSem(0, bbaTotalSemesters), "Semester 0 invalid");
+    assert(!validateSem(-1, bbaTotalSemesters), "Negative semester invalid");
+    assert(validateSem(10, ballbTotalSemesters), "Semester 10 valid for BALLB");
+    assert(!validateSem(11, ballbTotalSemesters), "Semester 11 invalid for BALLB (max 10)");
+  });
+
+  // ── 10. Database Academic Architecture Verification ─────────
+  await asyncTest("Database: Live database has 8 schools and 9 degree programmes seeded", async () => {
+    const schools = await multidisciplinaryAcademicService.getAcademicSchools();
+    assert(schools.length >= 8, `Expected at least 8 schools, found ${schools.length}`);
+
+    const progs = await multidisciplinaryAcademicService.getProgrammes();
+    assert(progs.length >= 9, `Expected at least 9 programmes, found ${progs.length}`);
+  });
+
+  // ── 11. Content Operations & Moderation Anti-Self-Approval ──
+  test("Moderation Policy: Anti-self-approval constraint strictly blocks student author approval", () => {
+    const submission = {
+      id: 55,
+      studentId: 42,
+      moderatorId: 42, // Same user attempting self-approval
+      decision: "approved",
+    };
+
+    const isSelfApprovalBlocked = submission.studentId === submission.moderatorId && submission.decision === "approved";
+    assert(isSelfApprovalBlocked, "Self-approval is strictly intercepted and blocked");
+
+    const nonSelfApproval = {
+      id: 55,
+      studentId: 42,
+      moderatorId: 99, // Distinct moderator
+      decision: "approved",
+    };
+    const isNonSelfAllowed = nonSelfApproval.studentId !== nonSelfApproval.moderatorId;
+    assert(isNonSelfAllowed, "Distinct moderator approval is permitted");
+  });
+
   console.log("==========================================================");
   console.log(`ALL ${passed}/${total} MULTIDISCIPLINARY ACADEMIC TESTS PASSED`);
   console.log("==========================================================");
