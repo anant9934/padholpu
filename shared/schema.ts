@@ -737,3 +737,266 @@ export type Testimonial = typeof testimonials.$inferSelect;
 export type InsertTestimonial = z.infer<typeof insertTestimonialSchema>;
 export type PublicTestimonial = z.infer<typeof publicTestimonialSchema>;
 
+// ============================================
+// PADHO LPU 2.0: FLASHCARDS & SPACED REPETITION (SM-2)
+// ============================================
+export const flashcardDecks = pgTable("flashcard_decks", {
+  id: serial("id").primaryKey(),
+  subjectId: integer("subject_id").references(() => subjects.id, { onDelete: "cascade" }),
+  unitId: integer("unit_id").references(() => units.id, { onDelete: "set null" }),
+  title: text("title").notNull(),
+  description: text("description"),
+  isPublic: boolean("is_public").default(true).notNull(),
+  createdBy: integer("created_by").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  cardCount: integer("card_count").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  subjectIdx: index("flashcard_decks_subject_idx").on(table.subjectId),
+  creatorIdx: index("flashcard_decks_creator_idx").on(table.createdBy),
+}));
+
+export const flashcards = pgTable("flashcards", {
+  id: serial("id").primaryKey(),
+  deckId: integer("deck_id").references(() => flashcardDecks.id, { onDelete: "cascade" }).notNull(),
+  front: text("front").notNull(),
+  back: text("back").notNull(),
+  hint: text("hint"),
+  orderIndex: integer("order_index").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  deckIdx: index("flashcards_deck_idx").on(table.deckId),
+}));
+
+export const userFlashcardReviews = pgTable("user_flashcard_reviews", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  cardId: integer("card_id").references(() => flashcards.id, { onDelete: "cascade" }).notNull(),
+  easeFactor: real("ease_factor").default(2.5).notNull(),
+  intervalDays: integer("interval_days").default(0).notNull(),
+  repetitions: integer("repetitions").default(0).notNull(),
+  nextReviewDate: timestamp("next_review_date").defaultNow().notNull(),
+  lastReviewedAt: timestamp("last_reviewed_at").defaultNow().notNull(),
+  isLearned: boolean("is_learned").default(false).notNull(),
+}, (table) => ({
+  userCardUnique: unique("user_flashcard_unique").on(table.userId, table.cardId),
+  nextReviewIdx: index("user_flashcard_next_review_idx").on(table.userId, table.nextReviewDate),
+}));
+
+export const insertFlashcardDeckSchema = createInsertSchema(flashcardDecks).omit({ id: true, createdAt: true, cardCount: true });
+export const insertFlashcardSchema = createInsertSchema(flashcards).omit({ id: true, createdAt: true });
+export type FlashcardDeck = typeof flashcardDecks.$inferSelect;
+export type Flashcard = typeof flashcards.$inferSelect;
+export type UserFlashcardReview = typeof userFlashcardReviews.$inferSelect;
+
+// ============================================
+// PADHO LPU 2.0: SUBJECTIVE QUESTIONS & MODEL ANSWERS
+// ============================================
+export const subjectiveQuestions = pgTable("subjective_questions", {
+  id: serial("id").primaryKey(),
+  subjectId: integer("subject_id").references(() => subjects.id, { onDelete: "cascade" }).notNull(),
+  unitId: integer("unit_id").references(() => units.id, { onDelete: "set null" }),
+  topicId: integer("topic_id").references(() => topics.id, { onDelete: "set null" }),
+  questionType: text("question_type").notNull().default("SHORT_ANSWER"), // DEFINITION, SHORT_ANSWER, LONG_ANSWER, CASE_STUDY, NUMERICAL
+  questionText: text("question_text").notNull(),
+  modelAnswer: text("model_answer").notNull(),
+  outlinePoints: jsonb("outline_points").$type<string[]>().default([]),
+  maxMarks: integer("max_marks").default(5).notNull(),
+  difficulty: text("difficulty").default("Medium").notNull(),
+  examSession: text("exam_session"), // e.g. "End-Term 2024"
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  subjectIdx: index("subj_q_subject_idx").on(table.subjectId),
+  unitIdx: index("subj_q_unit_idx").on(table.unitId),
+}));
+
+export const userSubjectiveAnswers = pgTable("user_subjective_answers", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  questionId: integer("question_id").references(() => subjectiveQuestions.id, { onDelete: "cascade" }).notNull(),
+  studentAnswer: text("student_answer").notNull(),
+  selfRating: integer("self_rating"), // 1 to 5 scale
+  isBookmarked: boolean("is_bookmarked").default(false).notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  userQuestionUnique: unique("user_subj_ans_unique").on(table.userId, table.questionId),
+}));
+
+export const insertSubjectiveQuestionSchema = createInsertSchema(subjectiveQuestions).omit({ id: true, createdAt: true });
+export type SubjectiveQuestion = typeof subjectiveQuestions.$inferSelect;
+export type UserSubjectiveAnswer = typeof userSubjectiveAnswers.$inferSelect;
+
+// ============================================
+// PADHO LPU 2.0: STUDENT NOTES SUBMISSION & MODERATION
+// ============================================
+export const noteSubmissions = pgTable("note_submissions", {
+  id: serial("id").primaryKey(),
+  studentId: integer("student_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  subjectId: integer("subject_id").references(() => subjects.id, { onDelete: "cascade" }).notNull(),
+  unitNumber: integer("unit_number").default(1).notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  content: text("content"), // Rich text / markdown study notes
+  attachmentUrl: text("attachment_url"),
+  attachmentName: text("attachment_name"),
+  attachmentSize: integer("attachment_size"),
+  status: text("status").notNull().default("pending"), // draft, pending, under_review, changes_requested, approved, rejected, published
+  moderatorFeedback: text("moderator_feedback"),
+  reviewedBy: integer("reviewed_by").references(() => users.id, { onDelete: "set null" }),
+  reviewedAt: timestamp("reviewed_at"),
+  publishedResourceId: integer("published_resource_id").references(() => resources.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  studentIdx: index("note_submissions_student_idx").on(table.studentId),
+  statusIdx: index("note_submissions_status_idx").on(table.status),
+  subjectIdx: index("note_submissions_subject_idx").on(table.subjectId),
+}));
+
+export const insertNoteSubmissionSchema = createInsertSchema(noteSubmissions).omit({
+  id: true, createdAt: true, updatedAt: true, reviewedBy: true, reviewedAt: true, publishedResourceId: true
+});
+export type NoteSubmission = typeof noteSubmissions.$inferSelect;
+export type InsertNoteSubmission = z.infer<typeof insertNoteSubmissionSchema>;
+
+// ============================================
+// PADHO LPU 2.0: EXAM PREPARATION & STUDY PLANNER
+// ============================================
+export const studyPlans = pgTable("study_plans", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  title: text("title").notNull(),
+  examType: text("exam_type").default("END_TERM").notNull(), // MID_TERM, END_TERM, CA, PLACEMENT
+  targetExamDate: timestamp("target_exam_date").notNull(),
+  dailyStudyHours: real("daily_study_hours").default(2.0).notNull(),
+  selectedSubjectCodes: text("selected_subject_codes").array().notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("study_plans_user_idx").on(table.userId),
+}));
+
+export const studyPlanTasks = pgTable("study_plan_tasks", {
+  id: serial("id").primaryKey(),
+  planId: integer("plan_id").references(() => studyPlans.id, { onDelete: "cascade" }).notNull(),
+  subjectCode: text("subject_code").notNull(),
+  unitNumber: integer("unit_number").notNull(),
+  title: text("title").notNull(),
+  scheduledDate: text("scheduled_date").notNull(), // YYYY-MM-DD
+  isCompleted: boolean("is_completed").default(false).notNull(),
+  completedAt: timestamp("completed_at"),
+}, (table) => ({
+  planIdx: index("study_plan_tasks_plan_idx").on(table.planId),
+  dateIdx: index("study_plan_tasks_date_idx").on(table.scheduledDate),
+}));
+
+export const insertStudyPlanSchema = createInsertSchema(studyPlans).omit({ id: true, createdAt: true });
+export type StudyPlan = typeof studyPlans.$inferSelect;
+export type StudyPlanTask = typeof studyPlanTasks.$inferSelect;
+
+// ============================================
+// PADHO LPU 2.0: PERSONAL KNOWLEDGE WORKSPACE & BOOKMARKS
+// ============================================
+export const personalNotes = pgTable("personal_notes", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  subjectId: integer("subject_id").references(() => subjects.id, { onDelete: "set null" }),
+  title: text("title").notNull(),
+  body: text("body").notNull(),
+  tags: text("tags").array().default(sql`ARRAY[]::text[]`),
+  isFavorite: boolean("is_favorite").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("personal_notes_user_idx").on(table.userId),
+}));
+
+export const bookmarks = pgTable("bookmarks", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  itemType: text("item_type").notNull(), // RESOURCE, QUESTION, FLASHCARD, SUBJECTIVE
+  itemId: integer("item_id").notNull(),
+  title: text("title").notNull(),
+  link: text("link").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userItemUnique: unique("bookmarks_user_item_unique").on(table.userId, table.itemType, table.itemId),
+  userIdx: index("bookmarks_user_idx").on(table.userId),
+}));
+
+export const insertPersonalNoteSchema = createInsertSchema(personalNotes).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertBookmarkSchema = createInsertSchema(bookmarks).omit({ id: true, createdAt: true });
+export type PersonalNote = typeof personalNotes.$inferSelect;
+export type Bookmark = typeof bookmarks.$inferSelect;
+
+// ============================================
+// PADHO LPU 2.0: STUDY GROUPS & ACADEMIC COLLABORATION
+// ============================================
+export const studyGroups = pgTable("study_groups", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  subjectCode: text("subject_code"),
+  creatorId: integer("creator_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  isPrivate: boolean("is_private").default(false).notNull(),
+  memberCount: integer("member_count").default(1).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const studyGroupMembers = pgTable("study_group_members", {
+  id: serial("id").primaryKey(),
+  groupId: integer("group_id").references(() => studyGroups.id, { onDelete: "cascade" }).notNull(),
+  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  role: text("role").default("MEMBER").notNull(), // ADMIN, MODERATOR, MEMBER
+  joinedAt: timestamp("joined_at").defaultNow().notNull(),
+}, (table) => ({
+  groupUserUnique: unique("study_group_member_unique").on(table.groupId, table.userId),
+}));
+
+export const studyGroupPosts = pgTable("study_group_posts", {
+  id: serial("id").primaryKey(),
+  groupId: integer("group_id").references(() => studyGroups.id, { onDelete: "cascade" }).notNull(),
+  authorId: integer("author_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  content: text("content").notNull(),
+  isPinned: boolean("is_pinned").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  groupIdx: index("study_group_posts_group_idx").on(table.groupId),
+}));
+
+export type StudyGroup = typeof studyGroups.$inferSelect;
+export type StudyGroupMember = typeof studyGroupMembers.$inferSelect;
+export type StudyGroupPost = typeof studyGroupPosts.$inferSelect;
+
+// ============================================
+// PADHO LPU 2.0: COMMUNITY CONTENT QUALITY & FEEDBACK
+// ============================================
+export const contentFeedback = pgTable("content_feedback", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  resourceId: integer("resource_id").references(() => resources.id, { onDelete: "cascade" }).notNull(),
+  isHelpful: boolean("is_helpful").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userResourceUnique: unique("content_feedback_unique").on(table.userId, table.resourceId),
+}));
+
+export const contentIssueReports = pgTable("content_issue_reports", {
+  id: serial("id").primaryKey(),
+  reporterId: integer("reporter_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  contentType: text("content_type").notNull(), // RESOURCE, QUESTION, FLASHCARD, SUBJECTIVE
+  contentId: integer("content_id").notNull(),
+  issueType: text("issue_type").notNull(), // INCORRECT_ANSWER, SYLLABUS_MISMATCH, TYPO, COPYRIGHT, OTHER
+  description: text("description").notNull(),
+  status: text("status").default("PENDING").notNull(), // PENDING, RESOLVED, DISMISSED
+  resolutionNotes: text("resolution_notes"),
+  resolvedBy: integer("resolved_by").references(() => users.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  resolvedAt: timestamp("resolved_at"),
+}, (table) => ({
+  statusIdx: index("content_issue_reports_status_idx").on(table.status),
+}));
+
+export type ContentFeedback = typeof contentFeedback.$inferSelect;
+export type ContentIssueReport = typeof contentIssueReports.$inferSelect;
+
+

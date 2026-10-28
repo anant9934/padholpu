@@ -166,7 +166,209 @@ async function syncSchema() {
     `CREATE INDEX IF NOT EXISTS testimonials_status_idx ON testimonials (status);`,
     `CREATE INDEX IF NOT EXISTS testimonials_featured_idx ON testimonials (is_featured);`,
     `CREATE INDEX IF NOT EXISTS testimonials_category_idx ON testimonials (category);`,
-    `CREATE INDEX IF NOT EXISTS testimonials_display_order_idx ON testimonials (display_order);`
+    `CREATE INDEX IF NOT EXISTS testimonials_display_order_idx ON testimonials (display_order);`,
+
+    // 11. Flashcards & Spaced Repetition (SM-2)
+    `CREATE TABLE IF NOT EXISTS flashcard_decks (
+      id SERIAL PRIMARY KEY,
+      subject_id INTEGER REFERENCES subjects(id) ON DELETE CASCADE,
+      unit_id INTEGER REFERENCES units(id) ON DELETE SET NULL,
+      title TEXT NOT NULL,
+      description TEXT,
+      is_public BOOLEAN NOT NULL DEFAULT TRUE,
+      created_by INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      card_count INTEGER NOT NULL DEFAULT 0,
+      created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    );`,
+    `CREATE INDEX IF NOT EXISTS flashcard_decks_subject_idx ON flashcard_decks (subject_id);`,
+    `CREATE INDEX IF NOT EXISTS flashcard_decks_creator_idx ON flashcard_decks (created_by);`,
+
+    `CREATE TABLE IF NOT EXISTS flashcards (
+      id SERIAL PRIMARY KEY,
+      deck_id INTEGER NOT NULL REFERENCES flashcard_decks(id) ON DELETE CASCADE,
+      front TEXT NOT NULL,
+      back TEXT NOT NULL,
+      hint TEXT,
+      order_index INTEGER NOT NULL DEFAULT 0,
+      created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    );`,
+    `CREATE INDEX IF NOT EXISTS flashcards_deck_idx ON flashcards (deck_id);`,
+
+    `CREATE TABLE IF NOT EXISTS user_flashcard_reviews (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      card_id INTEGER NOT NULL REFERENCES flashcards(id) ON DELETE CASCADE,
+      ease_factor REAL NOT NULL DEFAULT 2.5,
+      interval_days INTEGER NOT NULL DEFAULT 0,
+      repetitions INTEGER NOT NULL DEFAULT 0,
+      next_review_date TIMESTAMP NOT NULL DEFAULT NOW(),
+      last_reviewed_at TIMESTAMP NOT NULL DEFAULT NOW(),
+      is_learned BOOLEAN NOT NULL DEFAULT FALSE,
+      CONSTRAINT user_flashcard_unique UNIQUE (user_id, card_id)
+    );`,
+    `CREATE INDEX IF NOT EXISTS user_flashcard_next_review_idx ON user_flashcard_reviews (user_id, next_review_date);`,
+
+    // 12. Subjective Questions & Model Answers
+    `CREATE TABLE IF NOT EXISTS subjective_questions (
+      id SERIAL PRIMARY KEY,
+      subject_id INTEGER NOT NULL REFERENCES subjects(id) ON DELETE CASCADE,
+      unit_id INTEGER REFERENCES units(id) ON DELETE SET NULL,
+      topic_id INTEGER REFERENCES topics(id) ON DELETE SET NULL,
+      question_type TEXT NOT NULL DEFAULT 'SHORT_ANSWER',
+      question_text TEXT NOT NULL,
+      model_answer TEXT NOT NULL,
+      outline_points JSONB DEFAULT '[]'::jsonb,
+      max_marks INTEGER NOT NULL DEFAULT 5,
+      difficulty TEXT NOT NULL DEFAULT 'Medium',
+      exam_session TEXT,
+      created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    );`,
+    `CREATE INDEX IF NOT EXISTS subj_q_subject_idx ON subjective_questions (subject_id);`,
+    `CREATE INDEX IF NOT EXISTS subj_q_unit_idx ON subjective_questions (unit_id);`,
+
+    `CREATE TABLE IF NOT EXISTS user_subjective_answers (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      question_id INTEGER NOT NULL REFERENCES subjective_questions(id) ON DELETE CASCADE,
+      student_answer TEXT NOT NULL,
+      self_rating INTEGER,
+      is_bookmarked BOOLEAN NOT NULL DEFAULT FALSE,
+      updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+      CONSTRAINT user_subj_ans_unique UNIQUE (user_id, question_id)
+    );`,
+
+    // 13. Student Notes Submissions & Moderation
+    `CREATE TABLE IF NOT EXISTS note_submissions (
+      id SERIAL PRIMARY KEY,
+      student_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      subject_id INTEGER NOT NULL REFERENCES subjects(id) ON DELETE CASCADE,
+      unit_number INTEGER NOT NULL DEFAULT 1,
+      title TEXT NOT NULL,
+      description TEXT,
+      content TEXT,
+      attachment_url TEXT,
+      attachment_name TEXT,
+      attachment_size INTEGER,
+      status TEXT NOT NULL DEFAULT 'pending',
+      moderator_feedback TEXT,
+      reviewed_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+      reviewed_at TIMESTAMP,
+      published_resource_id INTEGER REFERENCES resources(id) ON DELETE SET NULL,
+      created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+    );`,
+    `CREATE INDEX IF NOT EXISTS note_submissions_student_idx ON note_submissions (student_id);`,
+    `CREATE INDEX IF NOT EXISTS note_submissions_status_idx ON note_submissions (status);`,
+    `CREATE INDEX IF NOT EXISTS note_submissions_subject_idx ON note_submissions (subject_id);`,
+
+    // 14. Exam Preparation & Study Planner
+    `CREATE TABLE IF NOT EXISTS study_plans (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      title TEXT NOT NULL,
+      exam_type TEXT NOT NULL DEFAULT 'END_TERM',
+      target_exam_date TIMESTAMP NOT NULL,
+      daily_study_hours REAL NOT NULL DEFAULT 2.0,
+      selected_subject_codes TEXT[] NOT NULL,
+      is_active BOOLEAN NOT NULL DEFAULT TRUE,
+      created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    );`,
+    `CREATE INDEX IF NOT EXISTS study_plans_user_idx ON study_plans (user_id);`,
+
+    `CREATE TABLE IF NOT EXISTS study_plan_tasks (
+      id SERIAL PRIMARY KEY,
+      plan_id INTEGER NOT NULL REFERENCES study_plans(id) ON DELETE CASCADE,
+      subject_code TEXT NOT NULL,
+      unit_number INTEGER NOT NULL,
+      title TEXT NOT NULL,
+      scheduled_date TEXT NOT NULL,
+      is_completed BOOLEAN NOT NULL DEFAULT FALSE,
+      completed_at TIMESTAMP
+    );`,
+    `CREATE INDEX IF NOT EXISTS study_plan_tasks_plan_idx ON study_plan_tasks (plan_id);`,
+    `CREATE INDEX IF NOT EXISTS study_plan_tasks_date_idx ON study_plan_tasks (scheduled_date);`,
+
+    // 15. Personal Knowledge Workspace & Bookmarks
+    `CREATE TABLE IF NOT EXISTS personal_notes (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      subject_id INTEGER REFERENCES subjects(id) ON DELETE SET NULL,
+      title TEXT NOT NULL,
+      body TEXT NOT NULL,
+      tags TEXT[] DEFAULT ARRAY[]::text[],
+      is_favorite BOOLEAN NOT NULL DEFAULT FALSE,
+      created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+    );`,
+    `CREATE INDEX IF NOT EXISTS personal_notes_user_idx ON personal_notes (user_id);`,
+
+    `CREATE TABLE IF NOT EXISTS bookmarks (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      item_type TEXT NOT NULL,
+      item_id INTEGER NOT NULL,
+      title TEXT NOT NULL,
+      link TEXT NOT NULL,
+      created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+      CONSTRAINT bookmarks_user_item_unique UNIQUE (user_id, item_type, item_id)
+    );`,
+    `CREATE INDEX IF NOT EXISTS bookmarks_user_idx ON bookmarks (user_id);`,
+
+    // 16. Study Groups
+    `CREATE TABLE IF NOT EXISTS study_groups (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      description TEXT,
+      subject_code TEXT,
+      creator_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      is_private BOOLEAN NOT NULL DEFAULT FALSE,
+      member_count INTEGER NOT NULL DEFAULT 1,
+      created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    );`,
+
+    `CREATE TABLE IF NOT EXISTS study_group_members (
+      id SERIAL PRIMARY KEY,
+      group_id INTEGER NOT NULL REFERENCES study_groups(id) ON DELETE CASCADE,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      role TEXT NOT NULL DEFAULT 'MEMBER',
+      joined_at TIMESTAMP NOT NULL DEFAULT NOW(),
+      CONSTRAINT study_group_member_unique UNIQUE (group_id, user_id)
+    );`,
+
+    `CREATE TABLE IF NOT EXISTS study_group_posts (
+      id SERIAL PRIMARY KEY,
+      group_id INTEGER NOT NULL REFERENCES study_groups(id) ON DELETE CASCADE,
+      author_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      content TEXT NOT NULL,
+      is_pinned BOOLEAN NOT NULL DEFAULT FALSE,
+      created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    );`,
+    `CREATE INDEX IF NOT EXISTS study_group_posts_group_idx ON study_group_posts (group_id);`,
+
+    // 17. Content Feedback & Quality Issues
+    `CREATE TABLE IF NOT EXISTS content_feedback (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      resource_id INTEGER NOT NULL REFERENCES resources(id) ON DELETE CASCADE,
+      is_helpful BOOLEAN NOT NULL,
+      created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+      CONSTRAINT content_feedback_unique UNIQUE (user_id, resource_id)
+    );`,
+
+    `CREATE TABLE IF NOT EXISTS content_issue_reports (
+      id SERIAL PRIMARY KEY,
+      reporter_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      content_type TEXT NOT NULL,
+      content_id INTEGER NOT NULL,
+      issue_type TEXT NOT NULL,
+      description TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'PENDING',
+      resolution_notes TEXT,
+      resolved_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+      created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+      resolved_at TIMESTAMP
+    );`,
+    `CREATE INDEX IF NOT EXISTS content_issue_reports_status_idx ON content_issue_reports (status);`
   ];
 
   for (const q of queries) {
