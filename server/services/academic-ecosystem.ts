@@ -6,7 +6,7 @@ import {
   personalNotes, bookmarks,
   studyGroups, studyGroupMembers, studyGroupPosts,
   contentFeedback, contentIssueReports,
-  subjects, units, resources, users,
+  subjects, units, resources, users, notifications,
   type FlashcardDeck, type Flashcard, type UserFlashcardReview,
   type SubjectiveQuestion, type UserSubjectiveAnswer,
   type NoteSubmission, type InsertNoteSubmission,
@@ -14,7 +14,7 @@ import {
   type PersonalNote, type Bookmark,
   type StudyGroup, type StudyGroupPost
 } from "../../shared/schema";
-import { eq, and, or, desc, sql, asc, inArray, gte, lte } from "drizzle-orm";
+import { eq, and, or, ne, desc, sql, asc, inArray, gte, lte } from "drizzle-orm";
 import { invalidatePattern, delCache } from "../lib/redis";
 
 // ============================================================================
@@ -262,6 +262,17 @@ export async function submitStudentNotes(submission: InsertNoteSubmission) {
     ...submission,
     status: "pending",
   }).returning();
+
+  // Create acknowledgement notification
+  await db.insert(notifications).values({
+    userId: submission.studentId,
+    type: "INFO",
+    title: "Notes Submitted for Review",
+    message: `Your notes "${submission.title}" have been queued for faculty review.`,
+    link: "/contributions",
+    isRead: false,
+  }).catch(() => {});
+
   return created;
 }
 
@@ -294,6 +305,16 @@ export async function updateStudentSubmission(
     updatedAt: new Date(),
   }).where(eq(noteSubmissions.id, submissionId)).returning();
 
+  // Create re-submission notification
+  await db.insert(notifications).values({
+    userId: studentId,
+    type: "INFO",
+    title: "Revised Notes Resubmitted",
+    message: `Your revised submission "${sub.title}" has been placed back in the moderation queue.`,
+    link: "/contributions",
+    isRead: false,
+  }).catch(() => {});
+
   return updated;
 }
 
@@ -308,6 +329,17 @@ export async function withdrawStudentSubmission(submissionId: number, studentId:
   }
 
   await db.delete(noteSubmissions).where(eq(noteSubmissions.id, submissionId));
+
+  // Create withdraw notification
+  await db.insert(notifications).values({
+    userId: studentId,
+    type: "INFO",
+    title: "Submission Withdrawn",
+    message: `Your submission "${sub.title}" has been withdrawn from review.`,
+    link: "/contributions",
+    isRead: false,
+  }).catch(() => {});
+
   return true;
 }
 
@@ -384,6 +416,36 @@ export async function moderateNoteSubmission(
     publishedResourceId,
     updatedAt: new Date(),
   }).where(eq(noteSubmissions.id, submissionId)).returning();
+
+  // Send status notification to contributor
+  if (decision === "approved") {
+    await db.insert(notifications).values({
+      userId: sub.studentId,
+      type: "INFO",
+      title: "Notes Approved & Published! 📚",
+      message: `Your contribution "${sub.title}" has been approved and published to the public library.`,
+      link: publishedResourceId ? `/resources/${publishedResourceId}` : "/contributions",
+      isRead: false,
+    }).catch(() => {});
+  } else if (decision === "changes_requested") {
+    await db.insert(notifications).values({
+      userId: sub.studentId,
+      type: "INFO",
+      title: "Changes Requested on Your Notes 📝",
+      message: `Faculty requested revisions on "${sub.title}": ${feedback || "Please review notes and resubmit."}`,
+      link: "/contributions",
+      isRead: false,
+    }).catch(() => {});
+  } else if (decision === "rejected") {
+    await db.insert(notifications).values({
+      userId: sub.studentId,
+      type: "INFO",
+      title: "Notes Submission Not Approved",
+      message: `Your submission "${sub.title}" was not approved: ${feedback || "Does not meet academic guidelines."}`,
+      link: "/contributions",
+      isRead: false,
+    }).catch(() => {});
+  }
 
   return updated;
 }
@@ -821,6 +883,89 @@ export async function reportContentIssue(
   }).returning();
 
   return report;
+}
+
+export async function getContentIssueReports(status?: string, contentType?: string) {
+  const conditions = [];
+  if (status && status !== "ALL") conditions.push(eq(contentIssueReports.status, status));
+  if (contentType && contentType !== "ALL") conditions.push(eq(contentIssueReports.contentType, contentType));
+
+  return db.select({
+    report: contentIssueReports,
+    reporter: {
+      id: users.id,
+      fullName: users.fullName,
+      username: users.username,
+      email: users.email,
+    }
+  })
+  .from(contentIssueReports)
+  .leftJoin(users, eq(contentIssueReports.reporterId, users.id))
+  .where(conditions.length ? and(...conditions) : undefined)
+  .orderBy(desc(contentIssueReports.createdAt));
+}
+
+export async function resolveContentIssueReport(
+  reportId: number,
+  adminId: number,
+  status: "RESOLVED" | "DISMISSED",
+  resolutionNotes?: string
+) {
+  const [report] = await db.select().from(contentIssueReports).where(eq(contentIssueReports.id, reportId));
+  if (!report) throw new Error("Report not found");
+
+  const [updated] = await db.update(contentIssueReports).set({
+    status,
+    resolutionNotes: resolutionNotes || null,
+    resolvedBy: adminId,
+    resolvedAt: new Date(),
+  }).where(eq(contentIssueReports.id, reportId)).returning();
+
+  // Notify reporter of outcome
+  if (report.reporterId) {
+    await db.insert(notifications).values({
+      userId: report.reporterId,
+      type: "INFO",
+      title: `Content Report ${status === "RESOLVED" ? "Resolved" : "Dismissed"}`,
+      message: `Your report regarding ${report.contentType} #${report.contentId} was reviewed: ${resolutionNotes || "Action completed by academic administration."}`,
+      link: "/learn",
+      isRead: false,
+    }).catch(() => {});
+  }
+
+  return updated;
+}
+
+export async function updateSubjectiveQuestion(
+  questionId: number,
+  data: {
+    questionText?: string;
+    modelAnswer?: string;
+    outlinePoints?: string[];
+    maxMarks?: number;
+    difficulty?: string;
+  }
+) {
+  const [question] = await db.select().from(subjectiveQuestions).where(eq(subjectiveQuestions.id, questionId));
+  if (!question) throw new Error("Question not found");
+
+  const [updated] = await db.update(subjectiveQuestions).set({
+    questionText: data.questionText ?? question.questionText,
+    modelAnswer: data.modelAnswer ?? question.modelAnswer,
+    outlinePoints: data.outlinePoints ?? question.outlinePoints,
+    maxMarks: data.maxMarks ?? question.maxMarks,
+    difficulty: data.difficulty ?? question.difficulty,
+  }).where(eq(subjectiveQuestions.id, questionId)).returning();
+
+  return updated;
+}
+
+export async function deleteSubjectiveQuestion(questionId: number) {
+  const [question] = await db.select().from(subjectiveQuestions).where(eq(subjectiveQuestions.id, questionId));
+  if (!question) throw new Error("Question not found");
+
+  await db.delete(subjectiveQuestions).where(eq(subjectiveQuestions.id, questionId));
+  return true;
 }
 
 // ============================================================================

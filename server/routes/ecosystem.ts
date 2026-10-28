@@ -32,9 +32,14 @@ import {
   voteResourceHelpful,
   getResourceHelpfulCount,
   reportContentIssue,
+  getContentIssueReports,
+  resolveContentIssueReport,
+  updateSubjectiveQuestion,
+  deleteSubjectiveQuestion,
   getConceptExplanation,
 } from "../services/academic-ecosystem";
 import { db } from "../db";
+import { storage } from "../storage";
 import { flashcardDecks, flashcards, subjectiveQuestions, noteSubmissions } from "../../shared/schema";
 import { eq, sql } from "drizzle-orm";
 import { ecosystemPostLimiter, aiTutorLimiter } from "../middleware/action-limiters";
@@ -894,6 +899,112 @@ router.post("/feedback/report", requireAuth, async (req: Request, res: Response)
   } catch (error: any) {
     console.error("[Ecosystem] Error reporting issue:", error);
     res.status(400).json({ message: error.message || "Failed to report issue." });
+  }
+});
+
+/**
+ * GET /api/ecosystem/admin/reports
+ * List reported academic content issues (Admin only)
+ */
+router.get("/admin/reports", requireAdmin, async (req: Request, res: Response) => {
+  try {
+    const status = req.query.status as string | undefined;
+    const contentType = req.query.contentType as string | undefined;
+    const reports = await getContentIssueReports(status, contentType);
+    res.json(reports);
+  } catch (error: any) {
+    console.error("[Ecosystem] Error fetching content issue reports:", error);
+    res.status(500).json({ message: "Failed to load content issue reports." });
+  }
+});
+
+/**
+ * PATCH /api/ecosystem/admin/reports/:id
+ * Resolve or dismiss content issue report (Admin only)
+ */
+router.patch("/admin/reports/:id", requireAdmin, async (req: Request, res: Response) => {
+  try {
+    const reportId = Number(req.params.id);
+    const adminId = (req.user as any).id;
+    const schema = z.object({
+      status: z.enum(["RESOLVED", "DISMISSED"]),
+      resolutionNotes: z.string().optional(),
+    });
+
+    const body = schema.parse(req.body);
+    const updated = await resolveContentIssueReport(reportId, adminId, body.status, body.resolutionNotes);
+    res.json(updated);
+  } catch (error: any) {
+    console.error("[Ecosystem] Error resolving content issue report:", error);
+    res.status(400).json({ message: error.message || "Failed to resolve report." });
+  }
+});
+
+/**
+ * PATCH /api/ecosystem/admin/subjective/:id
+ * Admin updates subjective question
+ */
+router.patch("/admin/subjective/:id", requireAdmin, async (req: Request, res: Response) => {
+  try {
+    const questionId = Number(req.params.id);
+    const schema = z.object({
+      questionText: z.string().min(5).optional(),
+      modelAnswer: z.string().min(5).optional(),
+      outlinePoints: z.array(z.string()).optional(),
+      maxMarks: z.number().min(1).optional(),
+      difficulty: z.enum(["EASY", "MEDIUM", "HARD"]).optional(),
+    });
+    const body = schema.parse(req.body);
+    const updated = await updateSubjectiveQuestion(questionId, body);
+    res.json(updated);
+  } catch (error: any) {
+    console.error("[Ecosystem] Error updating subjective question:", error);
+    res.status(400).json({ message: error.message || "Failed to update subjective question." });
+  }
+});
+
+/**
+ * DELETE /api/ecosystem/admin/subjective/:id
+ * Admin deletes/archives subjective question
+ */
+router.delete("/admin/subjective/:id", requireAdmin, async (req: Request, res: Response) => {
+  try {
+    const questionId = Number(req.params.id);
+    await deleteSubjectiveQuestion(questionId);
+    res.json({ success: true, message: "Subjective question deleted." });
+  } catch (error: any) {
+    console.error("[Ecosystem] Error deleting subjective question:", error);
+    res.status(400).json({ message: error.message || "Failed to delete subjective question." });
+  }
+});
+
+/**
+ * PATCH /api/ecosystem/admin/questions/:id
+ * Admin updates MCQ / Question Bank item
+ */
+router.patch("/admin/questions/:id", requireAdmin, async (req: Request, res: Response) => {
+  try {
+    const questionId = Number(req.params.id);
+    const updated = await storage.updateQuestion(questionId, req.body);
+    res.json(updated);
+  } catch (error: any) {
+    console.error("[Ecosystem] Error updating question:", error);
+    res.status(400).json({ message: error.message || "Failed to update question." });
+  }
+});
+
+/**
+ * DELETE /api/ecosystem/admin/questions/:id
+ * Admin deletes / archives question
+ */
+router.delete("/admin/questions/:id", requireAdmin, async (req: Request, res: Response) => {
+  try {
+    const questionId = Number(req.params.id);
+    const success = await storage.deleteQuestion(questionId);
+    res.json({ success, message: "Question deleted." });
+  } catch (error: any) {
+    console.error("[Ecosystem] Error deleting question:", error);
+    res.status(400).json({ message: error.message || "Failed to delete question." });
   }
 });
 
