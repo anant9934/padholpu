@@ -5,12 +5,13 @@
  * These are additive on top of the global 100/15min API limiter.
  */
 import rateLimit from "express-rate-limit";
-import { PostgresRateLimitStore } from "./postgres-store";
+import { DistributedRateLimitStore } from "./distributed-limiter-store";
 
 /** Global API rate limit (General protection) */
 export const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100,
+  store: new DistributedRateLimitStore("api_global"),
   standardHeaders: true,
   legacyHeaders: false,
   message: "Too many requests from this IP, please try again after 15 minutes",
@@ -21,7 +22,7 @@ export const apiLimiter = rateLimit({
 export const strictAuthLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
   max: 5,
-  store: new PostgresRateLimitStore("auth_strict"),
+  store: new DistributedRateLimitStore("auth_strict"),
   standardHeaders: true,
   legacyHeaders: false,
   message: { code: "RATE_LIMITED", message: "Too many sensitive attempts. Please try again after 1 minute." },
@@ -32,7 +33,7 @@ export const strictAuthLimiter = rateLimit({
 export const quizSubmitLimiter = rateLimit({
   windowMs: 10 * 60 * 1000,
   max: 5,
-  store: new PostgresRateLimitStore("quiz_submit"),
+  store: new DistributedRateLimitStore("quiz_submit"),
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req) => {
@@ -49,7 +50,7 @@ export const quizSubmitLimiter = rateLimit({
 export const examSubmitLimiter = rateLimit({
   windowMs: 30 * 60 * 1000,
   max: 3,
-  store: new PostgresRateLimitStore("exam_submit"),
+  store: new DistributedRateLimitStore("exam_submit"),
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req) => {
@@ -65,7 +66,7 @@ export const examSubmitLimiter = rateLimit({
 export const downloadLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 30,
-  store: new PostgresRateLimitStore("download"),
+  store: new DistributedRateLimitStore("download"),
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req) => {
@@ -81,7 +82,7 @@ export const downloadLimiter = rateLimit({
 export const uploadLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 5,
-  store: new PostgresRateLimitStore("upload"),
+  store: new DistributedRateLimitStore("upload"),
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req) => {
@@ -108,7 +109,7 @@ export const examGenerationLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 5,
   validate: false,
-  store: new PostgresRateLimitStore("exam_gen"),
+  store: new DistributedRateLimitStore("exam_gen"),
   keyGenerator: (req) => {
     const user = req.user as any;
     return user ? `uid:${user.id}` : (req.ip ?? "unknown");
@@ -120,7 +121,7 @@ export const examGenerationLimiter = rateLimit({
 export const secureDownloadLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 10,
-  store: new PostgresRateLimitStore("sec_download"),
+  store: new DistributedRateLimitStore("sec_download"),
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req) => {
@@ -136,7 +137,7 @@ export const secureDownloadLimiter = rateLimit({
 export const supportTrackingLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20,
-  store: new PostgresRateLimitStore("support_track"),
+  store: new DistributedRateLimitStore("support_track"),
   standardHeaders: true,
   legacyHeaders: false,
   message: { message: "Too many ticket status requests. Please wait." },
@@ -147,7 +148,7 @@ export const supportTrackingLimiter = rateLimit({
 export const contactLimiter = rateLimit({
   windowMs: 10 * 60 * 1000,
   max: 3,
-  store: new PostgresRateLimitStore("contact"),
+  store: new DistributedRateLimitStore("contact"),
   standardHeaders: true,
   legacyHeaders: false,
   message: { message: "Too many contact requests. Please wait before submitting again." },
