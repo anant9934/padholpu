@@ -5,7 +5,7 @@ import pg from "pg";
 import ws from "ws";
 import * as schema from "../shared/schema";
 
-const connectionString = (
+const rawConnectionString = (
   process.env.DATABASE_URL ||
   process.env.POSTGRES_URL ||
   process.env.STUDYLPU_DATABASE_URL ||
@@ -14,11 +14,13 @@ const connectionString = (
   ""
 ).trim().replace(/^"|"$/g, '');
 
-if (!connectionString) {
+if (!rawConnectionString && process.env.NODE_ENV === "production") {
   throw new Error(
     "No database connection string found. Set DATABASE_URL or POSTGRES_URL."
   );
 }
+
+const connectionString = rawConnectionString || "postgresql://postgres:postgres@localhost:5432/padholpu_dev";
 
 // Ensure DATABASE_URL is set globally for internal utilities and migrations
 if (!process.env.DATABASE_URL) {
