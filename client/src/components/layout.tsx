@@ -15,6 +15,11 @@ import {
   Search,
   Upload,
   HelpCircle,
+  BrainCircuit,
+  Calendar,
+  FolderLock,
+  Users,
+  Award,
 } from "lucide-react";
 import {
   Sheet,
@@ -38,16 +43,19 @@ import { MobileBottomNav } from "./ui/MobileBottomNav";
 import { GlobalSearchModal } from "./search/GlobalSearchModal";
 import { OfflineBanner } from "./ui/ErrorState";
 import { PWAUpdatePrompt } from "./pwa/PWAUpdatePrompt";
+import { StudyComfortBar } from "./ui/StudyComfortBar";
 
 const CookieConsent = lazy(() => import("./cookie-consent").then(m => ({ default: m.CookieConsent })));
 
-/* ── 5 Core Academic Pillars ────────────────────────────── */
+/* ── 7 Core Academic Pillars ────────────────────────────── */
 const primaryNav = [
-  { href: "/",         label: "Home",     icon: Home       },
-  { href: "/learn",    label: "Learn",    icon: BookOpen   },
-  { href: "/practice", label: "Practice", icon: FileText   },
-  { href: "/exams",    label: "Exams",    icon: Sparkles   },
-  { href: "/progress", label: "Progress", icon: TrendingUp },
+  { href: "/",              label: "Home",        icon: Home         },
+  { href: "/learn",         label: "Learn",       icon: BookOpen     },
+  { href: "/practice",      label: "Practice",    icon: FileText     },
+  { href: "/flashcards",    label: "Flashcards",  icon: BrainCircuit },
+  { href: "/exams",         label: "Exams",       icon: Sparkles     },
+  { href: "/study-planner", label: "Planner",     icon: Calendar     },
+  { href: "/progress",      label: "Progress",    icon: TrendingUp   },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -72,7 +80,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
     if (path === "/") return location === "/";
     if (path === "/learn") return location.startsWith("/learn") || location.startsWith("/resources");
     if (path === "/practice") return location.startsWith("/practice") || location.startsWith("/quizzes");
+    if (path === "/flashcards") return location.startsWith("/flashcards");
     if (path === "/exams") return location.startsWith("/exams") || location.startsWith("/exam");
+    if (path === "/study-planner") return location.startsWith("/study-planner");
     if (path === "/progress") return location.startsWith("/progress");
     return location.startsWith(path);
   };
@@ -220,9 +230,30 @@ export function Layout({ children }: { children: React.ReactNode }) {
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/contribute">
+                      <Link href="/workspace">
                         <div className="flex items-center gap-2.5 w-full cursor-pointer px-2.5 py-2 rounded-xl text-sm text-[#181510] dark:text-[#f0ece4] hover:bg-[#EFE9DE]/60 transition-colors">
-                          <Upload className="h-4 w-4 text-[#696158]" /> Contribute Notes
+                          <FolderLock className="h-4 w-4 text-[#696158]" /> Personal Workspace
+                        </div>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/subjective">
+                        <div className="flex items-center gap-2.5 w-full cursor-pointer px-2.5 py-2 rounded-xl text-sm text-[#181510] dark:text-[#f0ece4] hover:bg-[#EFE9DE]/60 transition-colors">
+                          <Award className="h-4 w-4 text-[#696158]" /> Subjective Questions
+                        </div>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/study-groups">
+                        <div className="flex items-center gap-2.5 w-full cursor-pointer px-2.5 py-2 rounded-xl text-sm text-[#181510] dark:text-[#f0ece4] hover:bg-[#EFE9DE]/60 transition-colors">
+                          <Users className="h-4 w-4 text-[#696158]" /> Study Groups
+                        </div>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/contributions">
+                        <div className="flex items-center gap-2.5 w-full cursor-pointer px-2.5 py-2 rounded-xl text-sm text-[#181510] dark:text-[#f0ece4] hover:bg-[#EFE9DE]/60 transition-colors">
+                          <Upload className="h-4 w-4 text-[#696158]" /> My Contributions
                         </div>
                       </Link>
                     </DropdownMenuItem>
@@ -383,9 +414,24 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     <p className="section-label px-3 pt-4 pb-1 text-[10px]">
                       Academic Secondary
                     </p>
-                    <Link href="/contribute" onClick={() => setIsOpen(false)}>
+                    <Link href="/workspace" onClick={() => setIsOpen(false)}>
                       <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[#696158] hover:bg-[#EFE9DE]/60 cursor-pointer">
-                        <Upload className="w-4 h-4 text-[#696158]" /> Contribute Notes
+                        <FolderLock className="w-4 h-4 text-[#696158]" /> Personal Workspace
+                      </div>
+                    </Link>
+                    <Link href="/subjective" onClick={() => setIsOpen(false)}>
+                      <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[#696158] hover:bg-[#EFE9DE]/60 cursor-pointer">
+                        <Award className="w-4 h-4 text-[#696158]" /> Subjective Questions
+                      </div>
+                    </Link>
+                    <Link href="/study-groups" onClick={() => setIsOpen(false)}>
+                      <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[#696158] hover:bg-[#EFE9DE]/60 cursor-pointer">
+                        <Users className="w-4 h-4 text-[#696158]" /> Study Groups
+                      </div>
+                    </Link>
+                    <Link href="/contributions" onClick={() => setIsOpen(false)}>
+                      <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[#696158] hover:bg-[#EFE9DE]/60 cursor-pointer">
+                        <Upload className="w-4 h-4 text-[#696158]" /> My Contributions
                       </div>
                     </Link>
                     <Link href="/rankings" onClick={() => setIsOpen(false)}>
@@ -444,6 +490,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
       {/* Mobile Bottom Nav */}
       <MobileBottomNav />
+
+      {/* Study Comfort & Accessibility Controls (Floating Action Bar) */}
+      <StudyComfortBar />
 
       <Suspense fallback={null}>
         <CookieConsent />

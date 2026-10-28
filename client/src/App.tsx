@@ -40,6 +40,12 @@ const DisclaimerPage = lazy(() => import("@/pages/disclaimer"));
 const PrivacyRequestsPage = lazy(() => import("@/pages/privacy-requests"));
 const SupportTracker = lazy(() => import("@/pages/SupportTracker"));
 const AdminSupport = lazy(() => import("@/pages/AdminSupport"));
+const FlashcardsPage = lazy(() => import("@/pages/flashcards-page"));
+const SubjectivePage = lazy(() => import("@/pages/subjective-page"));
+const StudyPlannerPage = lazy(() => import("@/pages/study-planner-page"));
+const WorkspacePage = lazy(() => import("@/pages/workspace-page"));
+const ContributionsPage = lazy(() => import("@/pages/contributions-page"));
+const StudyGroupsPage = lazy(() => import("@/pages/study-groups-page"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 import { Loader2 } from "lucide-react";
 import { PageSkeleton } from "@/components/ui/LoadingSkeleton";
@@ -349,6 +355,43 @@ function Router() {
             <Route path="/exam/result/:id">
               <Layout>
                 <ProtectedRoute component={ExamResultPage} />
+              </Layout>
+            </Route>
+
+            {/* Padho LPU 2.0 Academic Ecosystem Routes */}
+            <Route path="/flashcards">
+              <Layout>
+                <FlashcardsPage />
+              </Layout>
+            </Route>
+
+            <Route path="/subjective">
+              <Layout>
+                <SubjectivePage />
+              </Layout>
+            </Route>
+
+            <Route path="/study-planner">
+              <Layout>
+                <ProtectedRoute component={StudyPlannerPage} />
+              </Layout>
+            </Route>
+
+            <Route path="/workspace">
+              <Layout>
+                <ProtectedRoute component={WorkspacePage} />
+              </Layout>
+            </Route>
+
+            <Route path="/contributions">
+              <Layout>
+                <ProtectedRoute component={ContributionsPage} />
+              </Layout>
+            </Route>
+
+            <Route path="/study-groups">
+              <Layout>
+                <ProtectedRoute component={StudyGroupsPage} />
               </Layout>
             </Route>
 
