@@ -8,17 +8,29 @@ on:
 
 jobs:
   heartbeat:
-    name: Ping Health Endpoint
+    name: Ping Health Endpoints
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Backend Health Endpoint
+      - name: Ping Direct Render Backend
         run: |
           TARGET_URL="${{ secrets.RENDER_BACKEND_URL || 'https://padholpu-backend.onrender.com/health' }}"
-          echo "Pinging keep-alive endpoint: ${TARGET_URL}..."
-          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "${TARGET_URL}" || echo "000")
-          echo "HTTP Response Code: ${HTTP_CODE}"
+          echo "Pinging direct Render backend: ${TARGET_URL}..."
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 45 "${TARGET_URL}" || echo "000")
+          echo "Direct Backend HTTP Response: ${HTTP_CODE}"
           if [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 301 ] || [ "$HTTP_CODE" -eq 302 ]; then
-            echo "✅ Keep-alive successful: Render web service is awake and healthy."
+            echo "✅ Direct backend keep-alive successful: Render service is awake and healthy."
           else
-            echo "⚠️ Health probe returned code ${HTTP_CODE}. Service may be waking up from cold start."
+            echo "⚠️ Direct backend returned code ${HTTP_CODE}. Service may be waking up."
+          fi
+
+      - name: Ping Vercel Edge & Rewrites
+        run: |
+          PROXY_URL="https://padholpu.online/health"
+          echo "Pinging Vercel edge proxy: ${PROXY_URL}..."
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "${PROXY_URL}" || echo "000")
+          echo "Vercel Proxy HTTP Response: ${HTTP_CODE}"
+          if [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 301 ] || [ "$HTTP_CODE" -eq 302 ]; then
+            echo "✅ Vercel proxy keep-alive successful."
+          else
+            echo "⚠️ Vercel proxy returned code ${HTTP_CODE}."
           fi
