@@ -56,6 +56,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { EmailTemplatesManager } from "@/components/admin/EmailTemplatesManager";
 import { AdminTotpManager } from "@/components/admin/AdminTotpManager";
 import { TestimonialsManager } from "@/components/admin/TestimonialsManager";
+import { NotesModerationQueue } from "@/components/admin/NotesModerationQueue";
 
 
 export default function AdminDashboard() {
@@ -322,6 +323,7 @@ export default function AdminDashboard() {
             <TabsTrigger value="resources" className="rounded-lg px-6 py-2">Resources</TabsTrigger>
             <TabsTrigger value="quizzes" className="rounded-lg px-6 py-2">Quizzes</TabsTrigger>
             <TabsTrigger value="moderation" className="rounded-lg px-6 py-2">Moderation</TabsTrigger>
+            <TabsTrigger value="note-submissions" className="rounded-lg px-6 py-2">📝 Note Submissions</TabsTrigger>
             <TabsTrigger value="support" className="rounded-lg px-6 py-2">Support</TabsTrigger>
             <TabsTrigger value="users" className="rounded-lg px-6 py-2">User Management</TabsTrigger>
             <TabsTrigger value="profile" className="rounded-lg px-6 py-2">Profile</TabsTrigger>
@@ -404,6 +406,11 @@ export default function AdminDashboard() {
                 />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* NOTE SUBMISSIONS MODERATION */}
+          <TabsContent value="note-submissions" className="space-y-4">
+            <NotesModerationQueue currentAdminId={admin?.id} />
           </TabsContent>
 
           {/* SUPPORT MESSAGES */}
