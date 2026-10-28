@@ -213,7 +213,7 @@ export default function ProgrammesDirectoryPage() {
                 Your Primary Academic Track: <strong>{userProfile.programme.name}</strong> ({userProfile.programme.code})
               </p>
               <p className="text-[11px] text-muted-foreground">
-                Currently in Semester {userProfile.currentSemester} · {userProfile.school?.name || "LPU Faculty"}
+                Currently in Semester {userProfile.profile?.currentSemester || userProfile.currentSemester || 1} · {userProfile.school?.name || "LPU Faculty"}
               </p>
             </div>
           </div>
@@ -251,14 +251,18 @@ export default function ProgrammesDirectoryPage() {
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {programmesList.map(({ programme: prog, school }) => {
+          {programmesList.map((item: any) => {
+            const prog = item.programme || item;
+            const school = item.school || prog.school;
+            if (!prog || !prog.name) return null;
+
             const Icon = DISCIPLINE_ICONS[prog.discipline] || GraduationCap;
             const badgeClass = DISCIPLINE_COLORS[prog.discipline] || "bg-muted text-foreground";
             const isUserPrimary = userProfile?.programme?.id === prog.id;
 
             return (
               <Card
-                key={prog.id}
+                key={prog.id || prog.code}
                 className="group border border-border/70 hover:border-[#9A6205]/40 hover:shadow-md transition-all duration-200 flex flex-col justify-between overflow-hidden"
               >
                 <CardHeader className="bg-muted/15 pb-4">

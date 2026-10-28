@@ -126,10 +126,14 @@ export default function ProgrammeDetailPage() {
     );
   }
 
-  const Icon = DISCIPLINE_ICONS[programme.discipline] || GraduationCap;
-  const badgeClass = DISCIPLINE_COLORS[programme.discipline] || "bg-muted text-foreground";
-  const isPrimary = userProfile?.programme?.id === programme.id;
-  const semesterSubjects = programme.semesters?.[activeSemester] || [];
+  const prog = programme.programme || programme;
+  const school = programme.school || prog.school;
+  const Icon = DISCIPLINE_ICONS[prog.discipline] || GraduationCap;
+  const badgeClass = DISCIPLINE_COLORS[prog.discipline] || "bg-muted text-foreground";
+  const isPrimary = userProfile?.programme?.id === prog.id;
+  const semesterSubjects: any[] = Array.isArray(programme.semesters)
+    ? (programme.semesters.find((s: any) => Number(s.semester) === activeSemester)?.subjects || [])
+    : (programme.semesters?.[activeSemester] || []);
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
@@ -147,26 +151,26 @@ export default function ProgrammeDetailPage() {
             <div className="flex flex-wrap items-center gap-2">
               <Badge variant="outline" className={`text-xs font-semibold px-2.5 py-0.5 border ${badgeClass}`}>
                 <Icon className="w-3.5 h-3.5 mr-1 inline" />
-                {programme.discipline}
+                {prog.discipline}
               </Badge>
               <Badge variant="secondary" className="text-xs font-mono font-bold">
-                {programme.code}
+                {prog.code}
               </Badge>
               <Badge variant="outline" className="text-xs">
-                {programme.degree} Degree
+                {prog.degree} Degree
               </Badge>
             </div>
 
             <h1 className="text-2xl md:text-4xl font-serif font-bold text-foreground leading-tight">
-              {programme.name}
+              {prog.name}
             </h1>
 
             <p className="text-xs md:text-sm text-muted-foreground font-medium">
-              {programme.school?.name || "Lovely Professional University"}
+              {school?.name || "Lovely Professional University"}
             </p>
 
             <p className="text-xs text-foreground/85 leading-relaxed max-w-3xl pt-1">
-              {programme.description}
+              {prog.description}
             </p>
           </div>
 
@@ -226,7 +230,7 @@ export default function ProgrammeDetailPage() {
       </div>
 
       {/* Discipline-Specific Learning Guidance Card */}
-      {programme.discipline === "LAW" && (
+      {prog.discipline === "LAW" && (
         <div className="mb-8 p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 text-xs space-y-2">
           <div className="flex items-center gap-2 font-bold text-amber-900 dark:text-amber-300">
             <Scale className="w-4 h-4" /> Law & Jurisprudence Learning Architecture
@@ -237,7 +241,7 @@ export default function ProgrammeDetailPage() {
         </div>
       )}
 
-      {programme.discipline === "MANAGEMENT" && (
+      {prog.discipline === "MANAGEMENT" && (
         <div className="mb-8 p-4 rounded-2xl bg-blue-50/70 dark:bg-blue-950/20 border border-blue-200/60 dark:border-blue-900/40 text-xs space-y-2">
           <div className="flex items-center gap-2 font-bold text-blue-900 dark:text-blue-300">
             <Briefcase className="w-4 h-4" /> Business & Management Case Study Method
@@ -248,7 +252,7 @@ export default function ProgrammeDetailPage() {
         </div>
       )}
 
-      {programme.discipline === "AGRICULTURE" && (
+      {prog.discipline === "AGRICULTURE" && (
         <div className="mb-8 p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-900/40 text-xs space-y-2">
           <div className="flex items-center gap-2 font-bold text-emerald-900 dark:text-emerald-300">
             <Sprout className="w-4 h-4" /> ICAR Agronomy & Practicum Guidelines
@@ -268,7 +272,7 @@ export default function ProgrammeDetailPage() {
 
         <Tabs value={String(activeSemester)} onValueChange={(val) => setActiveSemester(Number(val))}>
           <TabsList className="bg-muted/40 p-1 rounded-xl flex-wrap h-auto">
-            {Array.from({ length: programme.totalSemesters }, (_, i) => i + 1).map((sem) => (
+            {Array.from({ length: prog.totalSemesters || 8 }, (_, i) => i + 1).map((sem) => (
               <TabsTrigger key={sem} value={String(sem)} className="text-xs px-3.5 py-1.5 rounded-lg font-medium">
                 Sem {sem}
               </TabsTrigger>
