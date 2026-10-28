@@ -31,6 +31,8 @@ import {
   AlertCircle,
   X,
   MinusCircle,
+  GraduationCap,
+  Building2,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
@@ -125,6 +127,27 @@ export default function AdminDashboard() {
       return res.json();
     },
     enabled: !!admin && activeTab === "quizzes",
+  });
+
+  // Multidisciplinary Academic Catalog (Admin View)
+  const { data: adminProgrammesData, isLoading: loadingProgrammes } = useQuery<{
+    schools: any[];
+    programmes: any[];
+  }>({
+    queryKey: ["/api/academic/admin-catalog"],
+    queryFn: async () => {
+      const [schoolsRes, progsRes] = await Promise.all([
+        apiRequest("GET", "/api/academic/schools"),
+        apiRequest("GET", "/api/academic/programmes"),
+      ]);
+      const schools = await schoolsRes.json();
+      const progsData = await progsRes.json();
+      return {
+        schools: schools.schools || [],
+        programmes: progsData.programmes || [],
+      };
+    },
+    enabled: !!admin && activeTab === "programmes",
   });
 
 
@@ -323,6 +346,7 @@ export default function AdminDashboard() {
           <TabsList className="bg-background border border-primary/10 p-1 rounded-xl">
             <TabsTrigger value="resources" className="rounded-lg px-6 py-2">Resources</TabsTrigger>
             <TabsTrigger value="quizzes" className="rounded-lg px-6 py-2">Quizzes</TabsTrigger>
+            <TabsTrigger value="programmes" className="rounded-lg px-6 py-2">🎓 Programmes &amp; Schools</TabsTrigger>
             <TabsTrigger value="moderation" className="rounded-lg px-6 py-2">Moderation</TabsTrigger>
             <TabsTrigger value="note-submissions" className="rounded-lg px-6 py-2">📝 Note Submissions</TabsTrigger>
             <TabsTrigger value="support" className="rounded-lg px-6 py-2">Support</TabsTrigger>
@@ -736,6 +760,131 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          {/* MULTIDISCIPLINARY PROGRAMMES & SCHOOLS */}
+          <TabsContent value="programmes" className="space-y-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-bold tracking-tight">Academic Faculties &amp; Programmes</h2>
+                <p className="text-sm text-muted-foreground">
+                  Multidisciplinary curriculum architecture across LPU schools, degree programmes, and semesters.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.open("/programmes", "_blank")}
+                  className="gap-1.5"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" /> View Public Directory
+                </Button>
+              </div>
+            </div>
+
+            {loadingProgrammes ? (
+              <div className="flex justify-center p-12">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Summary Metrics */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <Card className="p-4">
+                    <p className="text-xs text-muted-foreground font-mono uppercase">Schools / Faculties</p>
+                    <p className="text-2xl font-bold text-primary">{adminProgrammesData?.schools?.length || 0}</p>
+                  </Card>
+                  <Card className="p-4">
+                    <p className="text-xs text-muted-foreground font-mono uppercase">Degree Programmes</p>
+                    <p className="text-2xl font-bold text-primary">{adminProgrammesData?.programmes?.length || 0}</p>
+                  </Card>
+                  <Card className="p-4">
+                    <p className="text-xs text-muted-foreground font-mono uppercase">Target Disciplines</p>
+                    <p className="text-2xl font-bold text-primary">
+                      {new Set(adminProgrammesData?.programmes?.map((p: any) => p.discipline) || []).size}
+                    </p>
+                  </Card>
+                  <Card className="p-4">
+                    <p className="text-xs text-muted-foreground font-mono uppercase">Architectural Model</p>
+                    <p className="text-sm font-semibold text-emerald-600 pt-1">Multidisciplinary Unified</p>
+                  </Card>
+                </div>
+
+                {/* Faculties List */}
+                <Card className="p-5">
+                  <CardTitle className="text-base font-semibold mb-3 flex items-center gap-2">
+                    <Building2 className="w-4 h-4 text-primary" /> LPU Academic Schools &amp; Faculties
+                  </CardTitle>
+                  <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-3">
+                    {adminProgrammesData?.schools?.map((school: any) => (
+                      <div key={school.id} className="p-3 rounded-lg border border-border/60 bg-muted/20 space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="font-mono text-xs font-bold text-primary px-1.5 py-0.5 rounded bg-primary/10">
+                            {school.code}
+                          </span>
+                        </div>
+                        <p className="font-medium text-xs leading-snug line-clamp-1">{school.name}</p>
+                        <p className="text-[11px] text-muted-foreground line-clamp-2">{school.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+
+                {/* Programmes Table */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base font-semibold flex items-center gap-2">
+                      <GraduationCap className="w-4 h-4 text-primary" /> Registered Academic Programmes
+                    </CardTitle>
+                    <CardDescription>
+                      Each programme defines the degree structure, duration, semesters, and curriculum mapping.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-0 overflow-x-auto">
+                    <table className="w-full text-left border-collapse text-xs">
+                      <thead>
+                        <tr className="border-b bg-muted/40 text-muted-foreground">
+                          <th className="p-3 font-semibold">Code</th>
+                          <th className="p-3 font-semibold">Programme Name</th>
+                          <th className="p-3 font-semibold">Discipline</th>
+                          <th className="p-3 font-semibold">Degree</th>
+                          <th className="p-3 font-semibold">Duration</th>
+                          <th className="p-3 font-semibold">Semesters</th>
+                          <th className="p-3 font-semibold">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y">
+                        {adminProgrammesData?.programmes?.map((p: any) => (
+                          <tr key={p.id} className="hover:bg-muted/20">
+                            <td className="p-3 font-mono font-bold text-primary">{p.code}</td>
+                            <td className="p-3 font-medium">{p.name}</td>
+                            <td className="p-3">
+                              <Badge variant="outline" className="text-[10px]">
+                                {p.discipline}
+                              </Badge>
+                            </td>
+                            <td className="p-3 text-muted-foreground">{p.degree}</td>
+                            <td className="p-3 text-muted-foreground">{p.durationYears} Years</td>
+                            <td className="p-3 font-semibold">{p.totalSemesters} Semesters</td>
+                            <td className="p-3">
+                              <a
+                                href={`/programmes/${p.code}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-primary hover:underline font-medium inline-flex items-center gap-1"
+                              >
+                                View Curriculum <ExternalLink className="w-3 h-3" />
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
           </TabsContent>
         </Tabs>
         

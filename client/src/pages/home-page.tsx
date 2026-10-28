@@ -9,6 +9,8 @@ import {
   Flame,
   Check,
   HelpCircle,
+  GraduationCap,
+  Compass,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { SEO } from "@/components/seo";
@@ -543,6 +545,12 @@ function DashboardView({
     refetchInterval: 30000,
   });
 
+  // Fetch student's multidisciplinary academic profile & programme track
+  const { data: academicData } = useQuery<any>({
+    queryKey: ["/api/academic/profile"],
+    enabled: !!user,
+  });
+
   const readinessScore = dashboard?.readiness?.score ?? null;
   const weeklyChange = dashboard?.readiness?.weeklyChange ?? null;
   const avgAccuracy = dashboard?.accuracy?.averageScore ?? dashboard?.accuracy?.average ?? null;
@@ -602,6 +610,64 @@ function DashboardView({
           </div>
         </div>
       </section>
+
+      {/* ── MULTIDISCIPLINARY ACADEMIC TRACK BANNER ─────────── */}
+      {academicData?.programme ? (
+        <section className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#F4E7CA]/40 via-[#FFFEFB] to-[#F4E7CA]/20 dark:from-[#2d2315]/40 dark:via-[#191714] dark:to-[#2d2315]/20 border border-[#734700]/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center gap-3.5 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-[#734700]/10 dark:bg-[#734700]/20 text-[#734700] dark:text-[#f3a838] flex items-center justify-center shrink-0">
+              <GraduationCap className="w-5 h-5" />
+            </div>
+            <div className="space-y-0.5 min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-[#734700]/10 text-[#734700] dark:text-[#f3a838] font-semibold">
+                  {academicData.school?.code || academicData.programme.discipline}
+                </span>
+                <span className="text-xs font-semibold text-[#181510] dark:text-[#f0ece4] truncate">
+                  {academicData.programme.name} ({academicData.programme.code})
+                </span>
+              </div>
+              <p className="text-xs text-[#696158] dark:text-[#c8bfb0]">
+                {academicData.profile?.currentSemester ? `Semester ${academicData.profile.currentSemester}` : "All Semesters"} · {academicData.subjects?.length || 0} enrolled courses in curriculum
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
+            <Link href={`/programmes/${academicData.programme.code}`} className="flex-1 sm:flex-none">
+              <button className="btn-secondary text-xs h-9 px-3.5 w-full sm:w-auto">
+                Curriculum
+              </button>
+            </Link>
+            <Link href="/programmes" className="flex-1 sm:flex-none">
+              <button className="btn-ghost text-xs h-9 px-3 text-[#696158] hover:text-[#181510] dark:hover:text-[#f0ece4]">
+                Switch
+              </button>
+            </Link>
+          </div>
+        </section>
+      ) : (
+        <section className="p-4 sm:p-5 rounded-2xl bg-[#F7F4EE] dark:bg-[#1f1b16] border border-[#E7E1D7] dark:border-[#2b2722] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-700 dark:text-amber-400 flex items-center justify-center shrink-0">
+              <Compass className="w-5 h-5" />
+            </div>
+            <div className="space-y-0.5">
+              <h3 className="font-serif text-sm font-medium text-[#181510] dark:text-[#f0ece4]">
+                Select Your Academic Discipline & Programme
+              </h3>
+              <p className="text-xs text-[#696158] dark:text-[#c8bfb0]">
+                Choose your LPU programme (Law, Management, Agriculture, Sciences, CSE, etc.) to tailor courses, notes, and exam practice to your specific curriculum.
+              </p>
+            </div>
+          </div>
+          <Link href="/programmes" className="w-full sm:w-auto shrink-0">
+            <button className="btn-primary text-xs h-9 px-4 w-full sm:w-auto flex items-center justify-center gap-1.5">
+              Browse Programmes <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </Link>
+        </section>
+      )}
 
       {/* ── PRIMARY ACTION: NEXT BEST ACTION CARD ──────────── */}
       <section className="action-card-primary p-4 sm:p-6 md:p-8 bg-[#FFFEFB] dark:bg-[#191714]">
