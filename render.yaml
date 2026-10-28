@@ -1,0 +1,58 @@
+# ==============================================================================
+# Render Blueprint — Padho LPU Express Backend Web Service
+# ==============================================================================
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: padholpu-backend
+    runtime: node
+    plan: starter
+    region: oregon
+    branch: main
+    buildCommand: npm install --legacy-peer-deps && npm run build:server
+    startCommand: npm run start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: FRONTEND_URL
+        value: https://padholpu.online
+      # Database connection — points to existing PostgreSQL / Neon database
+      - key: DATABASE_URL
+        sync: false
+      # Core authentication secret
+      - key: JWT_SECRET
+        sync: false
+      # Optional session secret
+      - key: SESSION_SECRET
+        sync: false
+      # Cloudinary persistent file and avatar storage
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      # Email notification service
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      # Google OAuth 2.0 authentication
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      # Cloudflare Turnstile anti-bot verification
+      - key: TURNSTILE_SECRET_KEY
+        sync: false

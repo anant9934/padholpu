@@ -3,13 +3,8 @@
   "version": 2,
   "framework": "vite",
   "outputDirectory": "dist/public",
-  "buildCommand": "npm run build",
+  "buildCommand": "npm run build:client",
   "installCommand": "npm install --legacy-peer-deps",
-  "functions": {
-    "api/index.ts": {
-      "maxDuration": 15
-    }
-  },
   "redirects": [
     {
       "source": "/ai-exam-generator",
@@ -64,15 +59,15 @@
   ],
   "rewrites": [
     {
-      "source": "/api",
-      "destination": "/api"
+      "source": "/api/:path*",
+      "destination": "https://padholpu-backend.onrender.com/api/:path*"
     },
     {
-      "source": "/api/(.*)",
-      "destination": "/api"
+      "source": "/health",
+      "destination": "https://padholpu-backend.onrender.com/health"
     },
     {
-      "source": "/((?!api).*)",
+      "source": "/((?!api|health).*)",
       "destination": "/index.html"
     }
   ],
