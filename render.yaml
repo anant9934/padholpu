@@ -24,6 +24,9 @@ services:
       # Database connection — points to existing PostgreSQL / Neon database
       - key: DATABASE_URL
         sync: false
+      # Redis cache & distributed coordination (Render Key Value / Managed Redis)
+      - key: REDIS_URL
+        sync: false
       # Core authentication secret
       - key: JWT_SECRET
         sync: false
