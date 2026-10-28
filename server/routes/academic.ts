@@ -2,7 +2,7 @@ import { Router, type Request, type Response } from "express";
 import { storage } from "../storage";
 import { db } from "../db";
 import { eq, sql } from "drizzle-orm";
-import { subjects, resources, quizzes, questions } from "../../shared/schema";
+import { subjects, resources, quizzes, questions, programmes } from "../../shared/schema";
 import {
   getAcademicSchools,
   getDisciplines,
@@ -12,6 +12,7 @@ import {
   updateUserAcademicProfile,
   ensureMultidisciplinarySeedData,
 } from "../services/academic-multidisciplinary";
+import { CurriculumImportService } from "../services/curriculum-import";
 
 const router = Router();
 
@@ -101,16 +102,84 @@ router.patch("/academic/profile", async (req: Request, res: Response) => {
   if (!req.isAuthenticated()) return res.sendStatus(401);
   try {
     const { programmeId, currentSemester, specialization, academicYear } = req.body;
+    
+    // Validation
+    const parsedProgId = programmeId !== undefined && programmeId !== null ? Number(programmeId) : undefined;
+    const parsedSem = currentSemester !== undefined && currentSemester !== null ? Number(currentSemester) : undefined;
+
+    if (parsedSem !== undefined) {
+      if (isNaN(parsedSem) || parsedSem < 1 || parsedSem > 12) {
+        return res.status(400).json({ message: "Current semester must be between 1 and 12" });
+      }
+    }
+
+    if (parsedProgId !== undefined) {
+      const [prog] = await db.select().from(programmes).where(eq(programmes.id, parsedProgId));
+      if (!prog) {
+        return res.status(404).json({ message: "Selected programme not found" });
+      }
+      if (parsedSem !== undefined && parsedSem > prog.totalSemesters) {
+        return res.status(400).json({
+          message: `Semester ${parsedSem} exceeds maximum ${prog.totalSemesters} semesters for ${prog.code}`,
+        });
+      }
+    }
+
     const updated = await updateUserAcademicProfile(req.user!.id, {
-      programmeId: programmeId !== undefined ? Number(programmeId) : undefined,
-      currentSemester: currentSemester !== undefined ? Number(currentSemester) : undefined,
-      specialization: specialization !== undefined ? String(specialization) : undefined,
+      programmeId: parsedProgId,
+      currentSemester: parsedSem,
+      specialization: specialization !== undefined ? String(specialization).trim() : undefined,
       academicYear: academicYear !== undefined ? Number(academicYear) : undefined,
     });
     res.json(updated);
   } catch (error: any) {
     console.error("[Academic] Failed to update academic profile:", error);
     res.status(500).json({ message: "Failed to update academic profile" });
+  }
+});
+
+/**
+ * POST /api/academic/curriculum/validate-import
+ * Validates a batch of curriculum rows (preview & duplicate detection) before commit.
+ * Requires ADMIN or SUPER_ADMIN role.
+ */
+router.post("/academic/curriculum/validate-import", async (req: Request, res: Response) => {
+  if (!req.isAuthenticated()) return res.sendStatus(401);
+  const userRoles = (req.user as any)?.roles || [];
+  if (!userRoles.includes("ADMIN") && !userRoles.includes("SUPER_ADMIN")) {
+    return res.status(403).json({ message: "Admin authorization required to import curriculum" });
+  }
+
+  try {
+    const rows = req.body?.rows || req.body;
+    const result = await CurriculumImportService.validate(rows);
+    res.json(result);
+  } catch (error: any) {
+    console.error("[Academic Import] Validation failed:", error);
+    res.status(500).json({ message: error.message || "Failed to validate curriculum import" });
+  }
+});
+
+/**
+ * POST /api/academic/curriculum/apply-import
+ * Applies validated curriculum records transactionally.
+ * Requires ADMIN or SUPER_ADMIN role.
+ */
+router.post("/academic/curriculum/apply-import", async (req: Request, res: Response) => {
+  if (!req.isAuthenticated()) return res.sendStatus(401);
+  const userRoles = (req.user as any)?.roles || [];
+  if (!userRoles.includes("ADMIN") && !userRoles.includes("SUPER_ADMIN")) {
+    return res.status(403).json({ message: "Admin authorization required to apply curriculum import" });
+  }
+
+  try {
+    const rows = req.body?.rows || req.body;
+    const user = req.user as any;
+    const result = await CurriculumImportService.apply(rows, user.id, user.username || "admin");
+    res.json(result);
+  } catch (error: any) {
+    console.error("[Academic Import] Apply failed:", error);
+    res.status(400).json({ message: error.message || "Failed to apply curriculum import" });
   }
 });
 
