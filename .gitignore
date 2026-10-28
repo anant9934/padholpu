@@ -23,3 +23,5 @@ attached_assets/
 netlify_env.json
 backup/
 *.sql
+!migrations/*.sql
+!drizzle/*.sql
