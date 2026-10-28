@@ -35,6 +35,8 @@ interface SubjectiveQuestion {
   modelAnswer: string;
   keyOutlinePoints: string[];
   markingScheme: string | null;
+  contextScenario?: string | null;
+  statuteOrCitation?: string | null;
   userAnswer?: {
     studentAnswer: string;
     selfRating: number | null;
@@ -343,9 +345,24 @@ export default function SubjectivePage() {
                     </div>
                   </div>
 
-                  <CardTitle className="text-base md:text-lg font-semibold leading-relaxed text-foreground">
+                  {q.contextScenario && (
+                    <div className="mt-2.5 p-3.5 rounded-xl bg-amber-500/10 dark:bg-amber-950/20 border border-amber-500/20 text-xs text-foreground/90 leading-relaxed space-y-1">
+                      <div className="flex items-center gap-1.5 text-[11px] font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider">
+                        <BookOpen className="w-3.5 h-3.5" /> Case Scenario / Factual Context
+                      </div>
+                      <p className="whitespace-pre-line font-serif">{q.contextScenario}</p>
+                    </div>
+                  )}
+
+                  <CardTitle className="text-base md:text-lg font-semibold leading-relaxed text-foreground mt-2">
                     {q.questionText}
                   </CardTitle>
+
+                  {q.statuteOrCitation && (
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-muted text-[11px] text-muted-foreground border border-border font-mono mt-1">
+                      <span className="font-semibold text-foreground">Citation / Reference:</span> {q.statuteOrCitation}
+                    </div>
+                  )}
 
                   {q.markingScheme && (
                     <p className="text-xs text-muted-foreground mt-2 bg-background/80 p-2 rounded border border-border/50">

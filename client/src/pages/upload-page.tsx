@@ -45,6 +45,11 @@ const RESOURCE_TYPES = [
   "Revision Sheet",
   "Past Paper",
   "Assignment",
+  "Case Study Analysis",
+  "Legal Brief & Case Summary",
+  "Laboratory & Practicum Guide",
+  "Fieldwork & Agronomy Report",
+  "Formula Sheet & Derivations",
   "Presentation",
 ];
 
