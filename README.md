@@ -12,15 +12,18 @@
 
 | Category | Highlights |
 |---|---|
-| **Auth** | JWT cookie sessions, Google OAuth, bcrypt passwords, legacy scrypt migration |
-| **Resources** | PDF/file upload via Cloudinary, premium access with Gold coins |
-| **Quizzes** | Subject-filtered quiz engine with scoring, history & leaderboard |
-| **Mentors** | Browse & book mentor sessions, Gold coin payments |
-| **Mock Exams** | Timed examination simulator with LPU marking blueprint |
-| **Gamification** | Daily streaks, Gold & Silver coins, leaderboard |
-| **Admin Panel** | Full CRUD for users, quizzes, resources, payouts with audit logs |
-| **Security** | Helmet, rate-limiting, hpp, Turnstile bot protection, Zod validation |
-| **PWA** | Service worker + offline support via Workbox |
+| **Padho LPU 2.0 Ecosystem** | SM-2 Spaced Repetition Flashcards, Subjective Question Bank, Exam Study Planner, Private Workspace, Study Groups, Community Feedback |
+| **Flashcards (SM-2)** | SuperMemo SM-2 cognitive spaced repetition interval engine, 3D flip card, keyboard shortcuts (Space / 1-5), retention metrics |
+| **Subjective Bank** | Written answer drafting, model outlines checklist, marking schemes, self-evaluation scoring, AI concept explanation |
+| **Study Planner** | Dynamic syllabus milestone distribution based on exam countdown, target score, daily hours, and interactive checklist |
+| **Contribution Pipeline** | Multi-state student notes submission (draft → pending → changes_requested → approved/published), self-approval prevention |
+| **Personal Workspace** | Private student notes, tagging, bookmarked resources/questions/flashcards, export/print view |
+| **Study Groups** | Subject-aligned peer collaboration rooms, discussion threads, pinned posts, spam controls |
+| **AI Learning Boundary** | Google Gemini tutor integration with guaranteed 100% offline syllabus-linked fallback and official academic disclaimers |
+| **Accessibility & Comfort** | Study Comfort Bar with font sizing (A/A+/A++), distraction-free focus mode, print-friendly notes, WCAG 2.2 AA contrast |
+| **Auth & Security** | JWT cookie sessions, Google OAuth, Cloudflare Turnstile anti-bot, bcrypt passwords, role-based access control |
+| **Resources & Quizzes** | Cloudinary document storage, MCQs, time-constrained examination simulator with LPU marking blueprint |
+| **Gamification & PWA** | Daily streaks, coin rewards, class leaderboard, installable PWA with Workbox offline precaching |
 
 ---
 
