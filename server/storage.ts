@@ -1482,7 +1482,7 @@ export class DatabaseStorage implements IStorage {
         title: r.title,
         subtitle: `${r.subject} · ${r.type} by ${r.uploaderName}`,
         course: r.subject,
-        url: `/learn?search=${encodeURIComponent(r.title)}`,
+        url: `/resources/${r.id}`,
         relevance: r.title.toLowerCase().startsWith(q) ? 70 : 55,
       });
     });

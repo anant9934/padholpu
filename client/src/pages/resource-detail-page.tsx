@@ -17,7 +17,13 @@ import {
   Calendar, 
   User, 
   ShieldCheck, 
-  GraduationCap 
+  GraduationCap,
+  Printer,
+  Flag,
+  Scale,
+  Briefcase,
+  Sprout,
+  Atom,
 } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/site-config";
 
@@ -240,6 +246,40 @@ export default function ResourceDetailPage() {
             </div>
           </div>
 
+          {/* Discipline-Specific Academic Guidance Banner */}
+          {resource.subject?.startsWith("LAW") && (
+            <div className="p-3.5 rounded-xl bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 text-xs space-y-1">
+              <div className="flex items-center gap-1.5 font-bold text-amber-900 dark:text-amber-300">
+                <Scale className="w-4 h-4" /> BCI Legal Study Standards
+              </div>
+              <p className="text-foreground/80 leading-relaxed">
+                Review verified judicial citations, statutory sections, and ratio decidendi. Use structured IRAC format (Issue, Rule, Analysis, Conclusion) when referencing case briefs in assessments.
+              </p>
+            </div>
+          )}
+
+          {resource.subject?.startsWith("MGT") && (
+            <div className="p-3.5 rounded-xl bg-blue-50/70 dark:bg-blue-950/20 border border-blue-200/60 dark:border-blue-900/40 text-xs space-y-1">
+              <div className="flex items-center gap-1.5 font-bold text-blue-900 dark:text-blue-300">
+                <Briefcase className="w-4 h-4" /> Management Case Study Method
+              </div>
+              <p className="text-foreground/80 leading-relaxed">
+                Apply strategic frameworks (SWOT, Porter's Five Forces, BCG Matrix). Integrate quantitative financial metrics with qualitative strategic recommendations.
+              </p>
+            </div>
+          )}
+
+          {resource.subject?.startsWith("AGR") && (
+            <div className="p-3.5 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-900/40 text-xs space-y-1">
+              <div className="flex items-center gap-1.5 font-bold text-emerald-900 dark:text-emerald-300">
+                <Sprout className="w-4 h-4" /> ICAR Agronomy & Practicum Protocols
+              </div>
+              <p className="text-foreground/80 leading-relaxed">
+                Conforms to ICAR agronomy syllabus. Includes soil profiling guidelines, Kharif/Rabi tillage schedules, and field trial observations.
+              </p>
+            </div>
+          )}
+
           {/* Action Row */}
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <button
@@ -252,11 +292,33 @@ export default function ResourceDetailPage() {
               {downloading ? "Authorizing Download..." : "Download File"}
             </button>
 
+            <button
+              onClick={() => window.print()}
+              className="btn-secondary h-11 px-4 text-sm flex items-center gap-2 print:hidden"
+              title="Print Document or Save as PDF"
+            >
+              <Printer className="w-4 h-4 text-[var(--accent-amber)]" /> Print / Save PDF
+            </button>
+
             <Link href={`/learn?course=${encodeURIComponent(resource.subject)}`}>
               <button className="btn-secondary h-11 px-5 text-sm flex items-center gap-2" google-anno-skip="true">
                 <BookOpen className="w-4 h-4 text-[var(--accent-amber)]" /> View Subject Syllabus
               </button>
             </Link>
+
+            <button
+              onClick={() => {
+                toast({
+                  title: "Academic Quality Review",
+                  description: "To report content inaccuracies, use the Support ticket desk or contact faculty moderators.",
+                });
+                window.location.href = `/support?subject=${encodeURIComponent(resource.subject)}&resource=${resource.id}`;
+              }}
+              className="p-2 rounded-lg border border-[var(--border)] hover:bg-destructive/10 hover:text-destructive text-[var(--text-muted)] transition-colors ml-auto"
+              title="Report Content Issue"
+            >
+              <Flag className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
