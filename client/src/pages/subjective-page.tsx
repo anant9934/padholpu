@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -33,6 +33,11 @@ interface SubjectiveQuestion {
   modelAnswer: string;
   keyOutlinePoints: string[];
   markingScheme: string | null;
+  userAnswer?: {
+    studentAnswer: string;
+    selfRating: number | null;
+    updatedAt: string;
+  } | null;
 }
 
 export default function SubjectivePage() {
@@ -64,6 +69,22 @@ export default function SubjectivePage() {
       return res.json();
     },
   });
+
+  // Hydrate saved drafts when questions data loads
+  useEffect(() => {
+    if (questions.length > 0) {
+      const loadedDrafts: Record<number, string> = {};
+      const loadedSaved: Record<number, boolean> = {};
+      for (const q of questions) {
+        if (q.userAnswer?.studentAnswer) {
+          loadedDrafts[q.id] = q.userAnswer.studentAnswer;
+          loadedSaved[q.id] = true;
+        }
+      }
+      setStudentAnswers(prev => ({ ...loadedDrafts, ...prev }));
+      setSavedAnswers(prev => ({ ...loadedSaved, ...prev }));
+    }
+  }, [questions]);
 
   // Submit Answer Mutation
   const submitAnswerMutation = useMutation({
@@ -201,7 +222,7 @@ export default function SubjectivePage() {
             const answerText = studentAnswers[q.id] || "";
             const isSaved = !!savedAnswers[q.id];
             const isBookmarked = !!bookmarkedIds[q.id];
-            const wordCount = answerText.trim() ? answerText.trim().split(/\s+/).length : 0;
+            const wordCount = answerText.trim() ? answerText.trim().split(/\s+/).filter(Boolean).length : 0;
 
             return (
               <Card key={q.id} id={`question-${q.id}`} className="border-border/80 shadow-sm overflow-hidden">

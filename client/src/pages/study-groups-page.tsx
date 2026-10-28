@@ -29,6 +29,7 @@ interface StudyGroup {
   creatorId: number;
   isPrivate: boolean;
   memberCount: number;
+  isMember?: boolean;
   createdAt: string;
 }
 
@@ -83,6 +84,60 @@ export default function StudyGroupsPage() {
       return res.json();
     },
     enabled: !!selectedGroup,
+  });
+
+  // Join Group Mutation
+  const joinGroupMutation = useMutation({
+    mutationFn: async (groupId: number) => {
+      const res = await fetch(`/api/ecosystem/study-groups/${groupId}/join`, {
+        method: "POST",
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Failed to join group");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/ecosystem/study-groups"] });
+      setSelectedGroup((prev) =>
+        prev ? { ...prev, isMember: true, memberCount: prev.memberCount + 1 } : null
+      );
+      toast({
+        title: "Joined Study Group! 🎉",
+        description: "You can now participate and post in this group.",
+      });
+    },
+    onError: (err: any) => {
+      toast({ title: "Could not join group", description: err.message, variant: "destructive" });
+    },
+  });
+
+  // Leave Group Mutation
+  const leaveGroupMutation = useMutation({
+    mutationFn: async (groupId: number) => {
+      const res = await fetch(`/api/ecosystem/study-groups/${groupId}/leave`, {
+        method: "POST",
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Failed to leave group");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/ecosystem/study-groups"] });
+      setSelectedGroup((prev) =>
+        prev ? { ...prev, isMember: false, memberCount: Math.max(1, prev.memberCount - 1) } : null
+      );
+      toast({
+        title: "Left Study Group",
+        description: "You have left this academic study group.",
+      });
+    },
+    onError: (err: any) => {
+      toast({ title: "Error leaving group", description: err.message, variant: "destructive" });
+    },
   });
 
   // Create Group Mutation
@@ -332,6 +387,35 @@ export default function StudyGroupsPage() {
                     <Users className="w-3.5 h-3.5" />
                     {selectedGroup.memberCount} Active Members
                   </span>
+                  {selectedGroup.isMember && (
+                    <Badge className="bg-emerald-600/90 text-white text-[10px]">
+                      Member
+                    </Badge>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {selectedGroup.isMember ? (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => leaveGroupMutation.mutate(selectedGroup.id)}
+                      disabled={leaveGroupMutation.isPending}
+                      className="text-xs text-muted-foreground hover:text-red-600 border-border h-8"
+                    >
+                      {leaveGroupMutation.isPending ? "Leaving..." : "Leave Group"}
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      onClick={() => joinGroupMutation.mutate(selectedGroup.id)}
+                      disabled={joinGroupMutation.isPending}
+                      className="bg-orange-600 hover:bg-orange-700 text-white text-xs gap-1.5 h-8"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      {joinGroupMutation.isPending ? "Joining..." : "Join Group"}
+                    </Button>
+                  )}
                 </div>
               </div>
               <CardTitle className="text-2xl font-extrabold mt-1">{selectedGroup.name}</CardTitle>
@@ -341,41 +425,62 @@ export default function StudyGroupsPage() {
             </CardHeader>
           </Card>
 
-          {/* New Post Editor */}
-          <Card className="border-border/80 shadow-sm">
-            <CardContent className="pt-5 space-y-3">
-              <Textarea
-                placeholder="Share a doubt, discuss an exam question, or post a helpful study tip..."
-                value={newPostContent}
-                onChange={(e) => setNewPostContent(e.target.value)}
-                className="resize-none text-sm"
-                rows={3}
-              />
-              <div className="flex items-center justify-between pt-1">
-                <span className="text-xs text-muted-foreground">
-                  Keep discussions academic and respectful
-                </span>
+          {/* New Post Editor or Join Callout */}
+          {selectedGroup.isMember ? (
+            <Card className="border-border/80 shadow-sm">
+              <CardContent className="pt-5 space-y-3">
+                <Textarea
+                  placeholder="Share a doubt, discuss an exam question, or post a helpful study tip..."
+                  value={newPostContent}
+                  onChange={(e) => setNewPostContent(e.target.value)}
+                  className="resize-none text-sm"
+                  rows={3}
+                />
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-xs text-muted-foreground">
+                    Keep discussions academic and respectful
+                  </span>
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      if (!newPostContent.trim()) {
+                        toast({ title: "Post cannot be empty", variant: "destructive" });
+                        return;
+                      }
+                      postMutation.mutate({
+                        groupId: selectedGroup.id,
+                        content: newPostContent.trim(),
+                      });
+                    }}
+                    className="bg-orange-600 hover:bg-orange-700 text-white gap-1.5"
+                    disabled={postMutation.isPending}
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                    {postMutation.isPending ? "Posting..." : "Post Message"}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="border-dashed border-2 bg-orange-50/40 dark:bg-orange-950/10 border-orange-200 dark:border-orange-900/30">
+              <CardContent className="py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+                <div>
+                  <h4 className="text-sm font-bold text-foreground">Join to Participate</h4>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Become a member of this study group to post questions, share study notes, and discuss with peers.
+                  </p>
+                </div>
                 <Button
                   size="sm"
-                  onClick={() => {
-                    if (!newPostContent.trim()) {
-                      toast({ title: "Post cannot be empty", variant: "destructive" });
-                      return;
-                    }
-                    postMutation.mutate({
-                      groupId: selectedGroup.id,
-                      content: newPostContent.trim(),
-                    });
-                  }}
-                  className="bg-orange-600 hover:bg-orange-700 text-white gap-1.5"
-                  disabled={postMutation.isPending}
+                  onClick={() => joinGroupMutation.mutate(selectedGroup.id)}
+                  disabled={joinGroupMutation.isPending}
+                  className="bg-orange-600 hover:bg-orange-700 text-white text-xs gap-1.5 shrink-0"
                 >
-                  <Send className="w-3.5 h-3.5" />
-                  {postMutation.isPending ? "Posting..." : "Post Message"}
+                  <Plus className="w-3.5 h-3.5" /> Join Group
                 </Button>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Posts Feed */}
           <div className="space-y-4">

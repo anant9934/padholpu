@@ -1,8 +1,12 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { Link } from "wouter";
 import {
@@ -15,7 +19,9 @@ import {
   ExternalLink,
   MessageSquare,
   ShieldCheck,
-  ChevronRight
+  ChevronRight,
+  Trash2,
+  RefreshCw
 } from "lucide-react";
 
 interface NoteSubmission {
@@ -38,6 +44,13 @@ interface NoteSubmission {
 
 export default function ContributionsPage() {
   const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const [revisingSub, setRevisingSub] = useState<NoteSubmission | null>(null);
+  const [revisedTitle, setRevisedTitle] = useState("");
+  const [revisedDesc, setRevisedDesc] = useState("");
+  const [revisedContent, setRevisedContent] = useState("");
 
   const { data: submissions = [], isLoading } = useQuery<NoteSubmission[]>({
     queryKey: ["/api/ecosystem/submissions/mine"],
@@ -45,6 +58,55 @@ export default function ContributionsPage() {
       const res = await fetch("/api/ecosystem/submissions/mine");
       if (!res.ok) throw new Error("Failed to load submissions");
       return res.json();
+    },
+  });
+
+  const reviseMutation = useMutation({
+    mutationFn: async ({ id, title, description, content }: { id: number; title: string; description?: string; content?: string }) => {
+      const res = await fetch(`/api/ecosystem/submissions/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, description, content }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Failed to revise submission");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/ecosystem/submissions/mine"] });
+      setRevisingSub(null);
+      toast({
+        title: "Submission Updated! 📝",
+        description: "Your revised notes have been re-submitted for faculty review.",
+      });
+    },
+    onError: (err: any) => {
+      toast({ title: "Revision failed", description: err.message, variant: "destructive" });
+    },
+  });
+
+  const withdrawMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const res = await fetch(`/api/ecosystem/submissions/${id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Failed to withdraw submission");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/ecosystem/submissions/mine"] });
+      toast({
+        title: "Submission Withdrawn",
+        description: "Your contribution was removed from the review queue.",
+      });
+    },
+    onError: (err: any) => {
+      toast({ title: "Withdraw failed", description: err.message, variant: "destructive" });
     },
   });
 
@@ -166,21 +228,111 @@ export default function ContributionsPage() {
                   </div>
                 )}
 
-                {/* Footer Link if Published */}
-                {sub.publishedResourceId && (
-                  <div className="flex items-center justify-end pt-2 border-t border-border/40">
-                    <Button variant="ghost" size="sm" asChild className="text-xs text-emerald-600 hover:text-emerald-700 gap-1">
+                {/* Actions Bar */}
+                <div className="flex items-center justify-between pt-2 border-t border-border/40 text-xs">
+                  <div>
+                    {sub.status === "changes_requested" && (
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          setRevisingSub(sub);
+                          setRevisedTitle(sub.title);
+                          setRevisedDesc(sub.description || "");
+                          setRevisedContent(sub.content || "");
+                        }}
+                        className="bg-amber-600 hover:bg-amber-700 text-white text-xs gap-1.5 h-8"
+                      >
+                        <RefreshCw className="w-3.5 h-3.5" /> Revise &amp; Resubmit
+                      </Button>
+                    )}
+                    {sub.status === "pending" && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => withdrawMutation.mutate(sub.id)}
+                        disabled={withdrawMutation.isPending}
+                        className="text-xs text-muted-foreground hover:text-red-600 border-border h-8 gap-1"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" /> Withdraw
+                      </Button>
+                    )}
+                  </div>
+
+                  {sub.publishedResourceId && (
+                    <Button variant="ghost" size="sm" asChild className="text-xs text-emerald-600 hover:text-emerald-700 gap-1 h-8">
                       <Link href={`/resources/${sub.publishedResourceId}`}>
                         View in Public Notes Library <ExternalLink className="w-3.5 h-3.5" />
                       </Link>
                     </Button>
-                  </div>
-                )}
+                  )}
+                </div>
               </CardContent>
             </Card>
           ))}
         </div>
       )}
+
+      {/* Revise Submission Dialog */}
+      <Dialog open={!!revisingSub} onOpenChange={(open) => !open && setRevisingSub(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Revise &amp; Resubmit Note</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div>
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Title *
+              </label>
+              <Input
+                value={revisedTitle}
+                onChange={(e) => setRevisedTitle(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Description
+              </label>
+              <Input
+                value={revisedDesc}
+                onChange={(e) => setRevisedDesc(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Notes Content / Outline
+              </label>
+              <Textarea
+                value={revisedContent}
+                onChange={(e) => setRevisedContent(e.target.value)}
+                className="mt-1 font-mono text-xs"
+                rows={5}
+              />
+            </div>
+            <Button
+              className="w-full bg-amber-600 hover:bg-amber-700 text-white"
+              onClick={() => {
+                if (!revisedTitle.trim()) {
+                  toast({ title: "Title is required", variant: "destructive" });
+                  return;
+                }
+                if (revisingSub) {
+                  reviseMutation.mutate({
+                    id: revisingSub.id,
+                    title: revisedTitle.trim(),
+                    description: revisedDesc.trim(),
+                    content: revisedContent.trim(),
+                  });
+                }
+              }}
+              disabled={reviseMutation.isPending}
+            >
+              {reviseMutation.isPending ? "Submitting..." : "Resubmit for Review"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

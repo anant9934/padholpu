@@ -20,7 +20,8 @@ import {
   BookOpen,
   Tag,
   Clock,
-  Printer
+  Printer,
+  Pencil
 } from "lucide-react";
 
 interface PersonalNote {
@@ -55,6 +56,12 @@ export default function WorkspacePage() {
   const [noteTitle, setNoteTitle] = useState("");
   const [noteBody, setNoteBody] = useState("");
   const [noteTags, setNoteTags] = useState("");
+
+  // Edit Note State
+  const [editingNote, setEditingNote] = useState<PersonalNote | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editBody, setEditBody] = useState("");
+  const [editTags, setEditTags] = useState("");
 
   // Fetch Personal Notes
   const { data: notes = [], isLoading: isLoadingNotes } = useQuery<PersonalNote[]>({
@@ -94,6 +101,30 @@ export default function WorkspacePage() {
       setNoteBody("");
       setNoteTags("");
       toast({ title: "Note Saved", description: "Private note saved in your workspace." });
+    },
+    onError: (err: any) => {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    },
+  });
+
+  // Update Note Mutation
+  const updateNoteMutation = useMutation({
+    mutationFn: async ({ id, title, body, tags }: { id: number; title: string; body: string; tags: string[] }) => {
+      const res = await fetch(`/api/ecosystem/workspace/notes/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, body, tags }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Failed to update note");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/ecosystem/workspace/notes"] });
+      setEditingNote(null);
+      toast({ title: "Note Updated", description: "Private note updated in your workspace." });
     },
     onError: (err: any) => {
       toast({ title: "Error", description: err.message, variant: "destructive" });
@@ -273,14 +304,31 @@ export default function WorkspacePage() {
                           </Badge>
                         ))}
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => deleteNoteMutation.mutate(note.id)}
-                        className="h-7 w-7 text-muted-foreground hover:text-red-600"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            setEditingNote(note);
+                            setEditTitle(note.title);
+                            setEditBody(note.body);
+                            setEditTags((note.tags || []).join(", "));
+                          }}
+                          className="h-7 w-7 text-muted-foreground hover:text-orange-600"
+                          title="Edit Note"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => deleteNoteMutation.mutate(note.id)}
+                          className="h-7 w-7 text-muted-foreground hover:text-red-600"
+                          title="Delete Note"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
                     </div>
                     <CardTitle className="text-base font-bold">{note.title}</CardTitle>
                   </CardHeader>
@@ -355,6 +403,69 @@ export default function WorkspacePage() {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Edit Note Dialog */}
+      <Dialog open={!!editingNote} onOpenChange={(open) => !open && setEditingNote(null)}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Edit Private Study Note</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div>
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Title *
+              </label>
+              <Input
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Tags (Comma Separated)
+              </label>
+              <Input
+                value={editTags}
+                onChange={(e) => setEditTags(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Content / Notes *
+              </label>
+              <Textarea
+                value={editBody}
+                onChange={(e) => setEditBody(e.target.value)}
+                className="mt-1 resize-none font-mono text-sm"
+                rows={6}
+              />
+            </div>
+            <Button
+              className="w-full bg-orange-600 hover:bg-orange-700 text-white"
+              onClick={() => {
+                if (!editTitle.trim() || !editBody.trim()) {
+                  toast({ title: "Title and body required", variant: "destructive" });
+                  return;
+                }
+                if (editingNote) {
+                  const tags = editTags.split(",").map((t) => t.trim()).filter(Boolean);
+                  updateNoteMutation.mutate({
+                    id: editingNote.id,
+                    title: editTitle.trim(),
+                    body: editBody.trim(),
+                    tags,
+                  });
+                }
+              }}
+              disabled={updateNoteMutation.isPending}
+            >
+              {updateNoteMutation.isPending ? "Updating..." : "Update Private Note"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

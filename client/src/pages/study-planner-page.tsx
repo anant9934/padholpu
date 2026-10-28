@@ -19,7 +19,8 @@ import {
   BookOpen,
   ArrowRight,
   TrendingUp,
-  AlertCircle
+  AlertCircle,
+  Trash2
 } from "lucide-react";
 
 interface StudyTask {
@@ -95,6 +96,30 @@ export default function StudyPlannerPage() {
     },
     onError: (err: any) => {
       toast({ title: "Error", description: err.message, variant: "destructive" });
+    },
+  });
+
+  // Delete Plan Mutation
+  const deletePlanMutation = useMutation({
+    mutationFn: async (planId: number) => {
+      const res = await fetch(`/api/ecosystem/study-plans/${planId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Failed to delete plan");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/ecosystem/study-plans"] });
+      toast({
+        title: "Study Plan Deleted",
+        description: "The study plan and its scheduled tasks have been removed.",
+      });
+    },
+    onError: (err: any) => {
+      toast({ title: "Could not delete plan", description: err.message, variant: "destructive" });
     },
   });
 
@@ -176,6 +201,7 @@ export default function StudyPlannerPage() {
                   </label>
                   <Input
                     type="date"
+                    min={new Date().toISOString().split("T")[0]}
                     value={examDate}
                     onChange={(e) => setExamDate(e.target.value)}
                     className="mt-1"
@@ -295,11 +321,27 @@ export default function StudyPlannerPage() {
                     {activePlan.dailyStudyHours} hrs / day
                   </span>
                 </div>
-                <div className="text-right">
-                  <span className="text-2xl font-black text-orange-600">
-                    {calculateDaysRemaining(activePlan.targetExamDate)}
-                  </span>
-                  <span className="text-xs text-muted-foreground ml-1.5 font-medium">Days Until Exam</span>
+                <div className="flex items-center gap-4">
+                  <div className="text-right">
+                    <span className="text-2xl font-black text-orange-600">
+                      {calculateDaysRemaining(activePlan.targetExamDate)}
+                    </span>
+                    <span className="text-xs text-muted-foreground ml-1.5 font-medium">Days Until Exam</span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      if (window.confirm("Are you sure you want to delete this study plan?")) {
+                        deletePlanMutation.mutate(activePlan.id);
+                      }
+                    }}
+                    disabled={deletePlanMutation.isPending}
+                    className="h-8 w-8 text-muted-foreground hover:text-red-600"
+                    title="Delete Study Plan"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
                 </div>
               </div>
 
