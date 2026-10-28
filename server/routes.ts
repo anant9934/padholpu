@@ -104,7 +104,9 @@ export async function registerRoutes(
 
   // Render health check probe standard: /health and /api/health
   app.get("/health", healthCheckHandler);
+  app.head("/health", (_req, res) => res.status(200).end());
   app.get("/api/health", healthCheckHandler);
+  app.head("/api/health", (_req, res) => res.status(200).end());
 
   app.get("/api/system-stats", async (_req, res) => {
     const CACHE_KEY = "padholpu:stats:system";
