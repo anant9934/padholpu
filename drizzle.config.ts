@@ -1,6 +1,7 @@
 import { defineConfig } from "drizzle-kit";
 
 const url =
+  process.env.DIRECT_URL ||
   process.env.DATABASE_URL ||
   process.env.POSTGRES_URL ||
   process.env.STUDYLPU_DATABASE_URL ||

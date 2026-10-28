@@ -27,6 +27,7 @@ loadEnvFile(".env.local");
 loadEnvFile(".env");
 
 const connectionString = (
+  process.env.DIRECT_URL ||
   process.env.DATABASE_URL ||
   process.env.POSTGRES_URL ||
   process.env.STUDYLPU_DATABASE_URL ||
