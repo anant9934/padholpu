@@ -17,6 +17,7 @@ import { Loader2, ArrowLeft, X, Eye, EyeOff, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { SEO } from "@/components/seo";
+import { TurnstileWidget } from "@/components/ui/turnstile";
 
 /* Schemas */
 const loginSchema = z.object({
@@ -83,7 +84,7 @@ export default function AuthPage() {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
   const [acceptedTerms, setAcceptedTerms] = useState(true);
-  const [captchaToken] = useState<string>("dummy");
+  const [captchaToken, setCaptchaToken] = useState<string>("dummy");
   const [showLoginPw, setShowLoginPw] = useState(false);
   const [showRegPw, setShowRegPw] = useState(false);
   const [showRegConfirmPw, setShowRegConfirmPw] = useState(false);
@@ -358,6 +359,8 @@ export default function AuthPage() {
                   </label>
                 </div>
 
+                <TurnstileWidget onSuccess={setCaptchaToken} />
+
                 <button
                   type="submit"
                   className="btn-primary w-full h-11 text-sm mt-2 cursor-pointer"
@@ -556,6 +559,8 @@ export default function AuthPage() {
                     </Link>
                   </label>
                 </div>
+
+                <TurnstileWidget onSuccess={setCaptchaToken} />
 
                 <button
                   type="submit"
