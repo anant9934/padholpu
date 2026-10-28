@@ -21,6 +21,8 @@ const QuizReviewPage = lazy(() => import("@/pages/quiz-review-page"));
 const SubjectPage = lazy(() => import("@/pages/subject-page"));
 const SubjectsDirectoryPage = lazy(() => import("@/pages/subjects-directory-page"));
 const SemesterPage = lazy(() => import("@/pages/semester-page"));
+const ProgrammesDirectoryPage = lazy(() => import("@/pages/programmes-directory-page"));
+const ProgrammeDetailPage = lazy(() => import("@/pages/programme-detail-page"));
 const ResourceDetailPage = lazy(() => import("@/pages/resource-detail-page"));
 const AboutPage = lazy(() => import("@/pages/about-page"));
 const ContactPage = lazy(() => import("@/pages/contact-page"));
@@ -175,6 +177,18 @@ function Router() {
               <Redirect to="/terms" />
             </Route>
 
+
+            {/* Multidisciplinary Programmes Architecture */}
+            <Route path="/programmes">
+              <Layout>
+                <ProgrammesDirectoryPage />
+              </Layout>
+            </Route>
+            <Route path="/programmes/:code">
+              <Layout>
+                <ProgrammeDetailPage />
+              </Layout>
+            </Route>
 
             {/* LPU Semester Architecture */}
             <Route path="/semesters">

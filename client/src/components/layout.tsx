@@ -20,6 +20,7 @@ import {
   FolderLock,
   Users,
   Award,
+  GraduationCap,
 } from "lucide-react";
 import {
   Sheet,
@@ -47,9 +48,10 @@ import { StudyComfortBar } from "./ui/StudyComfortBar";
 
 const CookieConsent = lazy(() => import("./cookie-consent").then(m => ({ default: m.CookieConsent })));
 
-/* ── 7 Core Academic Pillars ────────────────────────────── */
+/* ── Core Academic Pillars ────────────────────────────── */
 const primaryNav = [
   { href: "/",              label: "Home",        icon: Home         },
+  { href: "/programmes",    label: "Programmes",  icon: GraduationCap},
   { href: "/learn",         label: "Learn",       icon: BookOpen     },
   { href: "/practice",      label: "Practice",    icon: FileText     },
   { href: "/flashcards",    label: "Flashcards",  icon: BrainCircuit },
@@ -78,6 +80,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   const isActive = (path: string) => {
     if (path === "/") return location === "/";
+    if (path === "/programmes") return location.startsWith("/programmes");
     if (path === "/learn") return location.startsWith("/learn") || location.startsWith("/resources");
     if (path === "/practice") return location.startsWith("/practice") || location.startsWith("/quizzes");
     if (path === "/flashcards") return location.startsWith("/flashcards");
@@ -226,6 +229,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
                       <Link href={`/user/${user.username}`}>
                         <div className="flex items-center gap-2.5 w-full cursor-pointer px-2.5 py-2 rounded-xl text-sm font-medium text-[#9A6205] hover:bg-[#F4E7CA]/60 transition-colors">
                           <Trophy className="h-4 w-4" /> Academic Profile
+                        </div>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/programmes">
+                        <div className="flex items-center gap-2.5 w-full cursor-pointer px-2.5 py-2 rounded-xl text-sm text-[#181510] dark:text-[#f0ece4] hover:bg-[#EFE9DE]/60 transition-colors">
+                          <GraduationCap className="h-4 w-4 text-[#696158]" /> Academic Programmes
                         </div>
                       </Link>
                     </DropdownMenuItem>
