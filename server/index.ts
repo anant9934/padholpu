@@ -14,6 +14,7 @@ import { bootstrapDatabase } from "./bootstrap";
 
 
 import { pool } from "./db";
+import { closeRedis } from "./lib/redis";
 
 const app = express();
 const httpServer = createServer(app);
@@ -67,17 +68,21 @@ export function log(message: string, source = "express") {
 }
 
 app.use((req, res, next) => {
+  const reqId = (req.headers["x-request-id"] as string) || `req_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
+  (req as any).id = reqId;
+  res.setHeader("X-Request-Id", reqId);
+
   const start = Date.now();
   const path = req.path;
 
-  // Log initial request
-  console.log(`${req.method} ${req.url} - ${new Date().toISOString()}`);
+  // Structured non-sensitive request logging
+  console.log(`[${reqId}] ${req.method} ${req.url} - ${new Date().toISOString()}`);
 
-  // Log completion metrics (without payload interception to prevent data leaks)
+  // Log completion metrics
   res.on("finish", () => {
     const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      log(`${req.method} ${path} ${res.statusCode} in ${duration}ms`);
+    if (path.startsWith("/api") || path.startsWith("/health")) {
+      log(`[${reqId}] ${req.method} ${path} ${res.statusCode} in ${duration}ms`);
     }
   });
 
@@ -164,9 +169,10 @@ if (process.env.NODE_ENV !== "test" && isMainModule) {
             await pool.end();
             log("Database connection pool closed successfully.");
           }
+          await closeRedis();
           process.exit(0);
         } catch (err) {
-          console.error("Error closing database connection pool:", err);
+          console.error("Error closing connection pools during shutdown:", err);
           process.exit(1);
         }
       });
