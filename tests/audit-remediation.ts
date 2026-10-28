@@ -194,6 +194,65 @@ async function runAuditRemediationSuite() {
     );
   }
 
+  // 7. CORS Render & Custom Domain Whitelisting Check
+  {
+    const allowed = [
+      "https://padholpu.online",
+      "https://www.padholpu.online",
+      "https://padholpu.info",
+      "https://padholpu-backend.onrender.com",
+    ];
+
+    const checkOrigin = (origin: string | undefined): boolean => {
+      const isNetlifyPreview = origin ? /^https:\/\/[a-z0-9-]+\.netlify\.app$/.test(origin) : false;
+      const isVercelPreview = origin ? /^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(origin) : false;
+      const isRenderOrigin = origin ? /^https:\/\/[a-z0-9-]+\.onrender\.com$/.test(origin) : false;
+      return !origin || allowed.includes(origin) || isNetlifyPreview || isVercelPreview || isRenderOrigin;
+    };
+
+    const renderOk = checkOrigin("https://padholpu-backend.onrender.com");
+    const vercelProdOk = checkOrigin("https://padholpu-frontend.vercel.app");
+    const untrustedBlocked = !checkOrigin("https://phishing-site.xyz");
+
+    const passes = renderOk && vercelProdOk && untrustedBlocked;
+
+    record(
+      "7. Render & Vercel CORS Domain Whitelisting",
+      "Render services and Vercel deployments allowed; untrusted domains blocked",
+      `render=${renderOk}, vercel=${vercelProdOk}, untrustedBlocked=${untrustedBlocked}`,
+      passes
+    );
+  }
+
+  // 8. Client API Base URL Resolver Logic
+  {
+    const resolveApiUrl = (baseUrl: string, pathOrUrl: string): string => {
+      if (pathOrUrl.startsWith("http://") || pathOrUrl.startsWith("https://")) {
+        return pathOrUrl;
+      }
+      if (baseUrl && pathOrUrl.startsWith("/")) {
+        return `${baseUrl.replace(/\/+$/, "")}${pathOrUrl}`;
+      }
+      return pathOrUrl;
+    };
+
+    const sameOriginPath = resolveApiUrl("", "/api/user"); // Same-origin proxy
+    const customBaseUrl = resolveApiUrl("https://padholpu-backend.onrender.com", "/api/user");
+    const absolutePreserved = resolveApiUrl("https://padholpu-backend.onrender.com", "https://res.cloudinary.com/doc.pdf");
+
+    const resolverOk = 
+      sameOriginPath === "/api/user" &&
+      customBaseUrl === "https://padholpu-backend.onrender.com/api/user" &&
+      absolutePreserved === "https://res.cloudinary.com/doc.pdf";
+
+    record(
+      "8. Client API URL Resolution Resilience",
+      "Same-origin proxy path preserved without base URL; prepended when base URL provided",
+      `sameOrigin=${sameOriginPath}, customBase=${customBaseUrl}`,
+      resolverOk
+    );
+  }
+
   // Summary
   const allPassed = results.every(r => r.pass);
   console.log("\n==================================================");

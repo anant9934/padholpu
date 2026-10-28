@@ -56,6 +56,25 @@ async function throwIfResNotOk(res: Response) {
 }
 
 
+// ── Optional Base URL for direct cross-origin API mode ────────────────────────
+export const API_BASE_URL: string = (
+  (import.meta as any).env?.VITE_API_BASE_URL || ""
+).replace(/\/+$/, "");
+
+/**
+ * Resolves API path to full URL if VITE_API_BASE_URL is set,
+ * otherwise preserves the path for same-origin proxying.
+ */
+export function resolveApiUrl(pathOrUrl: string): string {
+  if (pathOrUrl.startsWith("http://") || pathOrUrl.startsWith("https://")) {
+    return pathOrUrl;
+  }
+  if (API_BASE_URL && pathOrUrl.startsWith("/")) {
+    return `${API_BASE_URL}${pathOrUrl}`;
+  }
+  return pathOrUrl;
+}
+
 // ── Core API request helper ───────────────────────────────────────────────────
 /**
  * Makes an authenticated, CSRF-protected API request.
@@ -79,7 +98,8 @@ export async function apiRequest(
     headers["x-xsrf-token"] = csrfToken;
   }
 
-  const res = await fetch(url, {
+  const targetUrl = resolveApiUrl(url);
+  const res = await fetch(targetUrl, {
     method,
     headers,
     body: data ? (isFormData ? data : JSON.stringify(data)) : undefined,
@@ -98,7 +118,9 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey.join("/") as string, {
+    const rawPath = queryKey.join("/") as string;
+    const targetUrl = resolveApiUrl(rawPath);
+    const res = await fetch(targetUrl, {
       credentials: "include",
     });
 
