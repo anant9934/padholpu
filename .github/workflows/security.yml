@@ -1,0 +1,59 @@
+name: DevSecOps Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: '0 0 * * 0' # Run weekly on Sundays
+
+jobs:
+  security-scan:
+    name: Security Audits
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run npm audit (SCA)
+        run: npm audit --audit-level=high
+
+      - name: TypeScript Type Check
+        run: npm run check
+
+      - name: Run Security & Integration Test Suites
+        run: npx tsx tests/seo-brand-audit.ts && npx tsx tests/adversarial-suite.ts
+        env:
+          NODE_ENV: test
+          JWT_SECRET: test_ci_jwt_secret_must_be_sufficiently_long_and_complex_12345
+          ADMIN_PASSCODE: test_ci_admin_passcode_for_security_suite_verification
+      
+  codeql-analysis:
+    name: CodeQL (SAST)
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: javascript, typescript
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
