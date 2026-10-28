@@ -148,33 +148,20 @@ Railway natively supports Node.js and PostgreSQL in a single project.
 
 ### Vercel + Neon DB (Full-Stack Serverless)
 
-The application includes native Vercel deployment support with Vite static asset hosting and Express serverless functions (`api/index.ts`).
+### Production Deployment (Vercel Frontend + Render Backend)
 
-#### 1. Database Setup (Neon PostgreSQL)
-1. Sign up / log in to [Neon](https://neon.tech) and create a new project.
-2. Under your Neon project dashboard, copy the **Connection string** (choose **Pooled connection** for serverless).
-   ```text
-   postgresql://neondb_owner:password@ep-xyz-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require
-   ```
-3. Push your schema to Neon from your terminal:
-   ```bash
-   DATABASE_URL="your-neon-pooled-connection-string" npm run db:push
-   ```
+Padho LPU is architected for decoupled cloud hosting:
 
-#### 2. Deploy to Vercel
-1. Import the repository in your [Vercel Dashboard](https://vercel.com/new).
-2. Vercel automatically detects the `vercel.json` configuration:
-   - **Framework:** Vite
-   - **Build Command:** `npm run build`
-   - **Output Directory:** `dist/public`
-   - **Install Command:** `npm install --legacy-peer-deps`
-3. In **Environment Variables**, add:
-   - `DATABASE_URL`: Your Neon connection string (or connect via the Neon integration on Vercel marketplace).
-   - `JWT_SECRET`: A 64-byte random secret (`node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"`).
-   - `APP_URL`: Your Vercel deployment URL (e.g. `https://your-app.vercel.app` or custom domain).
-   - `NODE_ENV`: `production`
-   - *(Optional)* `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `CLOUDINARY_*`, `TURNSTILE_*`, `SMTP_*`.
-4. Click **Deploy**. Vercel will build the Vite frontend, bundle the serverless Express API (`api/index.ts`), and deploy your application!
+1. **Frontend on Vercel:** Builds the React 18 / Vite SPA (`npm run build:client`) and serves static assets and PWA caches at the edge. API calls to `/api/*` are transparently proxied to the Render backend via Vercel rewrites.
+2. **Backend on Render:** Runs the complete long-running Express 5 web service (`npm run build:server` and `npm start`) connected to PostgreSQL / Neon with health checks at `/health`.
+3. **Database on PostgreSQL / Neon:** Preserved persistent storage with connection pooling, zero destructive migrations, and automated schema bootstrapping.
+4. **Cloudinary:** Cloud-native durable storage for all file uploads, documents, and student avatars.
+
+For full step-by-step instructions, environment variable setup, and rollback instructions, see [VERCEL_RENDER_MIGRATION.md](docs/deploy/VERCEL_RENDER_MIGRATION.md).
+
+#### Quick Deployment Overview:
+- **Render Backend:** Connect repo `anant9934/padholpu` -> Blueprint (`render.yaml`) -> supply `DATABASE_URL` and `JWT_SECRET`.
+- **Vercel Frontend:** Import repo `anant9934/padholpu` -> Build Command `npm run build:client` -> Output `dist/public`.
 
 ### Docker (Self-hosted / VPS)
 
@@ -202,11 +189,15 @@ docker-compose up --build
 | Script | Description |
 |---|---|
 | `npm run dev` | Start development server with hot reload |
-| `npm run build` | Build client (Vite) + server (esbuild) for production |
-| `npm start` | Run the production server from `dist/index.cjs` |
+| `npm run build` | Full production build (client Vite + server esbuild) |
+| `npm run build:client` | Build frontend Vite client into `dist/public` (Vercel target) |
+| `npm run build:server` | Bundle backend Express server into `dist/index.cjs` (Render target) |
+| `npm start` | Run production web service on `0.0.0.0:$PORT` |
 | `npm run check` | TypeScript type-check (zero errors = ✅) |
-| `npm run db:push` | Apply Drizzle schema to the database |
-| `npm run db:seed` | Seed quiz questions from `server/scripts/seed-questions.ts` |
+| `npm test` | Run complete automated test suite (SEO, adversarial, remediation) |
+| `npm run test:unit` | Run offline unit & security regression test suite |
+| `npm run test:db` | Run live database integration tests (requires `DATABASE_URL`) |
+| `npm run db:push` | Apply Drizzle schema to the database non-destructively |
 
 ---
 
