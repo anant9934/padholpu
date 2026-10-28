@@ -3,8 +3,116 @@ import { storage } from "../storage";
 import { db } from "../db";
 import { eq, sql } from "drizzle-orm";
 import { subjects, resources, quizzes, questions } from "../../shared/schema";
+import {
+  getAcademicSchools,
+  getDisciplines,
+  getProgrammes,
+  getProgrammeByCode,
+  getUserAcademicProfile,
+  updateUserAcademicProfile,
+  ensureMultidisciplinarySeedData,
+} from "../services/academic-multidisciplinary";
 
 const router = Router();
+
+/**
+ * GET /api/academic/schools
+ */
+router.get("/academic/schools", async (_req: Request, res: Response) => {
+  try {
+    await ensureMultidisciplinarySeedData();
+    const schools = await getAcademicSchools();
+    res.json(schools);
+  } catch (error: any) {
+    console.error("[Academic] Failed to fetch schools:", error);
+    res.status(500).json({ message: "Failed to load academic schools" });
+  }
+});
+
+/**
+ * GET /api/academic/disciplines
+ */
+router.get("/academic/disciplines", async (_req: Request, res: Response) => {
+  try {
+    await ensureMultidisciplinarySeedData();
+    const disciplines = await getDisciplines();
+    res.json(disciplines);
+  } catch (error: any) {
+    console.error("[Academic] Failed to fetch disciplines:", error);
+    res.status(500).json({ message: "Failed to load disciplines" });
+  }
+});
+
+/**
+ * GET /api/academic/programmes
+ */
+router.get("/academic/programmes", async (req: Request, res: Response) => {
+  try {
+    await ensureMultidisciplinarySeedData();
+    const schoolId = req.query.schoolId ? Number(req.query.schoolId) : undefined;
+    const discipline = req.query.discipline as string | undefined;
+    const degree = req.query.degree as string | undefined;
+    const search = req.query.search as string | undefined;
+
+    const list = await getProgrammes({ schoolId, discipline, degree, search });
+    res.json(list);
+  } catch (error: any) {
+    console.error("[Academic] Failed to fetch programmes:", error);
+    res.status(500).json({ message: "Failed to load academic programmes" });
+  }
+});
+
+/**
+ * GET /api/academic/programmes/:code
+ */
+router.get("/academic/programmes/:code", async (req: Request, res: Response) => {
+  try {
+    await ensureMultidisciplinarySeedData();
+    const code = String(req.params.code || "");
+    const prog = await getProgrammeByCode(code);
+    if (!prog) {
+      return res.status(404).json({ message: "Programme not found" });
+    }
+    res.json(prog);
+  } catch (error: any) {
+    console.error("[Academic] Failed to fetch programme detail:", error);
+    res.status(500).json({ message: "Failed to load programme detail" });
+  }
+});
+
+/**
+ * GET /api/academic/profile
+ */
+router.get("/academic/profile", async (req: Request, res: Response) => {
+  if (!req.isAuthenticated()) return res.sendStatus(401);
+  try {
+    const profile = await getUserAcademicProfile(req.user!.id);
+    res.json(profile);
+  } catch (error: any) {
+    console.error("[Academic] Failed to fetch academic profile:", error);
+    res.status(500).json({ message: "Failed to load academic profile" });
+  }
+});
+
+/**
+ * PATCH /api/academic/profile
+ */
+router.patch("/academic/profile", async (req: Request, res: Response) => {
+  if (!req.isAuthenticated()) return res.sendStatus(401);
+  try {
+    const { programmeId, currentSemester, specialization, academicYear } = req.body;
+    const updated = await updateUserAcademicProfile(req.user!.id, {
+      programmeId: programmeId !== undefined ? Number(programmeId) : undefined,
+      currentSemester: currentSemester !== undefined ? Number(currentSemester) : undefined,
+      specialization: specialization !== undefined ? String(specialization) : undefined,
+      academicYear: academicYear !== undefined ? Number(academicYear) : undefined,
+    });
+    res.json(updated);
+  } catch (error: any) {
+    console.error("[Academic] Failed to update academic profile:", error);
+    res.status(500).json({ message: "Failed to update academic profile" });
+  }
+});
 
 /**
  * GET /api/courses

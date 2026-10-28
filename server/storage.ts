@@ -1,7 +1,7 @@
 import {
   users, resources, quizzes, quizAttempts, sessions, contactMessages,
   questions, examSessions, examQuestions, examAttemptsDetailed, leaderboard,
-  subjects, units, topics,
+  subjects, units, topics, programmes, type Programme,
   type User, type InsertUser,
   type Resource, type InsertResource,
   type Quiz, type InsertQuiz,
@@ -1361,6 +1361,37 @@ export class DatabaseStorage implements IStorage {
 
     const wildcard = `%${q}%`;
     const results: any[] = [];
+
+    // 0. Programmes (Multidisciplinary Academic Catalog)
+    try {
+      const progs = await db
+        .select()
+        .from(programmes)
+        .where(
+          or(
+            sql`LOWER(${programmes.code}) LIKE ${wildcard}`,
+            sql`LOWER(${programmes.name}) LIKE ${wildcard}`,
+            sql`LOWER(${programmes.discipline}) LIKE ${wildcard}`
+          )
+        )
+        .limit(3);
+
+      progs.forEach((p: any) => {
+        const isExact = p.code.toLowerCase() === q;
+        results.push({
+          id: `p-${p.id}`,
+          type: "Programme",
+          title: `${p.name} (${p.code})`,
+          subtitle: `${p.discipline} · ${p.degree} (${p.durationYears} Years / ${p.totalSemesters} Semesters)`,
+          code: p.code,
+          course: p.code,
+          url: `/programmes/${p.code}`,
+          relevance: isExact ? 110 : 90,
+        });
+      });
+    } catch {
+      // Table may still be initializing
+    }
 
     // 1. Courses / Subjects
     const subs = await db
