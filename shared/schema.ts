@@ -37,6 +37,11 @@ export const users = pgTable("users", {
   totpSecret: text("totp_secret"), // Encrypted with AES-256-GCM at rest
   totpEnabled: boolean("totp_enabled").default(false),
   totpRecoveryCodes: text("totp_recovery_codes").array(), // SHA-256 hashes of one-time recovery codes
+  // ── Multidisciplinary Academic Preferences ───────────────────
+  programmeId: integer("programme_id"),
+  currentSemester: integer("current_semester").default(1),
+  specialization: text("specialization"),
+  academicYear: integer("academic_year").default(1),
 }, (table) => {
   return {
     scoreIdx: index("users_score_idx").on(table.score),
@@ -83,6 +88,10 @@ export const insertUserSchema = createInsertSchema(users, {
   totpSecret: true,
   totpEnabled: true,
   totpRecoveryCodes: true,
+  programmeId: true,
+  currentSemester: true,
+  specialization: true,
+  academicYear: true,
 });
 
 // ============================================
@@ -213,6 +222,42 @@ export const insertQuizAttemptSchema = createInsertSchema(quizAttempts).omit({
 });
 
 // ============================================
+// MULTIDISCIPLINARY ACADEMIC ARCHITECTURE
+// ============================================
+export const academicSchools = pgTable("academic_schools", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  code: text("code").notNull().unique(), // e.g. SOL, MSB, SAG, SCSE, SCEPS, SOH, SOD, SOC
+  description: text("description"),
+  icon: text("icon"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const programmes = pgTable("programmes", {
+  id: serial("id").primaryKey(),
+  schoolId: integer("school_id").references(() => academicSchools.id, { onDelete: "set null" }),
+  name: text("name").notNull(),
+  code: text("code").notNull().unique(), // e.g. BTECH-CSE, BBA, BALLB, BSC-AGRI, BCOM-HONS, MBA, BCA, MCA
+  degree: text("degree").notNull(), // UG, PG, INTEGRATED, DIPLOMA
+  durationYears: integer("duration_years").notNull().default(4),
+  totalSemesters: integer("total_semesters").notNull().default(8),
+  discipline: text("discipline").notNull(), // ENGINEERING, MANAGEMENT, LAW, AGRICULTURE, SCIENCES, COMMERCE, HUMANITIES, DESIGN
+  description: text("description"),
+  learningModel: text("learning_model").default("SEMESTER"), // SEMESTER, ANNUAL, PRACTICUM
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertAcademicSchoolSchema = createInsertSchema(academicSchools).omit({ id: true, createdAt: true });
+export const selectAcademicSchoolSchema = createSelectSchema(academicSchools);
+export type AcademicSchool = typeof academicSchools.$inferSelect;
+export type InsertAcademicSchool = z.infer<typeof insertAcademicSchoolSchema>;
+
+export const insertProgrammeSchema = createInsertSchema(programmes).omit({ id: true, createdAt: true });
+export const selectProgrammeSchema = createSelectSchema(programmes);
+export type Programme = typeof programmes.$inferSelect;
+export type InsertProgramme = z.infer<typeof insertProgrammeSchema>;
+
+// ============================================
 // SUBJECTS, UNITS & TOPICS (STRATEGIC DATA)
 // ============================================
 export const subjects = pgTable("subjects", {
@@ -220,7 +265,31 @@ export const subjects = pgTable("subjects", {
   name: text("name").notNull(),
   code: text("code").notNull().unique(),
   totalUnits: integer("total_units").notNull().default(0),
+  programmeId: integer("programme_id").references(() => programmes.id, { onDelete: "set null" }),
+  schoolId: integer("school_id").references(() => academicSchools.id, { onDelete: "set null" }),
+  semester: integer("semester"),
+  credits: integer("credits").default(4),
+  discipline: text("discipline").default("ENGINEERING"),
+  description: text("description"),
+  category: text("category").default("Core"),
 });
+
+export const programmeSubjects = pgTable("programme_subjects", {
+  id: serial("id").primaryKey(),
+  programmeId: integer("programme_id").references(() => programmes.id, { onDelete: "cascade" }).notNull(),
+  subjectId: integer("subject_id").references(() => subjects.id, { onDelete: "cascade" }).notNull(),
+  semester: integer("semester").notNull(),
+  isCore: boolean("is_core").default(true).notNull(),
+  credits: integer("credits").default(4).notNull(),
+  category: text("category").default("Core"),
+}, (table) => ({
+  programmeSubjectUnique: unique("programme_subjects_prog_subj_unique").on(table.programmeId, table.subjectId),
+  progSemIdx: index("programme_subjects_prog_sem_idx").on(table.programmeId, table.semester),
+}));
+
+export const insertProgrammeSubjectSchema = createInsertSchema(programmeSubjects).omit({ id: true });
+export type ProgrammeSubject = typeof programmeSubjects.$inferSelect;
+export type InsertProgrammeSubject = z.infer<typeof insertProgrammeSubjectSchema>;
 
 export const units = pgTable("units", {
   id: serial("id").primaryKey(),
@@ -796,8 +865,10 @@ export const subjectiveQuestions = pgTable("subjective_questions", {
   subjectId: integer("subject_id").references(() => subjects.id, { onDelete: "cascade" }).notNull(),
   unitId: integer("unit_id").references(() => units.id, { onDelete: "set null" }),
   topicId: integer("topic_id").references(() => topics.id, { onDelete: "set null" }),
-  questionType: text("question_type").notNull().default("SHORT_ANSWER"), // DEFINITION, SHORT_ANSWER, LONG_ANSWER, CASE_STUDY, NUMERICAL
+  questionType: text("question_type").notNull().default("SHORT_ANSWER"), // DEFINITION, SHORT_ANSWER, LONG_ANSWER, CASE_STUDY, NUMERICAL, LEGAL_PROBLEM, LAB_VIVA
   questionText: text("question_text").notNull(),
+  contextScenario: text("context_scenario"), // Case brief facts, business scenario, agriculture field setup, or problem prompt
+  statuteOrCitation: text("statute_or_citation"), // Reference statute, judicial citation, or academic paper reference
   modelAnswer: text("model_answer").notNull(),
   outlinePoints: jsonb("outline_points").$type<string[]>().default([]),
   maxMarks: integer("max_marks").default(5).notNull(),
