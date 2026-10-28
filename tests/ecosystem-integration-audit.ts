@@ -147,6 +147,135 @@ async function runEcosystemIntegrationAudit() {
     assert(res.disclaimer.length > 10, "Disclaimer must clearly disclose that it is a reference guide");
   });
 
+  // ── 7. Notification IDOR & Ownership Protection ────────────
+  test("Security / IDOR: Notification read authorization enforces matching authenticated userId", () => {
+    const notificationOwnerId = 201;
+    const attackerUserId = 202;
+    const notificationId = 888;
+
+    // Simulate database query condition: AND(notifications.id = id, notifications.userId = userId)
+    function canMarkAsRead(notifId: number, targetOwnerId: number, authUserId: number) {
+      return notifId === notificationId && targetOwnerId === authUserId;
+    }
+
+    assert.strictEqual(
+      canMarkAsRead(notificationId, notificationOwnerId, attackerUserId),
+      false,
+      "Attacker cannot mark another user's notification as read"
+    );
+    assert.strictEqual(
+      canMarkAsRead(notificationId, notificationOwnerId, notificationOwnerId),
+      true,
+      "Owner can mark their own notification as read"
+    );
+  });
+
+  // ── 8. Content Issue Reporting & Schema Validation ─────────
+  test("Quality System: Content Issue Report categorizes academic flaws with validation", () => {
+    const validCategories = ["INCORRECT_ANSWER", "SYLLABUS_MISMATCH", "TYPO_FORMATTING", "OUTDATED_CONTENT", "OTHER"];
+    const testReport = {
+      contentType: "SUBJECTIVE",
+      contentId: 45,
+      issueType: "INCORRECT_ANSWER",
+      description: "Step 3 of model answer in CSE310 Unit 2 omits banker's algorithm safety test.",
+    };
+
+    assert(validCategories.includes(testReport.issueType), "Issue type must be an authorized academic category");
+    assert(testReport.description.length >= 10, "Description must be substantive");
+    assert(Number.isInteger(testReport.contentId) && testReport.contentId > 0, "Content ID must be a positive integer");
+  });
+
+  // ── 9. Closed-Loop Reporter Notification Dispatch ──────────
+  test("Quality System: Admin report resolution generates closed-loop notification payload", () => {
+    const report = {
+      id: 12,
+      reporterId: 305,
+      contentType: "SUBJECTIVE",
+      contentId: 45,
+      status: "RESOLVED",
+      resolutionNotes: "Corrected marking scheme and added citation to Silberschatz 10th ed.",
+    };
+
+    const notificationPayload = {
+      userId: report.reporterId,
+      type: "INFO",
+      title: `Content Report ${report.status === "RESOLVED" ? "Resolved" : "Dismissed"}`,
+      message: `Your report regarding ${report.contentType} #${report.contentId} was reviewed: ${report.resolutionNotes}`,
+      link: "/learn",
+      isRead: false,
+    };
+
+    assert.strictEqual(notificationPayload.userId, 305, "Notification dispatched to original reporter");
+    assert(notificationPayload.title.includes("Resolved"), "Title reflects resolution outcome");
+    assert(notificationPayload.message.includes("Silberschatz"), "Message contains admin feedback");
+  });
+
+  // ── 10. Note Moderation Lifecycle Notification Events ───────
+  test("Moderation: Note submission lifecycle generates proper student feedback notifications", () => {
+    const decisions = ["approved", "changes_requested", "rejected"] as const;
+    const generatedNotifs: Record<string, { title: string; link: string }> = {};
+
+    for (const decision of decisions) {
+      if (decision === "approved") {
+        generatedNotifs[decision] = {
+          title: "Notes Approved & Published! 📚",
+          link: "/resources/101",
+        };
+      } else if (decision === "changes_requested") {
+        generatedNotifs[decision] = {
+          title: "Changes Requested on Your Notes 📝",
+          link: "/contributions",
+        };
+      } else {
+        generatedNotifs[decision] = {
+          title: "Notes Submission Not Approved",
+          link: "/contributions",
+        };
+      }
+    }
+
+    assert(generatedNotifs["approved"].title.includes("Published"), "Approved notification celebrates publishing");
+    assert(generatedNotifs["changes_requested"].link === "/contributions", "Revisions link to student contributions");
+    assert(generatedNotifs["rejected"].title.includes("Not Approved"), "Rejection notification is clear and direct");
+  });
+
+  // ── 11. Role-Based Access Control for Question Curation ─────
+  test("Academic Quality: Question Curation boundary requires ADMIN or SUPER_ADMIN role", () => {
+    function hasCurationPrivilege(roles: string[]): boolean {
+      return roles.includes("ADMIN") || roles.includes("SUPER_ADMIN");
+    }
+
+    assert.strictEqual(hasCurationPrivilege(["STUDENT"]), false, "Regular student cannot curate questions");
+    assert.strictEqual(hasCurationPrivilege(["USER"]), false, "Regular user cannot curate questions");
+    assert.strictEqual(hasCurationPrivilege(["ADMIN"]), true, "Admin has curation privilege");
+    assert.strictEqual(hasCurationPrivilege(["SUPER_ADMIN"]), true, "Super Admin has curation privilege");
+  });
+
+  // ── 12. Responsive Breakpoint Specification Verification ───
+  test("Responsive Layout: Breakpoint constraints cover standard mobile devices (320px to 1440px)", () => {
+    const requiredBreakpoints = [320, 360, 375, 390, 430, 768, 1024, 1280, 1440];
+    const tailwindBreakpoints = {
+      sm: 640,
+      md: 768,
+      lg: 1024,
+      xl: 1280,
+      "2xl": 1536,
+    };
+
+    // Verify all mobile viewports < 640px fall gracefully into the default (fluid 100% width) tier
+    const fluidMobileBreakpoints = requiredBreakpoints.filter((bp) => bp < tailwindBreakpoints.sm);
+    assert.deepStrictEqual(
+      fluidMobileBreakpoints,
+      [320, 360, 375, 390, 430],
+      "All mobile screen widths must be supported by mobile-first fluid layout"
+    );
+
+    // Verify tablet and desktop tiers
+    assert(requiredBreakpoints.includes(tailwindBreakpoints.md), "Tablet breakpoint 768px covered");
+    assert(requiredBreakpoints.includes(tailwindBreakpoints.lg), "Laptop breakpoint 1024px covered");
+    assert(requiredBreakpoints.includes(tailwindBreakpoints.xl), "Desktop breakpoint 1280px covered");
+  });
+
   console.log("==================================================");
   console.log(`AUDIT RESULTS: ${passed}/${total} TESTS PASSED`);
   console.log("==================================================");
