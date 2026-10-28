@@ -1,0 +1,32 @@
+# Padho LPU (padholpu.online)
+> An independent, open-access academic learning repository and practice examination platform built by students for students.
+
+## Identity & Context
+- **Canonical Website**: https://padholpu.online
+- **Primary Mission**: Democratize quality higher-education study aids, curated revision notes, unit breakdowns, formula sheets, chapter-level practice quizzes, and full-length semester mock examinations.
+- **Access Model**: 100% Free and Open-Access. No paywalls, no coin microtransactions, and no premium subscription tiers.
+- **Institutional Independence**: Padho LPU is an independent, student-driven academic community initiative. It is NOT affiliated with, endorsed by, or operated by Lovely Professional University (LPU).
+
+## Core Pillars & Key Routes
+- **Homepage**: https://padholpu.online/
+- **Academic Resources & Notes**: https://padholpu.online/resources (Lecture summaries, formula cheatsheets, revision guides)
+- **Practice Quizzes**: https://padholpu.online/quizzes (Chapter-wise interactive self-assessment quizzes)
+- **Exam Simulations**: https://padholpu.online/exams (Timed mock examinations with performance analytics)
+- **Subject Hubs**: https://padholpu.online/subjects (Organized by course codes e.g. CSE, ECE, MEC, MTH, PHY)
+- **About Platform**: https://padholpu.online/about
+- **Contact & Support**: https://padholpu.online/contact
+- **Disclaimer**: https://padholpu.online/disclaimer (AI disclosures & academic disclaimers)
+- **Privacy Policy**: https://padholpu.online/privacy (DPDP Act 2023 & GDPR compliant)
+- **Privacy Rights Portal**: https://padholpu.online/privacy-requests (Data subject access & erasure requests)
+- **Terms of Service**: https://padholpu.online/terms
+
+## Verified Team & Creators
+- **Ideator & Faculty Mentor**: Dr. Mohit Arora (https://linkedin.com/in/mohit24/)
+- **Founding Team**: Anant Kumar (https://linkedin.com/in/quantumanant01/)
+- **Founding Team**: Shivam Kumar Singh (https://linkedin.com/in/shivam-kumar-singh-lpu/)
+
+## Technical Architecture
+- **Frontend**: React + Vite, Tailwind CSS, TypeScript, TanStack Query, Framer Motion, Wouter.
+- **Backend**: Express.js, TypeScript, Drizzle ORM, PostgreSQL (Neon / Supabase), Cloudinary CDN.
+- **Security & Privacy**: Argon2id password hashing, RFC 9116 security.txt, strict multi-tier rate limiting, DPDP 2023 compliance.
+- **Contact**: padholpuonline@gmail.com

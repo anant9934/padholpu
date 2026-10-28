@@ -1,0 +1,61 @@
+# ==============================================================================
+# Padho LPU — Robots Policy (https://padholpu.online)
+# Academic preparation platform for Lovely Professional University students
+# ==============================================================================
+
+# Default rule for all web search and discovery crawlers
+User-agent: *
+Allow: /
+Allow: /assets/
+Allow: /images/
+Allow: /favicon.ico
+Allow: /manifest.json
+
+# ── Disallowed private, transactional, and authentication endpoints ───────────
+Disallow: /api/
+Disallow: /admin/
+Disallow: /profile/
+Disallow: /auth
+Disallow: /auth/
+Disallow: /exam/start/
+Disallow: /exam/result/
+Disallow: /quizzes/*/review/
+Disallow: /support/track/
+Disallow: /progress
+Disallow: /contribute
+Disallow: /upload
+Disallow: /privacy-requests
+
+# ── Generative AI & Answer Engine Crawlers (AEO / GEO / LLMO Policy) ──────────
+# Legitimate AI search discovery (Perplexity, OpenAI, Anthropic, Apple, Google-Extended)
+# permitted to index public academic resources, course syllabi, and study notes.
+User-agent: GPTBot
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /profile/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /profile/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /profile/
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /profile/
+
+# ── Sitemap Master Index ──────────────────────────────────────────────────────
+Sitemap: https://padholpu.online/sitemap.xml

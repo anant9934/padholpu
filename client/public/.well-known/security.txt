@@ -1,0 +1,10 @@
+# Padho LPU Security Contact & Disclosure Policy (RFC 9116)
+Contact: mailto:security@padholpu.online
+Contact: https://padholpu.online/contact
+Expires: 2027-12-31T23:59:59.000Z
+Encryption: https://padholpu.online/pgp-key.txt
+Preferred-Languages: en, hi
+Canonical: https://padholpu.online/.well-known/security.txt
+Policy: https://padholpu.online/terms-of-service
+Acknowledgments: https://padholpu.online/about
+Hiring: https://padholpu.online/about

@@ -1,0 +1,33 @@
+# ─────────────────────────────────────────────────────────────────
+# Netlify Redirects & SPA Rules — Padho LPU
+# ─────────────────────────────────────────────────────────────────
+
+# 0. Canonical Domain 301 Redirects (Defensive & Legacy)
+https://padholpu.info/*     https://padholpu.online/:splat  301!
+http://padholpu.info/*      https://padholpu.online/:splat  301!
+https://padhlolpu.online/*  https://padholpu.online/:splat  301!
+http://padhlolpu.online/*   https://padholpu.online/:splat  301!
+https://padhlolpu.info/*    https://padholpu.online/:splat  301!
+http://padhlolpu.info/*     https://padholpu.online/:splat  301!
+https://studylpu.online/*    https://padholpu.online/:splat  301!
+http://studylpu.online/*     https://padholpu.online/:splat  301!
+
+# 1. API Route Proxying to Netlify Serverless Function
+/api/*  /.netlify/functions/api/:splat  200!
+
+# 2. Legacy Route & Academic Aliases (Permanent 301)
+/ai-exam-generator      /exams                      301
+/ai-exam/*              /exams                      301
+/ai-tutor               /learn                      301
+/qwen-ai                /learn                      301
+/privacy-policy         /privacy                    301
+/terms-of-service       /terms                      301
+/library                /learn                      301
+/notes                  /resources?type=Notes       301
+/study-material         /learn                      301
+/previous-year-papers   /resources?type=Past+Paper  301
+/pyq                    /resources?type=Past+Paper  301
+/syllabus               /subjects                   301
+
+# 3. Single Page Application (SPA) Fallback
+/*      /index.html                     200

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>https://padholpu.online/sitemap-static.xml</loc>
+    <lastmod>2026-09-30</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://padholpu.online/sitemap-semesters.xml</loc>
+    <lastmod>2026-09-30</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://padholpu.online/sitemap-subjects.xml</loc>
+    <lastmod>2026-09-30</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://padholpu.online/sitemap-resources.xml</loc>
+    <lastmod>2026-09-30</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://padholpu.online/sitemap-quizzes.xml</loc>
+    <lastmod>2026-09-30</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://padholpu.online/sitemap-exams.xml</loc>
+    <lastmod>2026-09-30</lastmod>
+  </sitemap>
+</sitemapindex>
