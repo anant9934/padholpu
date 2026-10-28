@@ -13,8 +13,13 @@ import { setupAuth } from "./auth";
 import { bootstrapDatabase } from "./bootstrap";
 
 
+import { pool } from "./db";
+
 const app = express();
 const httpServer = createServer(app);
+
+// Enable trust proxy for Render / reverse proxies (accurately captures req.ip, protocol, secure cookies)
+app.set("trust proxy", 1);
 
 // 301 Domain Canonical Redirection: studylpu.online & padholpu.info -> padholpu.online
 app.use((req, res, next) => {
@@ -145,9 +150,36 @@ if (process.env.NODE_ENV !== "test" && isMainModule) {
         host: "0.0.0.0",
       },
       () => {
-        log(`serving on port ${port}`);
+        log(`serving on port ${port} (Render / Web Service environment ready)`);
       },
     );
+
+    // Graceful shutdown handling for Render container lifecycle
+    const handleShutdown = async (signal: string) => {
+      log(`Received ${signal}. Initiating graceful shutdown...`);
+      httpServer.close(async () => {
+        log("HTTP server stopped accepting new connections.");
+        try {
+          if (pool && typeof pool.end === "function") {
+            await pool.end();
+            log("Database connection pool closed successfully.");
+          }
+          process.exit(0);
+        } catch (err) {
+          console.error("Error closing database connection pool:", err);
+          process.exit(1);
+        }
+      });
+
+      // Force exit after 10s timeout to prevent hanging containers
+      setTimeout(() => {
+        console.error("Graceful shutdown timeout exceeded (10s). Forcing termination.");
+        process.exit(1);
+      }, 10000).unref();
+    };
+
+    process.on("SIGTERM", () => handleShutdown("SIGTERM"));
+    process.on("SIGINT", () => handleShutdown("SIGINT"));
   })();
 }
 

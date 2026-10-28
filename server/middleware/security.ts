@@ -110,22 +110,27 @@ export function setupSecurity(app: Express) {
         "https://www.padholpu.info",
         "https://studylpu.online", 
         "https://www.studylpu.online",
-        // Allow Netlify & Vercel deployment URLs and environment overrides
+        // Allow Netlify, Vercel & Render deployment URLs and environment overrides
+        ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
+        ...(process.env.CLIENT_URL ? [process.env.CLIENT_URL] : []),
+        ...(process.env.PUBLIC_APP_URL ? [process.env.PUBLIC_APP_URL] : []),
         ...(process.env.APP_URL ? [process.env.APP_URL] : []),
         ...(process.env.URL ? [process.env.URL] : []),
         ...(process.env.DEPLOY_URL ? [process.env.DEPLOY_URL] : []),
+        ...(process.env.RENDER_EXTERNAL_URL ? [process.env.RENDER_EXTERNAL_URL] : []),
         ...(process.env.VERCEL_URL ? [process.env.VERCEL_URL.startsWith("http") ? process.env.VERCEL_URL : `https://${process.env.VERCEL_URL}`] : []),
       ] 
     : ["http://localhost:3000", "http://localhost:5000", "http://0.0.0.0:5000", "https://padholpu.online", "https://studylpu.online"];
 
   app.use(cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or server-to-server) 
+      // Allow requests with no origin (like mobile apps, curl, or server-to-server) 
       // OR if the origin is in our whitelist
-      // OR if it's a Netlify or Vercel preview deploy
-      const isNetlifyPreview = origin ? /https:\/\/[a-z0-9-]+\.netlify\.app$/.test(origin) : false;
-      const isVercelPreview = origin ? /https:\/\/[a-z0-9-]+\.vercel\.app$/.test(origin) : false;
-      if (!origin || allowedOrigins.includes(origin) || isNetlifyPreview || isVercelPreview) {
+      // OR if it's a Netlify, Vercel preview deploy, or Render service domain
+      const isNetlifyPreview = origin ? /^https:\/\/[a-z0-9-]+\.netlify\.app$/.test(origin) : false;
+      const isVercelPreview = origin ? /^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(origin) : false;
+      const isRenderOrigin = origin ? /^https:\/\/[a-z0-9-]+\.onrender\.com$/.test(origin) : false;
+      if (!origin || allowedOrigins.includes(origin) || isNetlifyPreview || isVercelPreview || isRenderOrigin) {
         callback(null, true);
       } else {
         console.warn(`[SECURITY] Blocked CORS attempt from unauthorized origin: ${origin}`);

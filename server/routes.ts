@@ -78,14 +78,18 @@ export async function registerRoutes(
   // ==========================================
   // API ROUTES
   
-  app.get("/api/health", async (_req, res) => {
+  const healthCheckHandler = async (_req: any, res: any) => {
     try {
       await db.execute(sql`SELECT 1`);
       res.status(200).json({ status: "healthy", timestamp: new Date().toISOString() });
     } catch {
       res.status(503).json({ status: "unhealthy", error: "Database connection failed" });
     }
-  });
+  };
+
+  // Render health check probe standard: /health and /api/health
+  app.get("/health", healthCheckHandler);
+  app.get("/api/health", healthCheckHandler);
 
   app.get("/api/system-stats", async (_req, res) => {
     try {

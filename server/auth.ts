@@ -74,10 +74,13 @@ export function sanitizeUser(user: any) {
   return safeUser;
 }
 
+const cookieSameSite = (process.env.COOKIE_SAMESITE as "strict" | "lax" | "none") || 
+  (process.env.CROSS_ORIGIN_AUTH === "true" ? "none" : "lax");
+
 export const AUTH_COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "strict" as const,
+  secure: process.env.NODE_ENV === "production" || cookieSameSite === "none",
+  sameSite: cookieSameSite,
   maxAge: 30 * 24 * 60 * 60 * 1000,
   path: "/",
 };
@@ -95,8 +98,8 @@ export function createAuthToken(user: { id: number; tokenVersion?: number | null
 export function clearAuthCookie(res: any) {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    secure: process.env.NODE_ENV === "production" || cookieSameSite === "none",
+    sameSite: cookieSameSite,
     path: "/",
   });
 }
