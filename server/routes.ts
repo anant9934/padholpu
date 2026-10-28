@@ -23,6 +23,7 @@ import { strictAuthLimiter } from "./middleware/action-limiters";
 import { quizSubmitLimiter, examSubmitLimiter, downloadLimiter, uploadLimiter, supportTrackingLimiter, contactLimiter } from "./middleware/action-limiters";
 import { shadowBanGate, recordActionAndDetect, detectIpCluster } from "./middleware/anti-automation";
 import { computeQuizScore, LIMITS } from "./engine/scoring";
+import { getRedisHealth, getCache, setCache } from "./lib/redis";
 import { enforceTimingConstraint } from "./engine/constraints";
 import resourceRouter from "./routes/resources";
 import quizzesRouter from "./routes/quizzes";
@@ -79,12 +80,26 @@ export async function registerRoutes(
   // API ROUTES
   
   const healthCheckHandler = async (_req: any, res: any) => {
+    let dbStatus = "unhealthy";
     try {
       await db.execute(sql`SELECT 1`);
-      res.status(200).json({ status: "healthy", timestamp: new Date().toISOString() });
+      dbStatus = "healthy";
     } catch {
-      res.status(503).json({ status: "unhealthy", error: "Database connection failed" });
+      dbStatus = "unhealthy";
     }
+
+    const redisHealth = await getRedisHealth();
+    // Neon PostgreSQL is the persistent authority; Redis is the optional cache
+    const isHealthy = dbStatus === "healthy";
+    const httpStatus = isHealthy ? 200 : 503;
+
+    res.status(httpStatus).json({
+      status: isHealthy ? "healthy" : "unhealthy",
+      database: dbStatus,
+      cache: redisHealth.status,
+      ...(redisHealth.latencyMs !== undefined ? { cacheLatencyMs: redisHealth.latencyMs } : {}),
+      timestamp: new Date().toISOString(),
+    });
   };
 
   // Render health check probe standard: /health and /api/health
@@ -92,7 +107,14 @@ export async function registerRoutes(
   app.get("/api/health", healthCheckHandler);
 
   app.get("/api/system-stats", async (_req, res) => {
+    const CACHE_KEY = "padholpu:stats:system";
     try {
+      // 0. Cache-aside fast path from Redis
+      const cached = await getCache<any>(CACHE_KEY);
+      if (cached) {
+        return res.json(cached);
+      }
+
       // 1. Daily Learning (Active users in last 24h OR Total actions today)
       // For a "Daily Learning" label, Active Users in 24h is most honest
       const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -116,13 +138,18 @@ export async function registerRoutes(
       // 5. Total Community (Learners)
       const [{ count: totalLearners }] = await db.select({ count: sql`count(*)`.mapWith(Number) }).from(users);
 
-      res.json({
+      const stats = {
         users: activeUsers,
         resources: resCount,
         quizzes: qAttempts + eSessions,
         attempts: solvedCount,
-        totalUsers: totalLearners
-      });
+        totalUsers: totalLearners,
+      };
+
+      // Populate Redis cache with 60-second TTL
+      await setCache(CACHE_KEY, stats, 60);
+
+      res.json(stats);
     } catch (e) {
       console.error("[STATS ERROR]", e);
       res.json({ users: 0, resources: 0, quizzes: 0, attempts: 0 });

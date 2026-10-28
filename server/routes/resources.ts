@@ -10,6 +10,7 @@ import { generateDownloadToken, verifyDownloadToken, consumeDownloadToken } from
 import { downloadLimiter, secureDownloadLimiter } from "../middleware/action-limiters";
 import { resources, users } from "../../shared/schema";
 import { db } from "../db";
+import { getCache, setCache, invalidatePattern, delCache } from "../lib/redis";
 
 const router = Router();
 
@@ -48,7 +49,24 @@ router.get("/", async (req, res) => {
   try {
     const subject = req.query.subject as string | undefined;
     const type = req.query.type as string | undefined;
+    const isPublicQuery = !req.user;
+
+    const cacheKey = isPublicQuery
+      ? `padholpu:resources:list:${subject || "all"}:${type || "all"}`
+      : null;
+
+    if (cacheKey) {
+      const cached = await getCache<any[]>(cacheKey);
+      if (cached) {
+        return res.json(cached);
+      }
+    }
+
     const list = await storage.getResources(subject, type, req.user?.id, !!req.user?.isAdmin);
+
+    if (cacheKey && list) {
+      await setCache(cacheKey, list, 300); // 5-minute TTL for public resource catalog
+    }
     
     logEvent("Resource list fetched", { userId: req.user?.id, subject, type, count: list.length });
     res.json(list);
@@ -232,6 +250,10 @@ router.post("/upload", upload.single("file"), async (req, res) => {
       uploaderUsername: req.user!.username,
       uploadedBy: req.user!.id
     });
+
+    // Invalidate public resource catalog & system stats caches in background
+    invalidatePattern("padholpu:resources:*").catch(() => {});
+    delCache("padholpu:stats:system").catch(() => {});
 
     logEvent("File uploaded successfully", { 
       requestId, 
