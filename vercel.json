@@ -1,0 +1,120 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "framework": "vite",
+  "outputDirectory": "dist/public",
+  "buildCommand": "npm run build",
+  "installCommand": "npm install --legacy-peer-deps",
+  "functions": {
+    "api/index.ts": {
+      "maxDuration": 15
+    }
+  },
+  "redirects": [
+    {
+      "source": "/ai-exam-generator",
+      "destination": "/exams",
+      "permanent": true
+    },
+    {
+      "source": "/ai-exam/(.*)",
+      "destination": "/exams",
+      "permanent": true
+    },
+    {
+      "source": "/ai-tutor",
+      "destination": "/learn",
+      "permanent": true
+    },
+    {
+      "source": "/qwen-ai",
+      "destination": "/learn",
+      "permanent": true
+    },
+    {
+      "source": "/library",
+      "destination": "/learn",
+      "permanent": true
+    },
+    {
+      "source": "/notes",
+      "destination": "/resources?type=Notes",
+      "permanent": true
+    },
+    {
+      "source": "/study-material",
+      "destination": "/learn",
+      "permanent": true
+    },
+    {
+      "source": "/previous-year-papers",
+      "destination": "/resources?type=Past+Paper",
+      "permanent": true
+    },
+    {
+      "source": "/pyq",
+      "destination": "/resources?type=Past+Paper",
+      "permanent": true
+    },
+    {
+      "source": "/syllabus",
+      "destination": "/subjects",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api",
+      "destination": "/api"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api"
+    },
+    {
+      "source": "/((?!api).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), payment=()"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/fonts/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
+}
