@@ -13,6 +13,8 @@ import {
   ensureMultidisciplinarySeedData,
 } from "../services/academic-multidisciplinary";
 import { CurriculumImportService } from "../services/curriculum-import";
+import { AcademicCoverageService } from "../services/academic-coverage";
+import { ResourceImportService } from "../services/resource-import";
 
 const router = Router();
 
@@ -180,6 +182,78 @@ router.post("/academic/curriculum/apply-import", async (req: Request, res: Respo
   } catch (error: any) {
     console.error("[Academic Import] Apply failed:", error);
     res.status(400).json({ message: error.message || "Failed to apply curriculum import" });
+  }
+});
+
+/**
+ * GET /api/academic/admin/content-coverage
+ * Authoritative content coverage breakdown for administrators.
+ * Requires ADMIN or SUPER_ADMIN role.
+ */
+router.get("/academic/admin/content-coverage", async (req: Request, res: Response) => {
+  if (!req.isAuthenticated()) return res.sendStatus(401);
+  const userRoles = (req.user as any)?.roles || [];
+  if (!userRoles.includes("ADMIN") && !userRoles.includes("SUPER_ADMIN")) {
+    return res.status(403).json({ message: "Admin authorization required to view coverage reports" });
+  }
+
+  try {
+    const { schoolCode, programmeCode, discipline, status } = req.query;
+    const report = await AcademicCoverageService.getCoverageReport({
+      schoolCode: schoolCode ? String(schoolCode) : undefined,
+      programmeCode: programmeCode ? String(programmeCode) : undefined,
+      discipline: discipline ? String(discipline) : undefined,
+      status: status ? (String(status) as any) : undefined,
+    });
+    res.json(report);
+  } catch (error: any) {
+    console.error("[Academic Coverage] Failed to generate coverage report:", error);
+    res.status(500).json({ message: "Failed to generate academic content coverage report" });
+  }
+});
+
+/**
+ * POST /api/academic/resources/validate-import
+ * Validates a batch of academic resources before import.
+ * Requires ADMIN or SUPER_ADMIN role.
+ */
+router.post("/academic/resources/validate-import", async (req: Request, res: Response) => {
+  if (!req.isAuthenticated()) return res.sendStatus(401);
+  const userRoles = (req.user as any)?.roles || [];
+  if (!userRoles.includes("ADMIN") && !userRoles.includes("SUPER_ADMIN")) {
+    return res.status(403).json({ message: "Admin authorization required to import resources" });
+  }
+
+  try {
+    const rows = req.body?.rows || req.body;
+    const result = await ResourceImportService.validate(rows);
+    res.json(result);
+  } catch (error: any) {
+    console.error("[Resource Import] Validation error:", error);
+    res.status(500).json({ message: error.message || "Failed to validate resource import" });
+  }
+});
+
+/**
+ * POST /api/academic/resources/apply-import
+ * Applies validated academic resources transactionally.
+ * Requires ADMIN or SUPER_ADMIN role.
+ */
+router.post("/academic/resources/apply-import", async (req: Request, res: Response) => {
+  if (!req.isAuthenticated()) return res.sendStatus(401);
+  const userRoles = (req.user as any)?.roles || [];
+  if (!userRoles.includes("ADMIN") && !userRoles.includes("SUPER_ADMIN")) {
+    return res.status(403).json({ message: "Admin authorization required to apply resource import" });
+  }
+
+  try {
+    const rows = req.body?.rows || req.body;
+    const user = req.user as any;
+    const result = await ResourceImportService.apply(rows, user.id, user.username || "admin");
+    res.json(result);
+  } catch (error: any) {
+    console.error("[Resource Import] Apply error:", error);
+    res.status(400).json({ message: error.message || "Failed to apply resource import" });
   }
 });
 

@@ -61,6 +61,8 @@ import { TestimonialsManager } from "@/components/admin/TestimonialsManager";
 import { NotesModerationQueue } from "@/components/admin/NotesModerationQueue";
 import { AcademicContentReportsTable } from "@/components/admin/AcademicContentReportsTable";
 import { CurriculumImportModal } from "@/components/admin/CurriculumImportModal";
+import { ResourceImportModal } from "@/components/admin/ResourceImportModal";
+import { AcademicContentCoverage } from "@/components/admin/AcademicContentCoverage";
 
 
 export default function AdminDashboard() {
@@ -348,6 +350,7 @@ export default function AdminDashboard() {
             <TabsTrigger value="resources" className="rounded-lg px-6 py-2">Resources</TabsTrigger>
             <TabsTrigger value="quizzes" className="rounded-lg px-6 py-2">Quizzes</TabsTrigger>
             <TabsTrigger value="programmes" className="rounded-lg px-6 py-2">🎓 Programmes &amp; Schools</TabsTrigger>
+            <TabsTrigger value="coverage" className="rounded-lg px-6 py-2">📊 Content Coverage</TabsTrigger>
             <TabsTrigger value="moderation" className="rounded-lg px-6 py-2">Moderation</TabsTrigger>
             <TabsTrigger value="note-submissions" className="rounded-lg px-6 py-2">📝 Note Submissions</TabsTrigger>
             <TabsTrigger value="support" className="rounded-lg px-6 py-2">Support</TabsTrigger>
@@ -773,10 +776,17 @@ export default function AdminDashboard() {
                 </p>
               </div>
               <div className="flex items-center gap-2">
+                <ResourceImportModal
+                  onImportSuccess={() => {
+                    queryClient.invalidateQueries({ queryKey: ["/api/academic/admin-catalog"] });
+                    queryClient.invalidateQueries({ queryKey: ["/api/academic/admin/content-coverage"] });
+                  }}
+                />
                 <CurriculumImportModal
-                  onImportSuccess={() =>
-                    queryClient.invalidateQueries({ queryKey: ["/api/academic/admin-catalog"] })
-                  }
+                  onImportSuccess={() => {
+                    queryClient.invalidateQueries({ queryKey: ["/api/academic/admin-catalog"] });
+                    queryClient.invalidateQueries({ queryKey: ["/api/academic/admin/content-coverage"] });
+                  }}
                 />
                 <Button
                   variant="outline"
@@ -891,6 +901,11 @@ export default function AdminDashboard() {
                 </Card>
               </div>
             )}
+          </TabsContent>
+
+          {/* Academic Content Coverage Tab */}
+          <TabsContent value="coverage" className="space-y-6">
+            <AcademicContentCoverage />
           </TabsContent>
         </Tabs>
         
