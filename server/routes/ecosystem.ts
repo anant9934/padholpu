@@ -8,18 +8,25 @@ import {
   saveSubjectiveAnswer,
   submitStudentNotes,
   getStudentSubmissions,
+  updateStudentSubmission,
+  withdrawStudentSubmission,
   getModerationQueue,
   moderateNoteSubmission,
   generateStudyPlan,
   getUserStudyPlans,
   toggleStudyPlanTask,
+  deleteStudyPlan,
   getPersonalNotes,
   createPersonalNote,
+  updatePersonalNote,
   deletePersonalNote,
   getUserBookmarks,
+  getUserBookmarkStatus,
   toggleBookmark,
   getStudyGroups,
   createStudyGroup,
+  joinStudyGroup,
+  leaveStudyGroup,
   getGroupPosts,
   createGroupPost,
   voteResourceHelpful,
@@ -30,6 +37,7 @@ import {
 import { db } from "../db";
 import { flashcardDecks, flashcards, subjectiveQuestions, noteSubmissions } from "../../shared/schema";
 import { eq, sql } from "drizzle-orm";
+import { ecosystemPostLimiter, aiTutorLimiter } from "../middleware/action-limiters";
 
 const router = Router();
 
@@ -65,7 +73,9 @@ router.get("/flashcards/decks", async (req: Request, res: Response) => {
   try {
     const subjectId = req.query.subjectId ? Number(req.query.subjectId) : undefined;
     const unitId = req.query.unitId ? Number(req.query.unitId) : undefined;
-    const decks = await getDecksForSubject(subjectId, unitId);
+    const userId = req.user ? (req.user as any).id : undefined;
+
+    const decks = await getDecksForSubject(subjectId, unitId, userId);
     res.json(decks);
   } catch (error: any) {
     console.error("[Ecosystem] Error fetching flashcard decks:", error);
@@ -88,7 +98,8 @@ router.get("/flashcards/decks/:id/cards", async (req: Request, res: Response) =>
     res.json(cards);
   } catch (error: any) {
     console.error("[Ecosystem] Error fetching deck cards:", error);
-    res.status(500).json({ message: "Failed to load flashcards." });
+    const status = error.message.includes("Forbidden") ? 403 : error.message.includes("not found") ? 404 : 500;
+    res.status(status).json({ message: error.message || "Failed to load flashcards." });
   }
 });
 
@@ -130,7 +141,7 @@ router.post("/flashcards/decks", requireAuth, async (req: Request, res: Response
 
 /**
  * POST /api/ecosystem/flashcards/cards
- * Add a card to a deck
+ * Add a card to a deck (caller must be creator or admin)
  */
 router.post("/flashcards/cards", requireAuth, async (req: Request, res: Response) => {
   try {
@@ -142,6 +153,18 @@ router.post("/flashcards/cards", requireAuth, async (req: Request, res: Response
     });
 
     const body = schema.parse(req.body);
+    const userId = (req.user as any).id;
+    const userRoles = (req.user as any).roles || [];
+    const isAdmin = userRoles.includes("ADMIN") || userRoles.includes("SUPER_ADMIN");
+
+    // Verify deck ownership
+    const [deck] = await db.select().from(flashcardDecks).where(eq(flashcardDecks.id, body.deckId));
+    if (!deck) {
+      return res.status(404).json({ message: "Deck not found." });
+    }
+    if (deck.createdBy !== userId && !isAdmin) {
+      return res.status(403).json({ message: "Forbidden: You do not have permission to add cards to this deck." });
+    }
 
     const [card] = await db
       .insert(flashcards)
@@ -184,7 +207,8 @@ router.post("/flashcards/cards/:id/review", requireAuth, async (req: Request, re
     res.json(reviewResult);
   } catch (error: any) {
     console.error("[Ecosystem] Error recording review:", error);
-    res.status(500).json({ message: error.message || "Failed to record review." });
+    const status = error.message.includes("not found") ? 404 : error.message.includes("Forbidden") ? 403 : 500;
+    res.status(status).json({ message: error.message || "Failed to record review." });
   }
 });
 
@@ -195,14 +219,16 @@ router.post("/flashcards/cards/:id/review", requireAuth, async (req: Request, re
 /**
  * GET /api/ecosystem/subjective
  * Query: subjectId, unitId, difficulty
+ * Populates student's previously saved draft answer when authenticated!
  */
 router.get("/subjective", async (req: Request, res: Response) => {
   try {
     const subjectId = req.query.subjectId ? Number(req.query.subjectId) : undefined;
     const unitId = req.query.unitId ? Number(req.query.unitId) : undefined;
     const difficulty = req.query.difficulty as string | undefined;
+    const userId = req.user ? (req.user as any).id : undefined;
 
-    const questions = await getSubjectiveQuestions({ subjectId, unitId, difficulty });
+    const questions = await getSubjectiveQuestions({ subjectId, unitId, difficulty }, userId);
     res.json(questions);
   } catch (error: any) {
     console.error("[Ecosystem] Error fetching subjective questions:", error);
@@ -274,7 +300,8 @@ router.post("/subjective/:id/answer", requireAuth, async (req: Request, res: Res
     res.json(result);
   } catch (error: any) {
     console.error("[Ecosystem] Error saving subjective answer:", error);
-    res.status(500).json({ message: error.message || "Failed to save answer." });
+    const status = error.message.includes("not found") ? 404 : 500;
+    res.status(status).json({ message: error.message || "Failed to save answer." });
   }
 });
 
@@ -301,7 +328,7 @@ router.get("/submissions/mine", requireAuth, async (req: Request, res: Response)
  * POST /api/ecosystem/submissions
  * Submit notes for moderation
  */
-router.post("/submissions", requireAuth, async (req: Request, res: Response) => {
+router.post("/submissions", requireAuth, ecosystemPostLimiter, async (req: Request, res: Response) => {
   try {
     const schema = z.object({
       title: z.string().min(3, "Title must be at least 3 characters"),
@@ -334,6 +361,52 @@ router.post("/submissions", requireAuth, async (req: Request, res: Response) => 
   } catch (error: any) {
     console.error("[Ecosystem] Error submitting student notes:", error);
     res.status(400).json({ message: error.message || "Failed to submit notes." });
+  }
+});
+
+/**
+ * PATCH /api/ecosystem/submissions/:id
+ * Student updates & resubmits their submission (e.g. after changes requested)
+ */
+router.patch("/submissions/:id", requireAuth, ecosystemPostLimiter, async (req: Request, res: Response) => {
+  try {
+    const submissionId = Number(req.params.id);
+    const userId = (req.user as any).id;
+
+    const schema = z.object({
+      title: z.string().min(3).optional(),
+      description: z.string().optional().nullable(),
+      content: z.string().optional().nullable(),
+      attachmentUrl: z.string().optional().nullable(),
+      attachmentName: z.string().optional().nullable(),
+      attachmentSize: z.number().optional().nullable(),
+    });
+
+    const body = schema.parse(req.body);
+    const updated = await updateStudentSubmission(submissionId, userId, body);
+    res.json(updated);
+  } catch (error: any) {
+    console.error("[Ecosystem] Error updating submission:", error);
+    const status = error.message.includes("Forbidden") ? 403 : error.message.includes("not found") ? 404 : 400;
+    res.status(status).json({ message: error.message || "Failed to update submission." });
+  }
+});
+
+/**
+ * DELETE /api/ecosystem/submissions/:id
+ * Student withdraws their submission
+ */
+router.delete("/submissions/:id", requireAuth, async (req: Request, res: Response) => {
+  try {
+    const submissionId = Number(req.params.id);
+    const userId = (req.user as any).id;
+
+    await withdrawStudentSubmission(submissionId, userId);
+    res.json({ success: true, message: "Submission withdrawn." });
+  } catch (error: any) {
+    console.error("[Ecosystem] Error withdrawing submission:", error);
+    const status = error.message.includes("Forbidden") ? 403 : error.message.includes("not found") ? 404 : 400;
+    res.status(status).json({ message: error.message || "Failed to withdraw submission." });
   }
 });
 
@@ -431,7 +504,7 @@ router.post("/study-plans", requireAuth, async (req: Request, res: Response) => 
 
 /**
  * PATCH /api/ecosystem/study-plans/tasks/:id/toggle
- * Toggle task completion
+ * Toggle task completion (enforces task ownership)
  */
 router.patch("/study-plans/tasks/:id/toggle", requireAuth, async (req: Request, res: Response) => {
   try {
@@ -443,7 +516,26 @@ router.patch("/study-plans/tasks/:id/toggle", requireAuth, async (req: Request, 
     res.json(updated);
   } catch (error: any) {
     console.error("[Ecosystem] Error toggling study plan task:", error);
-    res.status(500).json({ message: error.message || "Failed to update task." });
+    const status = error.message.includes("access denied") ? 403 : 500;
+    res.status(status).json({ message: error.message || "Failed to update task." });
+  }
+});
+
+/**
+ * DELETE /api/ecosystem/study-plans/:id
+ * Delete a study plan
+ */
+router.delete("/study-plans/:id", requireAuth, async (req: Request, res: Response) => {
+  try {
+    const planId = Number(req.params.id);
+    const userId = (req.user as any).id;
+
+    await deleteStudyPlan(planId, userId);
+    res.json({ success: true, message: "Study plan deleted." });
+  } catch (error: any) {
+    console.error("[Ecosystem] Error deleting study plan:", error);
+    const status = error.message.includes("access denied") ? 403 : 500;
+    res.status(status).json({ message: error.message || "Failed to delete plan." });
   }
 });
 
@@ -496,6 +588,40 @@ router.post("/workspace/notes", requireAuth, async (req: Request, res: Response)
 });
 
 /**
+ * PATCH /api/ecosystem/workspace/notes/:id
+ * Update a personal note
+ */
+router.patch("/workspace/notes/:id", requireAuth, async (req: Request, res: Response) => {
+  try {
+    const noteId = Number(req.params.id);
+    const userId = (req.user as any).id;
+
+    const schema = z.object({
+      title: z.string().min(1),
+      body: z.string().default(""),
+      tags: z.array(z.string()).optional(),
+      isFavorite: z.boolean().optional(),
+    });
+
+    const parsed = schema.parse(req.body);
+    const updated = await updatePersonalNote(
+      userId,
+      noteId,
+      parsed.title,
+      parsed.body,
+      parsed.tags,
+      parsed.isFavorite
+    );
+
+    res.json(updated);
+  } catch (error: any) {
+    console.error("[Ecosystem] Error updating personal note:", error);
+    const status = error.message.includes("access denied") ? 403 : 500;
+    res.status(status).json({ message: error.message || "Failed to update note." });
+  }
+});
+
+/**
  * DELETE /api/ecosystem/workspace/notes/:id
  */
 router.delete("/workspace/notes/:id", requireAuth, async (req: Request, res: Response) => {
@@ -507,7 +633,8 @@ router.delete("/workspace/notes/:id", requireAuth, async (req: Request, res: Res
     res.json({ success: true, message: "Personal note deleted." });
   } catch (error: any) {
     console.error("[Ecosystem] Error deleting personal note:", error);
-    res.status(500).json({ message: error.message || "Failed to delete note." });
+    const status = error.message.includes("access denied") ? 403 : 500;
+    res.status(status).json({ message: error.message || "Failed to delete note." });
   }
 });
 
@@ -528,6 +655,28 @@ router.get("/bookmarks", requireAuth, async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error("[Ecosystem] Error fetching bookmarks:", error);
     res.status(500).json({ message: "Failed to load bookmarks." });
+  }
+});
+
+/**
+ * GET /api/ecosystem/bookmarks/status
+ * Check if an item is bookmarked
+ */
+router.get("/bookmarks/status", requireAuth, async (req: Request, res: Response) => {
+  try {
+    const userId = (req.user as any).id;
+    const itemType = String(req.query.itemType || "");
+    const itemId = Number(req.query.itemId);
+
+    if (!itemType || !itemId || isNaN(itemId)) {
+      return res.status(400).json({ message: "itemType and itemId are required." });
+    }
+
+    const isBookmarked = await getUserBookmarkStatus(userId, itemType, itemId);
+    res.json({ itemType, itemId, isBookmarked });
+  } catch (error: any) {
+    console.error("[Ecosystem] Error checking bookmark status:", error);
+    res.status(500).json({ message: "Failed to check bookmark status." });
   }
 });
 
@@ -564,7 +713,9 @@ router.post("/bookmarks/toggle", requireAuth, async (req: Request, res: Response
 router.get("/study-groups", async (req: Request, res: Response) => {
   try {
     const subjectCode = req.query.subjectCode as string | undefined;
-    const groups = await getStudyGroups(subjectCode);
+    const userId = req.user ? (req.user as any).id : undefined;
+
+    const groups = await getStudyGroups(subjectCode, userId);
     res.json(groups);
   } catch (error: any) {
     console.error("[Ecosystem] Error fetching study groups:", error);
@@ -603,23 +754,62 @@ router.post("/study-groups", requireAuth, async (req: Request, res: Response) =>
 });
 
 /**
+ * POST /api/ecosystem/study-groups/:id/join
+ * Join an academic study group
+ */
+router.post("/study-groups/:id/join", requireAuth, async (req: Request, res: Response) => {
+  try {
+    const groupId = Number(req.params.id);
+    const userId = (req.user as any).id;
+
+    const result = await joinStudyGroup(groupId, userId);
+    res.json(result);
+  } catch (error: any) {
+    console.error("[Ecosystem] Error joining study group:", error);
+    const status = error.message.includes("not found") ? 404 : 400;
+    res.status(status).json({ message: error.message || "Failed to join group." });
+  }
+});
+
+/**
+ * POST /api/ecosystem/study-groups/:id/leave
+ * Leave a study group
+ */
+router.post("/study-groups/:id/leave", requireAuth, async (req: Request, res: Response) => {
+  try {
+    const groupId = Number(req.params.id);
+    const userId = (req.user as any).id;
+
+    const result = await leaveStudyGroup(groupId, userId);
+    res.json(result);
+  } catch (error: any) {
+    console.error("[Ecosystem] Error leaving study group:", error);
+    const status = error.message.includes("not a member") ? 400 : 500;
+    res.status(status).json({ message: error.message || "Failed to leave group." });
+  }
+});
+
+/**
  * GET /api/ecosystem/study-groups/:id/posts
  */
 router.get("/study-groups/:id/posts", async (req: Request, res: Response) => {
   try {
     const groupId = Number(req.params.id);
-    const posts = await getGroupPosts(groupId);
+    const userId = req.user ? (req.user as any).id : undefined;
+
+    const posts = await getGroupPosts(groupId, userId);
     res.json(posts);
   } catch (error: any) {
     console.error("[Ecosystem] Error fetching group posts:", error);
-    res.status(500).json({ message: "Failed to load group posts." });
+    const status = error.message.includes("Forbidden") ? 403 : error.message.includes("not found") ? 404 : 500;
+    res.status(status).json({ message: error.message || "Failed to load group posts." });
   }
 });
 
 /**
  * POST /api/ecosystem/study-groups/:id/posts
  */
-router.post("/study-groups/:id/posts", requireAuth, async (req: Request, res: Response) => {
+router.post("/study-groups/:id/posts", requireAuth, ecosystemPostLimiter, async (req: Request, res: Response) => {
   try {
     const groupId = Number(req.params.id);
     const userId = (req.user as any).id;
@@ -633,7 +823,8 @@ router.post("/study-groups/:id/posts", requireAuth, async (req: Request, res: Re
     res.status(201).json(post);
   } catch (error: any) {
     console.error("[Ecosystem] Error creating group post:", error);
-    res.status(500).json({ message: error.message || "Failed to create post." });
+    const status = error.message.includes("join this study group") ? 403 : 400;
+    res.status(status).json({ message: error.message || "Failed to create post." });
   }
 });
 
@@ -712,9 +903,9 @@ router.post("/feedback/report", requireAuth, async (req: Request, res: Response)
 
 /**
  * POST /api/ecosystem/ai/explain
- * Explain concept with guaranteed syllabus-linked fallback
+ * Explain concept with guaranteed syllabus-linked fallback and rate limiting
  */
-router.post("/ai/explain", async (req: Request, res: Response) => {
+router.post("/ai/explain", aiTutorLimiter, async (req: Request, res: Response) => {
   try {
     const { concept, subjectCode } = req.body;
     if (!concept || typeof concept !== "string" || !concept.trim()) {

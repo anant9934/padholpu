@@ -14,7 +14,8 @@ import {
   type PersonalNote, type Bookmark,
   type StudyGroup, type StudyGroupPost
 } from "../../shared/schema";
-import { eq, and, desc, sql, asc, inArray, gte, lte } from "drizzle-orm";
+import { eq, and, or, desc, sql, asc, inArray, gte, lte } from "drizzle-orm";
+import { invalidatePattern, delCache } from "../lib/redis";
 
 // ============================================================================
 // 1. FLASHCARDS & SM-2 SPACED REPETITION ENGINE
@@ -31,6 +32,7 @@ export interface SM2Result {
 /**
  * Computes next review schedule using the SuperMemo SM-2 algorithm.
  * Quality rating: 0 (blackout) to 5 (perfect recall).
+ * Hardened against NaN, non-finite, and negative edge-case inputs.
  */
 export function calculateSM2(
   quality: number, // 0 - 5
@@ -38,11 +40,14 @@ export function calculateSM2(
   currentInterval: number = 0,
   currentRepetitions: number = 0
 ): SM2Result {
-  // Clamp quality between 0 and 5
-  const q = Math.max(0, Math.min(5, Math.round(quality)));
-  let repetitions = currentRepetitions;
-  let intervalDays = currentInterval;
-  let easeFactor = currentEaseFactor;
+  // 1. Sanitize & clamp quality between 0 and 5
+  const validQuality = Number.isFinite(quality) ? quality : 0;
+  const q = Math.max(0, Math.min(5, Math.round(validQuality)));
+
+  // 2. Sanitize existing repetition stats
+  let repetitions = Number.isFinite(currentRepetitions) && currentRepetitions >= 0 ? Math.round(currentRepetitions) : 0;
+  let intervalDays = Number.isFinite(currentInterval) && currentInterval >= 0 ? Math.round(currentInterval) : 0;
+  let easeFactor = Number.isFinite(currentEaseFactor) && currentEaseFactor >= 1.3 ? currentEaseFactor : 2.5;
 
   if (q >= 3) {
     if (repetitions === 0) {
@@ -75,15 +80,39 @@ export function calculateSM2(
   };
 }
 
-export async function getDecksForSubject(subjectId?: number, unitId?: number) {
-  const conditions = [eq(flashcardDecks.isPublic, true)];
+/**
+ * Fetch flashcard decks for subject/unit.
+ * If userId is provided, returns public decks OR user's own private decks.
+ */
+export async function getDecksForSubject(subjectId?: number, unitId?: number, userId?: number) {
+  const conditions = [];
+
+  if (userId) {
+    conditions.push(or(eq(flashcardDecks.isPublic, true), eq(flashcardDecks.createdBy, userId)));
+  } else {
+    conditions.push(eq(flashcardDecks.isPublic, true));
+  }
+
   if (subjectId) conditions.push(eq(flashcardDecks.subjectId, subjectId));
   if (unitId) conditions.push(eq(flashcardDecks.unitId, unitId));
 
   return db.select().from(flashcardDecks).where(and(...conditions)).orderBy(desc(flashcardDecks.createdAt));
 }
 
+/**
+ * Fetch cards for deck with privacy verification.
+ */
 export async function getCardsForDeck(deckId: number, userId?: number) {
+  const [deck] = await db.select().from(flashcardDecks).where(eq(flashcardDecks.id, deckId));
+  if (!deck) {
+    throw new Error("Deck not found");
+  }
+
+  // Privacy check: If deck is private, caller must be the creator
+  if (!deck.isPublic && deck.createdBy !== userId) {
+    throw new Error("Forbidden: This flashcard deck is private.");
+  }
+
   const cards = await db.select().from(flashcards).where(eq(flashcards.deckId, deckId)).orderBy(asc(flashcards.orderIndex));
 
   if (!userId) {
@@ -105,7 +134,15 @@ export async function getCardsForDeck(deckId: number, userId?: number) {
   }));
 }
 
+/**
+ * Records flashcard review with card existence check and SM-2 calculation.
+ */
 export async function recordFlashcardReview(userId: number, cardId: number, quality: number) {
+  const [card] = await db.select().from(flashcards).where(eq(flashcards.id, cardId));
+  if (!card) {
+    throw new Error("Flashcard not found");
+  }
+
   const [existing] = await db.select().from(userFlashcardReviews).where(
     and(eq(userFlashcardReviews.userId, userId), eq(userFlashcardReviews.cardId, cardId))
   );
@@ -146,25 +183,54 @@ export async function recordFlashcardReview(userId: number, cardId: number, qual
 // 2. SUBJECTIVE QUESTION BANK & MODEL ANSWERS
 // ============================================================================
 
-export async function getSubjectiveQuestions(params: {
-  subjectId?: number;
-  unitId?: number;
-  difficulty?: string;
-  limit?: number;
-}) {
+export async function getSubjectiveQuestions(
+  params: {
+    subjectId?: number;
+    unitId?: number;
+    difficulty?: string;
+    limit?: number;
+  },
+  userId?: number
+) {
   const conditions = [];
   if (params.subjectId) conditions.push(eq(subjectiveQuestions.subjectId, params.subjectId));
   if (params.unitId) conditions.push(eq(subjectiveQuestions.unitId, params.unitId));
   if (params.difficulty) conditions.push(eq(subjectiveQuestions.difficulty, params.difficulty));
 
-  return db.select()
+  const questions = await db.select()
     .from(subjectiveQuestions)
     .where(conditions.length ? and(...conditions) : undefined)
     .orderBy(desc(subjectiveQuestions.createdAt))
     .limit(params.limit || 50);
+
+  if (!userId || questions.length === 0) {
+    return questions.map((q: any) => ({ ...q, userAnswer: null }));
+  }
+
+  // Load student's saved drafts/answers
+  const userAnswers = await db.select()
+    .from(userSubjectiveAnswers)
+    .where(
+      and(
+        eq(userSubjectiveAnswers.userId, userId),
+        inArray(userSubjectiveAnswers.questionId, questions.map((q: any) => q.id))
+      )
+    );
+
+  const answerMap = new Map(userAnswers.map((a: any) => [a.questionId, a]));
+
+  return questions.map((q: any) => ({
+    ...q,
+    userAnswer: answerMap.get(q.id) || null,
+  }));
 }
 
 export async function saveSubjectiveAnswer(userId: number, questionId: number, studentAnswer: string, selfRating?: number) {
+  const [question] = await db.select().from(subjectiveQuestions).where(eq(subjectiveQuestions.id, questionId));
+  if (!question) {
+    throw new Error("Subjective question not found");
+  }
+
   const [existing] = await db.select().from(userSubjectiveAnswers).where(
     and(eq(userSubjectiveAnswers.userId, userId), eq(userSubjectiveAnswers.questionId, questionId))
   );
@@ -203,6 +269,48 @@ export async function getStudentSubmissions(userId: number) {
   return db.select().from(noteSubmissions).where(eq(noteSubmissions.studentId, userId)).orderBy(desc(noteSubmissions.createdAt));
 }
 
+export async function updateStudentSubmission(
+  submissionId: number,
+  studentId: number,
+  data: Partial<InsertNoteSubmission>
+) {
+  const [sub] = await db.select().from(noteSubmissions).where(eq(noteSubmissions.id, submissionId));
+  if (!sub) throw new Error("Submission not found");
+  if (sub.studentId !== studentId) {
+    throw new Error("Forbidden: You cannot modify another student's submission.");
+  }
+  if (sub.status === "published") {
+    throw new Error("Published notes cannot be edited directly. Please submit an update.");
+  }
+
+  const [updated] = await db.update(noteSubmissions).set({
+    title: data.title ?? sub.title,
+    description: data.description ?? sub.description,
+    content: data.content ?? sub.content,
+    attachmentUrl: data.attachmentUrl ?? sub.attachmentUrl,
+    attachmentName: data.attachmentName ?? sub.attachmentName,
+    attachmentSize: data.attachmentSize ?? sub.attachmentSize,
+    status: "pending", // Resubmit to moderation queue
+    updatedAt: new Date(),
+  }).where(eq(noteSubmissions.id, submissionId)).returning();
+
+  return updated;
+}
+
+export async function withdrawStudentSubmission(submissionId: number, studentId: number) {
+  const [sub] = await db.select().from(noteSubmissions).where(eq(noteSubmissions.id, submissionId));
+  if (!sub) throw new Error("Submission not found");
+  if (sub.studentId !== studentId) {
+    throw new Error("Forbidden: You cannot withdraw another student's submission.");
+  }
+  if (sub.status === "published") {
+    throw new Error("Published notes cannot be withdrawn directly. Please contact moderation support.");
+  }
+
+  await db.delete(noteSubmissions).where(eq(noteSubmissions.id, submissionId));
+  return true;
+}
+
 export async function getModerationQueue(status: string = "pending") {
   return db.select({
     submission: noteSubmissions,
@@ -238,28 +346,34 @@ export async function moderateNoteSubmission(
     throw new Error("Self-approval is strictly prohibited under institutional academic policies.");
   }
 
-  let publishedResourceId: number | null = null;
+  let publishedResourceId = sub.publishedResourceId;
 
   if (decision === "approved") {
-    // Promote approved submission into the official resources library
-    const [uploader] = await db.select().from(users).where(eq(users.id, sub.studentId));
-    const [subSubject] = await db.select().from(subjects).where(eq(subjects.id, sub.subjectId));
+    // Prevent duplicate resource creation if already approved/published
+    if (!publishedResourceId) {
+      const [uploader] = await db.select().from(users).where(eq(users.id, sub.studentId));
+      const [subSubject] = await db.select().from(subjects).where(eq(subjects.id, sub.subjectId));
 
-    const [published] = await db.insert(resources).values({
-      title: sub.title,
-      subject: subSubject?.code || "GENERAL",
-      type: "Notes",
-      url: sub.attachmentUrl || `/notes/submitted/${sub.id}`,
-      filename: sub.attachmentName || `${sub.title.replace(/\s+/g, '_')}.pdf`,
-      fileSize: sub.attachmentSize || 1024,
-      uploaderId: sub.studentId,
-      uploaderName: uploader?.fullName || "Student Scholar",
-      uploaderUsername: uploader?.username || "contributor",
-      uploadedBy: sub.studentId,
-      isBoosted: false,
-    }).returning();
+      const [published] = await db.insert(resources).values({
+        title: sub.title,
+        subject: subSubject?.code || "GENERAL",
+        type: "Notes",
+        url: sub.attachmentUrl || `/notes/submitted/${sub.id}`,
+        filename: sub.attachmentName || `${sub.title.replace(/\s+/g, '_')}.pdf`,
+        fileSize: sub.attachmentSize || 1024,
+        uploaderId: sub.studentId,
+        uploaderName: uploader?.fullName || "Student Scholar",
+        uploaderUsername: uploader?.username || "contributor",
+        uploadedBy: sub.studentId,
+        isBoosted: false,
+      }).returning();
 
-    publishedResourceId = published.id;
+      publishedResourceId = published.id;
+
+      // Invalidate public catalog & system stats caches
+      invalidatePattern("padholpu:resources:*").catch(() => {});
+      delCache("padholpu:stats:system").catch(() => {});
+    }
   }
 
   const [updated] = await db.update(noteSubmissions).set({
@@ -286,45 +400,78 @@ export async function generateStudyPlan(
   dailyStudyHours: number = 2.0,
   examType: string = "END_TERM"
 ) {
-  // 1. Create main plan
+  // 1. Validate Target Exam Date
+  const now = new Date();
+  if (isNaN(targetExamDate.getTime())) {
+    throw new Error("Invalid target exam date.");
+  }
+  // Exam date must be in the future (at least end of today)
+  if (targetExamDate.getTime() < now.getTime() - 24 * 60 * 60 * 1000) {
+    throw new Error("Exam date must be scheduled in the future.");
+  }
+
+  // Normalize subject codes
+  const normalizedCodes = selectedSubjectCodes.map(c => c.trim().toUpperCase()).filter(Boolean);
+  if (normalizedCodes.length === 0) {
+    throw new Error("Please specify at least one subject code.");
+  }
+
+  // 2. Create main plan
   const [plan] = await db.insert(studyPlans).values({
     userId,
     title,
     targetExamDate,
-    selectedSubjectCodes,
-    dailyStudyHours,
+    selectedSubjectCodes: normalizedCodes,
+    dailyStudyHours: Math.max(0.5, Math.min(16, dailyStudyHours)),
     examType,
     isActive: true,
   }).returning();
 
-  // 2. Fetch all units for the selected subject codes
-  const subRows = await db.select().from(subjects).where(inArray(subjects.code, selectedSubjectCodes));
+  // 3. Fetch all units for the selected subject codes
+  const subRows = await db.select().from(subjects).where(inArray(subjects.code, normalizedCodes));
   const subIds = subRows.map((s: any) => s.id);
   const unitsList = subIds.length
     ? await db.select().from(units).where(inArray(units.subjectId, subIds)).orderBy(units.unitNumber)
     : [];
 
-  // 3. Evenly distribute units across the days remaining before target exam date
-  const now = new Date();
   const diffDays = Math.max(1, Math.ceil((targetExamDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
-  
   const tasksToInsert = [];
   let dayOffset = 0;
 
-  for (const u of unitsList) {
-    const targetDate = new Date(now.getTime() + (dayOffset % diffDays) * 24 * 60 * 60 * 1000);
-    const dateStr = targetDate.toISOString().split("T")[0];
-    const sub = subRows.find((s: any) => s.id === u.subjectId);
+  if (unitsList.length > 0) {
+    for (const u of unitsList) {
+      const targetDate = new Date(now.getTime() + (dayOffset % diffDays) * 24 * 60 * 60 * 1000);
+      const dateStr = targetDate.toISOString().split("T")[0];
+      const sub = subRows.find((s: any) => s.id === u.subjectId);
 
-    tasksToInsert.push({
-      planId: plan.id,
-      subjectCode: sub?.code || "COURSE",
-      unitNumber: u.unitNumber,
-      title: `Master Unit ${u.unitNumber}: ${u.unitName} (${sub?.code})`,
-      scheduledDate: dateStr,
-      isCompleted: false,
-    });
-    dayOffset++;
+      tasksToInsert.push({
+        planId: plan.id,
+        subjectCode: sub?.code || "COURSE",
+        unitNumber: u.unitNumber,
+        title: `Master Unit ${u.unitNumber}: ${u.unitName} (${sub?.code})`,
+        scheduledDate: dateStr,
+        isCompleted: false,
+      });
+      dayOffset++;
+    }
+  } else {
+    // If subjects don't have units populated in DB, generate standard syllabus units 1-5
+    for (const code of normalizedCodes) {
+      for (let unitNum = 1; unitNum <= 5; unitNum++) {
+        const targetDate = new Date(now.getTime() + (dayOffset % diffDays) * 24 * 60 * 60 * 1000);
+        const dateStr = targetDate.toISOString().split("T")[0];
+
+        tasksToInsert.push({
+          planId: plan.id,
+          subjectCode: code,
+          unitNumber: unitNum,
+          title: `Master Unit ${unitNum}: Core Syllabus Concepts (${code})`,
+          scheduledDate: dateStr,
+          isCompleted: false,
+        });
+        dayOffset++;
+      }
+    }
   }
 
   if (tasksToInsert.length > 0) {
@@ -374,6 +521,14 @@ export async function toggleStudyPlanTask(taskId: number, userId: number, isComp
   return updated;
 }
 
+export async function deleteStudyPlan(planId: number, userId: number) {
+  const [plan] = await db.select().from(studyPlans).where(and(eq(studyPlans.id, planId), eq(studyPlans.userId, userId)));
+  if (!plan) throw new Error("Study plan not found or access denied");
+
+  await db.delete(studyPlans).where(eq(studyPlans.id, planId));
+  return true;
+}
+
 // ============================================================================
 // 5. PERSONAL KNOWLEDGE WORKSPACE & BOOKMARKS
 // ============================================================================
@@ -394,13 +549,46 @@ export async function createPersonalNote(userId: number, title: string, body: st
   return note;
 }
 
+export async function updatePersonalNote(userId: number, noteId: number, title: string, body: string, tags?: string[], isFavorite?: boolean) {
+  const [existing] = await db.select().from(personalNotes).where(and(eq(personalNotes.id, noteId), eq(personalNotes.userId, userId)));
+  if (!existing) {
+    throw new Error("Personal note not found or access denied");
+  }
+
+  const [updated] = await db.update(personalNotes).set({
+    title,
+    body,
+    tags: tags ?? existing.tags,
+    isFavorite: isFavorite !== undefined ? isFavorite : existing.isFavorite,
+    updatedAt: new Date(),
+  }).where(eq(personalNotes.id, noteId)).returning();
+
+  return updated;
+}
+
 export async function deletePersonalNote(userId: number, noteId: number) {
-  await db.delete(personalNotes).where(and(eq(personalNotes.id, noteId), eq(personalNotes.userId, userId)));
+  const [existing] = await db.select().from(personalNotes).where(and(eq(personalNotes.id, noteId), eq(personalNotes.userId, userId)));
+  if (!existing) {
+    throw new Error("Personal note not found or access denied");
+  }
+
+  await db.delete(personalNotes).where(eq(personalNotes.id, noteId));
   return true;
 }
 
 export async function getUserBookmarks(userId: number) {
   return db.select().from(bookmarks).where(eq(bookmarks.userId, userId)).orderBy(desc(bookmarks.createdAt));
+}
+
+export async function getUserBookmarkStatus(userId: number, itemType: string, itemId: number): Promise<boolean> {
+  const [b] = await db.select().from(bookmarks).where(
+    and(
+      eq(bookmarks.userId, userId),
+      eq(bookmarks.itemType, itemType),
+      eq(bookmarks.itemId, itemId)
+    )
+  );
+  return !!b;
 }
 
 export async function toggleBookmark(userId: number, itemType: string, itemId: number, title: string, link: string) {
@@ -431,11 +619,32 @@ export async function toggleBookmark(userId: number, itemType: string, itemId: n
 // 6. STUDY GROUPS & ACADEMIC COLLABORATION
 // ============================================================================
 
-export async function getStudyGroups(subjectCode?: string) {
+export async function getStudyGroups(subjectCode?: string, userId?: number) {
   const conditions = [eq(studyGroups.isPrivate, false)];
   if (subjectCode) conditions.push(eq(studyGroups.subjectCode, subjectCode));
 
-  return db.select().from(studyGroups).where(and(...conditions)).orderBy(desc(studyGroups.createdAt));
+  const groups = await db.select().from(studyGroups).where(and(...conditions)).orderBy(desc(studyGroups.createdAt));
+
+  if (!userId || groups.length === 0) {
+    return groups.map((g: any) => ({ ...g, isMember: false }));
+  }
+
+  // Load user's memberships
+  const memberships = await db.select()
+    .from(studyGroupMembers)
+    .where(
+      and(
+        eq(studyGroupMembers.userId, userId),
+        inArray(studyGroupMembers.groupId, groups.map((g: any) => g.id))
+      )
+    );
+
+  const memberSet = new Set(memberships.map((m: any) => m.groupId));
+
+  return groups.map((g: any) => ({
+    ...g,
+    isMember: memberSet.has(g.id),
+  }));
 }
 
 export async function createStudyGroup(userId: number, name: string, description: string, subjectCode?: string, isPrivate: boolean = false) {
@@ -448,7 +657,7 @@ export async function createStudyGroup(userId: number, name: string, description
     memberCount: 1,
   }).returning();
 
-  // Add creator as ADMIN
+  // Add creator as ADMIN member
   await db.insert(studyGroupMembers).values({
     groupId: group.id,
     userId,
@@ -458,7 +667,66 @@ export async function createStudyGroup(userId: number, name: string, description
   return group;
 }
 
-export async function getGroupPosts(groupId: number) {
+export async function joinStudyGroup(groupId: number, userId: number) {
+  const [group] = await db.select().from(studyGroups).where(eq(studyGroups.id, groupId));
+  if (!group) throw new Error("Study group not found");
+
+  const [existing] = await db.select().from(studyGroupMembers).where(
+    and(eq(studyGroupMembers.groupId, groupId), eq(studyGroupMembers.userId, userId))
+  );
+
+  if (existing) {
+    return { joined: true, alreadyMember: true };
+  }
+
+  await db.insert(studyGroupMembers).values({
+    groupId,
+    userId,
+    role: "MEMBER",
+  });
+
+  // Increment memberCount
+  await db.update(studyGroups).set({
+    memberCount: sql`${studyGroups.memberCount} + 1`
+  }).where(eq(studyGroups.id, groupId));
+
+  return { joined: true, alreadyMember: false };
+}
+
+export async function leaveStudyGroup(groupId: number, userId: number) {
+  const [membership] = await db.select().from(studyGroupMembers).where(
+    and(eq(studyGroupMembers.groupId, groupId), eq(studyGroupMembers.userId, userId))
+  );
+
+  if (!membership) {
+    throw new Error("You are not a member of this study group");
+  }
+
+  await db.delete(studyGroupMembers).where(
+    and(eq(studyGroupMembers.groupId, groupId), eq(studyGroupMembers.userId, userId))
+  );
+
+  // Decrement memberCount (clamp >= 0)
+  await db.update(studyGroups).set({
+    memberCount: sql`GREATEST(0, ${studyGroups.memberCount} - 1)`
+  }).where(eq(studyGroups.id, groupId));
+
+  return { left: true };
+}
+
+export async function getGroupPosts(groupId: number, userId?: number) {
+  const [group] = await db.select().from(studyGroups).where(eq(studyGroups.id, groupId));
+  if (!group) throw new Error("Study group not found");
+
+  // If private group, user must be a member
+  if (group.isPrivate) {
+    if (!userId) throw new Error("Forbidden: Authentication required for private groups");
+    const [membership] = await db.select().from(studyGroupMembers).where(
+      and(eq(studyGroupMembers.groupId, groupId), eq(studyGroupMembers.userId, userId))
+    );
+    if (!membership) throw new Error("Forbidden: Membership required to view this private group");
+  }
+
   return db.select({
     post: studyGroupPosts,
     author: {
@@ -481,13 +749,26 @@ export async function createGroupPost(groupId: number, userId: number, content: 
   );
 
   if (!membership) {
-    throw new Error("You must be a member of this study group to post.");
+    throw new Error("You must join this study group before posting.");
+  }
+
+  // Sanitize content against stored XSS
+  const sanitized = content
+    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "")
+    .replace(/javascript:/gi, "")
+    .trim();
+
+  if (sanitized.length === 0) {
+    throw new Error("Post content cannot be empty.");
+  }
+  if (sanitized.length > 2000) {
+    throw new Error("Post content exceeds 2000 character maximum limit.");
   }
 
   const [post] = await db.insert(studyGroupPosts).values({
     groupId,
     authorId: userId,
-    content,
+    content: sanitized,
   }).returning();
 
   return post;
@@ -555,25 +836,33 @@ export interface AIExplanationResult {
 
 /**
  * Explains an academic concept or question.
- * If external AI keys (OpenAI / Gemini) are unavailable, uses authoritative syllabus outline fallback.
+ * Protected with request timeout (8s), input sanitization (max 500 chars),
+ * and guaranteed 100% offline syllabus outline fallback with institutional disclaimers.
  */
 export async function getConceptExplanation(topic: string, subjectCode?: string): Promise<AIExplanationResult> {
+  const cleanTopic = topic.trim().slice(0, 500);
+  const cleanSubject = (subjectCode || "computer science & engineering").trim().slice(0, 100);
+
   const hasAIKey = Boolean(process.env.GEMINI_API_KEY || process.env.OPENAI_API_KEY);
 
-  // If real AI provider is configured in production, call it securely here:
+  // If real AI provider is configured in production, call it securely with strict timeout:
   if (hasAIKey && process.env.GEMINI_API_KEY) {
     try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `You are an academic tutor at Lovely Professional University for ${subjectCode || "computer science & engineering"}. Explain the following concept clearly with key examination points, practical code/example, and common exam mistakes: "${topic}". Keep response formatted in clean markdown.`
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{
+                text: `You are an academic tutor at Lovely Professional University for ${cleanSubject}. Explain the following concept clearly with key examination points, practical code/example, and common exam mistakes: "${cleanTopic}". Keep response formatted in clean markdown.`
+              }]
             }]
-          }]
-        })
-      });
+          }),
+          signal: AbortSignal.timeout(8000), // 8-second strict timeout
+        }
+      );
       const data = await response.json();
       const generated = data.candidates?.[0]?.content?.parts?.[0]?.text;
       if (generated) {
@@ -595,8 +884,8 @@ export async function getConceptExplanation(topic: string, subjectCode?: string)
   // Authoritative Academic Knowledge Fallback (Guaranteed to work 100% offline & without third-party API keys)
   return {
     isAIGenerated: false,
-    explanation: `### Academic Concept Overview: ${topic}\n\n` +
-      `This core syllabus topic is critical for both Continuous Assessment (CA) and End-Term Examinations in ${subjectCode || "your curriculum"}.\n\n` +
+    explanation: `### Academic Concept Overview: ${cleanTopic}\n\n` +
+      `This core syllabus topic is critical for both Continuous Assessment (CA) and End-Term Examinations in ${cleanSubject}.\n\n` +
       `#### Core Theoretical Fundamentals\n` +
       `1. **Definition & Purpose:** Establishes the foundational logic and design patterns required for academic coursework.\n` +
       `2. **Key Mechanisms:** Involves modular decomposition, optimal resource management, and adherence to standard algorithmic complexity limits.\n` +

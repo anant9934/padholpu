@@ -154,3 +154,33 @@ export const contactLimiter = rateLimit({
   message: { message: "Too many contact requests. Please wait before submitting again." },
   validate: false,
 });
+
+/** AI Concept Explainer: 15 per minute per IP / user (prevents quota exhaustion & spam) */
+export const aiTutorLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 15,
+  store: new DistributedRateLimitStore("ai_tutor"),
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => {
+    const user = req.user as any;
+    return user ? `uid:${user.id}` : (req.ip ?? "unknown");
+  },
+  message: { message: "AI tutor rate threshold reached. Please wait a minute before requesting another explanation." },
+  validate: false,
+});
+
+/** Study Group Discussions & Submissions: 20 per minute per user */
+export const ecosystemPostLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 20,
+  store: new DistributedRateLimitStore("eco_post"),
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => {
+    const user = req.user as any;
+    return user ? `uid:${user.id}` : (req.ip ?? "unknown");
+  },
+  message: { message: "Posting too quickly. Please wait before submitting again." },
+  validate: false,
+});
