@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRoute, Link } from "wouter";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -11,9 +11,7 @@ import {
   GraduationCap,
   BookOpen,
   FileText,
-  BrainCircuit,
   Award,
-  ChevronRight,
   CheckCircle2,
   Scale,
   Briefcase,
@@ -23,10 +21,10 @@ import {
   Calculator,
   Globe,
   Palette,
-  Sparkles,
-  ExternalLink,
   Upload,
-  ArrowLeft
+  ArrowLeft,
+  Search,
+  Sparkles,
 } from "lucide-react";
 
 const DISCIPLINE_ICONS: Record<string, any> = {
@@ -52,12 +50,32 @@ const DISCIPLINE_COLORS: Record<string, string> = {
 };
 
 export default function ProgrammeDetailPage() {
-  const [, params] = useRoute("/programmes/:code");
-  const code = params?.code || "";
+  const [, paramsBase] = useRoute("/programmes/:code");
+  const [, paramsSem1] = useRoute("/programmes/:code/semesters/:semester");
+  const [, paramsSem2] = useRoute("/programmes/:code/semester/:semester");
+
+  const code = paramsSem1?.code || paramsSem2?.code || paramsBase?.code || "";
+  const routeSemester = paramsSem1?.semester || paramsSem2?.semester;
+
+  const urlSearch = typeof window !== "undefined" ? window.location.search : "";
+  const urlParams = new URLSearchParams(urlSearch);
+  const querySemester = urlParams.get("semester");
+  const targetSemester = routeSemester ? Number(routeSemester) : (querySemester ? Number(querySemester) : null);
+
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const [activeSemester, setActiveSemester] = useState<number>(1);
+  const [activeSemester, setActiveSemester] = useState<number>(
+    targetSemester && !isNaN(targetSemester) && targetSemester > 0 ? targetSemester : 1
+  );
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
+
+  useEffect(() => {
+    if (targetSemester && !isNaN(targetSemester) && targetSemester > 0) {
+      setActiveSemester(targetSemester);
+    }
+  }, [targetSemester]);
 
   const { data: programme, isLoading } = useQuery<any>({
     queryKey: ["/api/academic/programmes", code],
@@ -131,9 +149,111 @@ export default function ProgrammeDetailPage() {
   const Icon = DISCIPLINE_ICONS[prog.discipline] || GraduationCap;
   const badgeClass = DISCIPLINE_COLORS[prog.discipline] || "bg-muted text-foreground";
   const isPrimary = userProfile?.programme?.id === prog.id;
-  const semesterSubjects: any[] = Array.isArray(programme.semesters)
+
+  const rawSemesterSubjects: any[] = Array.isArray(programme.semesters)
     ? (programme.semesters.find((s: any) => Number(s.semester) === activeSemester)?.subjects || [])
     : (programme.semesters?.[activeSemester] || []);
+
+  // Deduplicate by code strictly
+  const semesterSubjects = rawSemesterSubjects.filter((subj, idx, self) =>
+    idx === self.findIndex((s) => s.code === subj.code)
+  );
+
+  const hasCore = semesterSubjects.some((s) => s.category === "Core" || s.isCore === true);
+  const totalSkillCount = semesterSubjects.filter((s) => s.category === "Skill Enhancement").length;
+  const hasCategories = hasCore && totalSkillCount > 0;
+
+  // Filter by search query
+  const queryFiltered = semesterSubjects.filter((s) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase().trim();
+    return (
+      s.code.toLowerCase().includes(q) ||
+      s.name.toLowerCase().includes(q) ||
+      (s.description && s.description.toLowerCase().includes(q))
+    );
+  });
+
+  // Filtered splits
+  const filteredCore = queryFiltered.filter((s) => s.category === "Core" || s.isCore === true);
+  const filteredSkill = queryFiltered.filter((s) => s.category === "Skill Enhancement");
+
+  const filteredSubjects = queryFiltered.filter((s) => {
+    if (selectedCategory === "ALL") return true;
+    if (selectedCategory === "Core") return s.category === "Core" || s.isCore === true;
+    if (selectedCategory === "Skill Enhancement") return s.category === "Skill Enhancement";
+    return true;
+  });
+
+  const renderSubjectCard = (subj: any) => {
+    const isCore = subj.category === "Core" || subj.isCore === true;
+    return (
+      <Card
+        key={subj.id || subj.code}
+        id={`subject-card-${subj.code.toLowerCase()}`}
+        className="border border-border/80 hover:border-[#9A6205]/40 transition-all flex flex-col justify-between shadow-xs hover:shadow-sm"
+      >
+        <CardHeader className="pb-3 bg-muted/15">
+          <div className="flex items-center justify-between gap-2 mb-1.5">
+            <Badge
+              variant="outline"
+              className="font-mono text-[11px] font-bold text-[#8f5200] dark:text-[#c8830a] bg-amber-50/50 dark:bg-amber-950/20 border-amber-200/60 dark:border-amber-900/40"
+            >
+              {subj.code}
+            </Badge>
+            <div className="flex items-center gap-1.5">
+              <Badge
+                variant="secondary"
+                className={`text-[10px] font-semibold ${
+                  isCore
+                    ? "bg-amber-100/80 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300"
+                    : "bg-emerald-100/80 text-emerald-900 dark:bg-emerald-950/60 dark:text-emerald-300"
+                }`}
+              >
+                {subj.category || (isCore ? "Core" : "Skill Enhancement")}
+              </Badge>
+              <Badge variant="outline" className="text-[10px]">
+                {subj.credits} Credits
+              </Badge>
+            </div>
+          </div>
+          <CardTitle className="text-base font-bold text-foreground leading-snug">
+            {subj.name}
+          </CardTitle>
+          {subj.description && (
+            <p className="text-xs text-muted-foreground line-clamp-2 mt-1 leading-relaxed">
+              {subj.description}
+            </p>
+          )}
+        </CardHeader>
+
+        <CardContent className="pt-4 space-y-3">
+          <div className="flex items-center justify-between text-xs text-muted-foreground bg-muted/30 px-3 py-1.5 rounded-lg border border-border/40">
+            <span>Syllabus: <strong>{subj.totalUnits || 5} Units</strong></span>
+            <span>Level: <strong>Semester {activeSemester}</strong></span>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2 pt-1">
+            <Link href={`/learn?subject=${encodeURIComponent(subj.code)}`}>
+              <Button size="sm" variant="outline" className="w-full text-[11px] h-8 px-2">
+                <BookOpen className="w-3 h-3 mr-1 text-[#8f5200] dark:text-[#c8830a]" /> Notes
+              </Button>
+            </Link>
+            <Link href={`/practice?course=${encodeURIComponent(subj.code)}`}>
+              <Button size="sm" variant="outline" className="w-full text-[11px] h-8 px-2">
+                <FileText className="w-3 h-3 mr-1 text-[#8f5200] dark:text-[#c8830a]" /> MCQs
+              </Button>
+            </Link>
+            <Link href={`/subjective?subject=${encodeURIComponent(subj.code)}`}>
+              <Button size="sm" className="w-full text-[11px] h-8 px-2 bg-[#9A6205] hover:bg-[#835203] text-white">
+                <Award className="w-3 h-3 mr-1" /> Written
+              </Button>
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
@@ -270,16 +390,101 @@ export default function ProgrammeDetailPage() {
           <span className="text-xs text-muted-foreground">Select a semester to inspect enrolled subjects</span>
         </div>
 
-        <Tabs value={String(activeSemester)} onValueChange={(val) => setActiveSemester(Number(val))}>
+        <Tabs
+          value={String(activeSemester)}
+          onValueChange={(val) => {
+            setActiveSemester(Number(val));
+            setSelectedCategory("ALL");
+            setSearchQuery("");
+          }}
+        >
           <TabsList className="bg-muted/40 p-1 rounded-xl flex-wrap h-auto">
             {Array.from({ length: prog.totalSemesters || 8 }, (_, i) => i + 1).map((sem) => (
-              <TabsTrigger key={sem} value={String(sem)} className="text-xs px-3.5 py-1.5 rounded-lg font-medium">
+              <TabsTrigger
+                key={sem}
+                value={String(sem)}
+                id={`tab-semester-${sem}`}
+                className="text-xs px-3.5 py-1.5 rounded-lg font-medium"
+              >
                 Sem {sem}
               </TabsTrigger>
             ))}
           </TabsList>
 
-          <TabsContent value={String(activeSemester)} className="mt-6 space-y-4">
+          <TabsContent value={String(activeSemester)} className="mt-6 space-y-6">
+            {/* Semester Header & Search Filter Bar */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-card border border-border/80 shadow-xs">
+              <div>
+                <h3 className="text-xl md:text-2xl font-serif font-bold text-foreground flex items-center gap-2.5">
+                  <span>Semester {activeSemester}</span>
+                  <Badge variant="outline" className="font-mono text-xs font-semibold">
+                    {filteredSubjects.length} of {semesterSubjects.length} Subjects
+                  </Badge>
+                </h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Verified curriculum syllabus aligned with Lovely Professional University guidelines
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                <div className="relative">
+                  <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type="text"
+                    id="curriculum-search-input"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search by code or title..."
+                    className="w-full sm:w-56 pl-8 pr-3 py-1.5 text-xs rounded-lg border border-border bg-background focus:outline-none focus:ring-1 focus:ring-amber-500"
+                  />
+                </div>
+
+                {hasCategories && (
+                  <div className="flex items-center gap-1 bg-muted/40 p-1 rounded-lg border border-border/60">
+                    <button
+                      type="button"
+                      id="filter-category-all"
+                      onClick={() => setSelectedCategory("ALL")}
+                      className={`px-2.5 py-1 text-xs rounded-md transition-all ${
+                        selectedCategory === "ALL"
+                          ? "bg-background shadow-xs text-foreground font-semibold"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      All ({queryFiltered.length})
+                    </button>
+                    <button
+                      type="button"
+                      id="filter-category-core"
+                      onClick={() => setSelectedCategory("Core")}
+                      className={`px-2.5 py-1 text-xs rounded-md transition-all ${
+                        selectedCategory === "Core"
+                          ? "bg-background shadow-xs text-foreground font-semibold"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      Core ({filteredCore.length})
+                    </button>
+                    {totalSkillCount > 0 && (
+                      <button
+                        type="button"
+                        id="filter-category-skill"
+                        onClick={() => setSelectedCategory("Skill Enhancement")}
+                        className={`px-2.5 py-1 text-xs rounded-md transition-all ${
+                          selectedCategory === "Skill Enhancement"
+                            ? "bg-background shadow-xs text-foreground font-semibold"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        Skill ({filteredSkill.length})
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Content rendering */}
             {semesterSubjects.length === 0 ? (
               <Card className="text-center py-16 border-dashed">
                 <CardContent className="space-y-3">
@@ -295,55 +500,103 @@ export default function ProgrammeDetailPage() {
                   </Link>
                 </CardContent>
               </Card>
+            ) : filteredSubjects.length === 0 ? (
+              <Card className="text-center py-12 border-dashed">
+                <CardContent className="space-y-2">
+                  <Search className="w-6 h-6 text-muted-foreground mx-auto" />
+                  <h3 className="text-sm font-bold text-foreground">No Subjects Matching Filter</h3>
+                  <p className="text-xs text-muted-foreground">
+                    No subjects in Semester {activeSemester} matched "{searchQuery}".
+                  </p>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-xs mt-2"
+                    onClick={() => {
+                      setSearchQuery("");
+                      setSelectedCategory("ALL");
+                    }}
+                  >
+                    Reset Filters
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : hasCategories ? (
+              <div className="space-y-8">
+                {/* 1. Core Subjects Section */}
+                {(selectedCategory === "ALL" || selectedCategory === "Core") && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between pb-1 border-b border-border/50">
+                      <h4 className="text-base md:text-lg font-bold font-serif text-foreground flex items-center gap-2">
+                        <span>Core Subjects — {filteredCore.length}</span>
+                        <Badge
+                          variant="outline"
+                          className="text-[10px] bg-amber-50 text-amber-900 dark:bg-amber-950/40 dark:text-amber-300 border-amber-300"
+                        >
+                          Core Curriculum
+                        </Badge>
+                      </h4>
+                      <span className="text-xs text-muted-foreground font-mono">
+                        {filteredCore.length} {filteredCore.length === 1 ? "Subject" : "Subjects"}
+                      </span>
+                    </div>
+
+                    {filteredCore.length === 0 ? (
+                      <p className="text-xs text-muted-foreground italic py-2">
+                        No core subjects match the current search query.
+                      </p>
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {filteredCore.map(renderSubjectCard)}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* 2. Skill Enhancement Subjects Section */}
+                {(selectedCategory === "ALL" || selectedCategory === "Skill Enhancement") && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between pb-1 border-b border-border/50">
+                      <h4 className="text-base md:text-lg font-bold font-serif text-foreground flex items-center gap-2">
+                        <span>Skill Enhancement Subjects — {filteredSkill.length}</span>
+                        <Badge
+                          variant="outline"
+                          className="text-[10px] bg-emerald-50 text-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-300"
+                        >
+                          Applied Specialization
+                        </Badge>
+                      </h4>
+                      <span className="text-xs text-muted-foreground font-mono">
+                        {filteredSkill.length} {filteredSkill.length === 1 ? "Subject" : "Subjects"}
+                      </span>
+                    </div>
+
+                    {filteredSkill.length === 0 ? (
+                      <p className="text-xs text-muted-foreground italic py-2">
+                        No skill enhancement subjects match the current search query.
+                      </p>
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {filteredSkill.map(renderSubjectCard)}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {semesterSubjects.map((subj: any) => (
-                  <Card key={subj.id} className="border border-border/80 hover:border-[#9A6205]/40 transition-all flex flex-col justify-between">
-                    <CardHeader className="pb-3 bg-muted/15">
-                      <div className="flex items-center justify-between gap-2 mb-1">
-                        <Badge variant="outline" className="font-mono text-[11px] font-bold text-[#8f5200] dark:text-[#c8830a]">
-                          {subj.code}
-                        </Badge>
-                        <Badge variant="secondary" className="text-[10px]">
-                          {subj.category || "Core"} · {subj.credits} Credits
-                        </Badge>
-                      </div>
-                      <CardTitle className="text-base font-bold text-foreground leading-snug">
-                        {subj.name}
-                      </CardTitle>
-                      {subj.description && (
-                        <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
-                          {subj.description}
-                        </p>
-                      )}
-                    </CardHeader>
-
-                    <CardContent className="pt-4 space-y-3">
-                      <div className="flex items-center justify-between text-xs text-muted-foreground bg-muted/30 px-3 py-1.5 rounded-lg border border-border/40">
-                        <span>Syllabus: <strong>{subj.totalUnits || 5} Units</strong></span>
-                        <span>Level: <strong>Semester {activeSemester}</strong></span>
-                      </div>
-
-                      <div className="grid grid-cols-3 gap-2 pt-1">
-                        <Link href={`/learn?subject=${encodeURIComponent(subj.code)}`}>
-                          <Button size="sm" variant="outline" className="w-full text-[11px] h-8 px-2">
-                            <BookOpen className="w-3 h-3 mr-1" /> Notes
-                          </Button>
-                        </Link>
-                        <Link href={`/practice?course=${encodeURIComponent(subj.code)}`}>
-                          <Button size="sm" variant="outline" className="w-full text-[11px] h-8 px-2">
-                            <FileText className="w-3 h-3 mr-1" /> MCQs
-                          </Button>
-                        </Link>
-                        <Link href="/subjective">
-                          <Button size="sm" className="w-full text-[11px] h-8 px-2 bg-[#9A6205] hover:bg-[#835203] text-white">
-                            <Award className="w-3 h-3 mr-1" /> Written
-                          </Button>
-                        </Link>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+              /* Fallback for Semesters with only Core or Uncategorized Subjects */
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-1 border-b border-border/50">
+                  <h4 className="text-base md:text-lg font-bold font-serif text-foreground">
+                    Core Subjects — {filteredSubjects.length}
+                  </h4>
+                  <span className="text-xs text-muted-foreground font-mono">
+                    {filteredSubjects.length} Courses
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {filteredSubjects.map(renderSubjectCard)}
+                </div>
               </div>
             )}
           </TabsContent>

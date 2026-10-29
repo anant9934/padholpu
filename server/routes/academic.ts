@@ -67,6 +67,7 @@ router.get("/academic/programmes", async (req: Request, res: Response) => {
 
 /**
  * GET /api/academic/programmes/:code
+ * Supports optional ?semester=<num>&category=<cat>
  */
 router.get("/academic/programmes/:code", async (req: Request, res: Response) => {
   try {
@@ -76,10 +77,69 @@ router.get("/academic/programmes/:code", async (req: Request, res: Response) => 
     if (!prog) {
       return res.status(404).json({ message: "Programme not found" });
     }
+
+    const semQuery = req.query.semester ? Number(req.query.semester) : undefined;
+    const catQuery = req.query.category ? String(req.query.category).trim() : undefined;
+
+    if (semQuery !== undefined && !isNaN(semQuery)) {
+      const targetSem = prog.semesters.find((s: any) => Number(s.semester) === semQuery);
+      let subs = targetSem?.subjects || [];
+      if (catQuery && catQuery !== "ALL") {
+        subs = subs.filter((s: any) => s.category?.toLowerCase() === catQuery.toLowerCase());
+      }
+      return res.json({
+        ...prog,
+        selectedSemester: semQuery,
+        selectedCategory: catQuery || "ALL",
+        semesterSubjects: subs,
+        coreSubjects: (targetSem?.subjects || []).filter((s: any) => s.category === "Core" || s.isCore === true),
+        skillEnhancementSubjects: (targetSem?.subjects || []).filter((s: any) => s.category === "Skill Enhancement"),
+      });
+    }
+
     res.json(prog);
   } catch (error: any) {
     console.error("[Academic] Failed to fetch programme detail:", error);
     res.status(500).json({ message: "Failed to load programme detail" });
+  }
+});
+
+/**
+ * GET /api/academic/programmes/:code/semesters/:semester
+ */
+router.get("/academic/programmes/:code/semesters/:semester", async (req: Request, res: Response) => {
+  try {
+    await ensureMultidisciplinarySeedData();
+    const code = String(req.params.code || "");
+    const semesterNum = Number(req.params.semester);
+    if (isNaN(semesterNum) || semesterNum < 1) {
+      return res.status(400).json({ message: "Invalid semester number" });
+    }
+
+    const prog = await getProgrammeByCode(code);
+    if (!prog) {
+      return res.status(404).json({ message: "Programme not found" });
+    }
+
+    const targetSem = prog.semesters.find((s: any) => Number(s.semester) === semesterNum);
+    const subs = targetSem?.subjects || [];
+    const core = subs.filter((s: any) => s.category === "Core" || s.isCore === true);
+    const skill = subs.filter((s: any) => s.category === "Skill Enhancement");
+
+    res.json({
+      programme: prog.programme,
+      school: prog.school,
+      semester: semesterNum,
+      totalSubjects: subs.length,
+      coreCount: core.length,
+      skillCount: skill.length,
+      coreSubjects: core,
+      skillEnhancementSubjects: skill,
+      subjects: subs,
+    });
+  } catch (error: any) {
+    console.error("[Academic] Failed to fetch semester subjects:", error);
+    res.status(500).json({ message: "Failed to load semester subjects" });
   }
 });
 

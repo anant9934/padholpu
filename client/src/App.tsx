@@ -189,6 +189,16 @@ function Router() {
                 <ProgrammeDetailPage />
               </Layout>
             </Route>
+            <Route path="/programmes/:code/semesters/:semester">
+              <Layout>
+                <ProgrammeDetailPage />
+              </Layout>
+            </Route>
+            <Route path="/programmes/:code/semester/:semester">
+              <Layout>
+                <ProgrammeDetailPage />
+              </Layout>
+            </Route>
 
             {/* LPU Semester Architecture */}
             <Route path="/semesters">

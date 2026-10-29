@@ -301,6 +301,139 @@ export const SEED_MULTIDISCIPLINARY_SUBJECTS = [
     description: "Identification of plant pathogens, insect pests of field crops, integrated pest management (IPM), and biological control.",
     category: "Practicum",
   },
+  // B.Sc. (Hons.) Agriculture — Semester 3 (Authoritative 13 Subjects)
+  // 9 Core Subjects
+  {
+    programmeCode: "BSC-AGRI",
+    code: "AEE103",
+    name: "Fundamentals of Extension Education",
+    semester: 3,
+    discipline: "AGRICULTURE",
+    credits: 2,
+    description: "Extension educational systems, teaching methods, communication models, adoption and diffusion of agricultural innovations, and rural development programs in India.",
+    category: "Core",
+  },
+  {
+    programmeCode: "BSC-AGRI",
+    code: "AEE201",
+    name: "Entrepreneurship Development and Business Communication",
+    semester: 3,
+    discipline: "AGRICULTURE",
+    credits: 3,
+    description: "Agribusiness entrepreneurship concepts, venture creation, business communication ethics, project formulation, financial appraisal, and enterprise management.",
+    category: "Core",
+  },
+  {
+    programmeCode: "BSC-AGRI",
+    code: "AGP218",
+    name: "Crop Production Technology-I (Kharif Crops)",
+    semester: 3,
+    discipline: "AGRICULTURE",
+    credits: 3,
+    description: "Geographic distribution, economic importance, soil and climatic requirements, high-yielding varieties, package of cultural practices, and yield attributes of Kharif cereals, pulses, and oilseeds.",
+    category: "Core",
+  },
+  {
+    programmeCode: "BSC-AGRI",
+    code: "AGR217",
+    name: "Principles and Practices of Natural Farming",
+    semester: 3,
+    discipline: "AGRICULTURE",
+    credits: 2,
+    description: "Principles of Subhash Palekar Natural Farming (SPNF), preparation of on-farm inputs (Bijamrit, Jeevamrit, Neemastra), soil biodiversity, mulching (Acchadana), and moisture aeration (Whapasa).",
+    category: "Core",
+  },
+  {
+    programmeCode: "BSC-AGRI",
+    code: "AGR220",
+    name: "Massive Open Online Course 1",
+    semester: 3,
+    discipline: "AGRICULTURE",
+    credits: 2,
+    description: "Curated Massive Open Online Course (MOOC) for advanced agricultural specializations, precision agronomy, and emerging agritech frameworks.",
+    category: "Core",
+  },
+  {
+    programmeCode: "BSC-AGRI",
+    code: "GPB203",
+    name: "Principles of Genetics",
+    semester: 3,
+    discipline: "AGRICULTURE",
+    credits: 3,
+    description: "Mendelian inheritance principles, gene interactions, chromosome architecture, linkage and recombination, chromosomal aberrations, mutations, and cytoplasmic heredity in crops.",
+    category: "Core",
+  },
+  {
+    programmeCode: "BSC-AGRI",
+    code: "HRT206",
+    name: "Production Technology of Fruit and Plantation Crops",
+    semester: 3,
+    discipline: "AGRICULTURE",
+    credits: 3,
+    description: "Commercial cultivation, orchard establishment, propagation methods, canopy management, training and pruning, nutrition, and post-harvest handling of tropical and subtropical fruits.",
+    category: "Core",
+  },
+  {
+    programmeCode: "BSC-AGRI",
+    code: "PTH214",
+    name: "Fundamentals of Nematology",
+    semester: 3,
+    discipline: "AGRICULTURE",
+    credits: 2,
+    description: "Morphology, anatomy, classification, economic impact, disease complexes, host-parasite relationships, and integrated nematode management in field and horticultural crops.",
+    category: "Core",
+  },
+  {
+    programmeCode: "BSC-AGRI",
+    code: "SOL223",
+    name: "Farm Machinery and Power",
+    semester: 3,
+    discipline: "AGRICULTURE",
+    credits: 2,
+    description: "Agricultural power sources, internal combustion engine systems, tractor transmission, primary and secondary tillage implements, sowing, planting, plant protection, and harvesting machinery.",
+    category: "Core",
+  },
+  // 4 Skill Enhancement Subjects
+  {
+    programmeCode: "BSC-AGRI",
+    code: "AGR233",
+    name: "Bioherbicide Formulation and Production",
+    semester: 3,
+    discipline: "AGRICULTURE",
+    credits: 2,
+    description: "Isolation and screening of phytotoxic fungal and bacterial bioagents, solid and submerged fermentation scale-up, emulsifiable and granular bioherbicide formulations, and field bioefficacy evaluation.",
+    category: "Skill Enhancement",
+  },
+  {
+    programmeCode: "BSC-AGRI",
+    code: "ENT203",
+    name: "Biopesticides in Insect Pest Management",
+    semester: 3,
+    discipline: "AGRICULTURE",
+    credits: 2,
+    description: "Production and mass culturing of entomopathogenic viruses (NPV), bacteria (Bacillus thuringiensis), fungi (Beauveria, Metarhizium), botanicals, standardization, and bio-suppression field protocols.",
+    category: "Skill Enhancement",
+  },
+  {
+    programmeCode: "BSC-AGRI",
+    code: "PTH215",
+    name: "Biopesticides and Biofertilizers in Plant Disease Management",
+    semester: 3,
+    discipline: "AGRICULTURE",
+    credits: 2,
+    description: "Biological control of plant pathogens using Trichoderma and Pseudomonas antagonists, biofertilizer mass production (Rhizobium, Azotobacter, mycorrhizae), carrier media, and induced resistance mechanisms.",
+    category: "Skill Enhancement",
+  },
+  {
+    programmeCode: "BSC-AGRI",
+    code: "SOL203",
+    name: "Manure and Fertilizer Testing",
+    semester: 3,
+    discipline: "AGRICULTURE",
+    credits: 2,
+    description: "Sampling protocols and laboratory chemical analysis of organic manures, compost quality parameters, testing nitrogen, phosphorus, potassium in chemical fertilizers, and adulteration diagnostics.",
+    category: "Skill Enhancement",
+  },
 
   // --- COMMERCE ---
   {
@@ -581,6 +714,7 @@ export async function ensureMultidisciplinarySeedData() {
             eq(programmeSubjects.subjectId, existingSubj.id)
           )
         );
+        const isCoreSubj = subj.category === "Core" || (subj as any).isCore === true;
         if (!existingMapping) {
           await db.insert(programmeSubjects).values({
             programmeId: targetProg.id,
@@ -588,8 +722,15 @@ export async function ensureMultidisciplinarySeedData() {
             semester: subj.semester,
             credits: subj.credits,
             category: subj.category,
-            isCore: true,
+            isCore: isCoreSubj,
           }).catch(() => {});
+        } else if (existingMapping.category !== subj.category || existingMapping.isCore !== isCoreSubj) {
+          await db.update(programmeSubjects).set({
+            category: subj.category,
+            isCore: isCoreSubj,
+            credits: subj.credits,
+            semester: subj.semester,
+          }).where(eq(programmeSubjects.id, existingMapping.id)).catch(() => {});
         }
       }
     }
@@ -874,7 +1015,7 @@ export async function getProgrammeByCode(code: string) {
     discipline: s.discipline,
     description: s.description,
     category: s.category,
-    isCore: true,
+    isCore: s.category === "Core",
   }));
 
   const semestersMap: Record<number, any[]> = {};
