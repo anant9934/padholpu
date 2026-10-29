@@ -14,6 +14,7 @@ import {
 import { eq, and, sql } from "drizzle-orm";
 import fs from "fs";
 import path from "path";
+import { ensureMultidisciplinarySeedData } from "../server/services/academic-multidisciplinary";
 
 // ============================================================================
 // VERIFIED ACADEMIC CONTENT MANIFEST
@@ -181,6 +182,66 @@ export const VERIFIED_RESOURCES = [
     fileSize: 5310,
     unitNumber: 1,
   },
+  {
+    subjectCode: "CSE310",
+    type: "Notes",
+    title: "Relational Database Design: Normal Forms (1NF to BCNF) & Transaction Isolation (ACID)",
+    description: "Formal functional dependencies, Armstrong's axioms, lossless join decomposition, dependency preservation, and ACID concurrency control.",
+    url: "/content/verified/cse/cse310-relational-database-design.pdf",
+    filename: "CSE310_Relational_Database_Design.pdf",
+    fileSize: 4680,
+    unitNumber: 2,
+  },
+  {
+    subjectCode: "LAW202",
+    type: "Notes",
+    title: "General Exceptions under IPC (Sections 76-106) & Strict Doctrine of Mens Rea",
+    description: "Statutory defences in Indian Penal Code: mistake of fact (Sec 76, 79), judicial acts, accident, necessity, insanity (Sec 84), intoxication, and right of private defence.",
+    url: "/content/verified/law/law202-ipc-general-exceptions.pdf",
+    filename: "LAW202_IPC_General_Exceptions.pdf",
+    fileSize: 5320,
+    unitNumber: 2,
+  },
+  {
+    subjectCode: "MGT103",
+    type: "Notes",
+    title: "Price Elasticity of Demand, Short-Run Marginal Costs & Market Structures",
+    description: "Microeconomic principles: point and arc elasticity, returns to scale, short-run vs long-run cost curves, profit maximization under perfect competition and monopoly.",
+    url: "/content/verified/management/mgt103-business-economics.pdf",
+    filename: "MGT103_Business_Economics_Principles.pdf",
+    fileSize: 4410,
+    unitNumber: 1,
+  },
+  {
+    subjectCode: "AGR201",
+    type: "Fieldwork Guide",
+    title: "Integrated Pest Management (IPM): Economic Injury Level & Biological Controls",
+    description: "Protocols for insect scouting, economic threshold levels, pheromone traps, biopesticides, and management of major crop pests in Indian agriculture.",
+    url: "/content/verified/agriculture/agr201-ipm-fieldwork-guide.pdf",
+    filename: "AGR201_IPM_Field_Manual.pdf",
+    fileSize: 4950,
+    unitNumber: 2,
+  },
+  {
+    subjectCode: "INT219",
+    type: "Notes",
+    title: "Modern Web Architecture: Asynchronous JavaScript, Fetch API & Responsive CSS Grid",
+    description: "DOM manipulation, ECMAScript Promise pipelines, asynchronous event loops, CSS Grid and Flexbox alignment, and RESTful client design.",
+    url: "/content/verified/cse/int219-modern-web-development.pdf",
+    filename: "INT219_Modern_Web_Development.pdf",
+    fileSize: 4820,
+    unitNumber: 2,
+  },
+  {
+    subjectCode: "PSY101",
+    type: "Notes",
+    title: "Foundations of Human Cognition: Classical & Operant Conditioning Paradigms",
+    description: "Behavioral psychology principles: Ivan Pavlov's classical conditioning, B.F. Skinner's operant conditioning, schedules of reinforcement, and cognitive schemas.",
+    url: "/content/verified/humanities/psy101-foundations-of-psychology.pdf",
+    filename: "PSY101_Foundations_of_Psychology.pdf",
+    fileSize: 4250,
+    unitNumber: 1,
+  },
 ];
 
 export const AUTHENTIC_DISCIPLINE_MCQS = [
@@ -280,6 +341,78 @@ export const AUTHENTIC_DISCIPLINE_MCQS = [
     correctOption: "A",
     explanation: "When v = 0, gamma = 1 / sqrt(1 - 0) = 1, reducing Lorentz transformations to standard Newtonian Galilean coordinates.",
   },
+  {
+    subjectCode: "CSE310",
+    unit: "Unit 2",
+    topic: "Database Normalization",
+    question: "Which relational schema normal form strictly guarantees that every non-trivial functional dependency X -> Y has X as a superkey?",
+    optionA: "Boyce-Codd Normal Form (BCNF)",
+    optionB: "Third Normal Form (3NF)",
+    optionC: "Second Normal Form (2NF)",
+    optionD: "First Normal Form (1NF)",
+    correctOption: "A",
+    explanation: "BCNF requires that for every functional dependency X -> Y, X must be a superkey of the relation. In 3NF, Y may also be a prime attribute.",
+  },
+  {
+    subjectCode: "LAW202",
+    unit: "Unit 2",
+    topic: "General Exceptions IPC",
+    question: "Under Section 84 of the Indian Penal Code 1860, the legal test of insanity requires proving that the accused at the time of the act was incapable of knowing:",
+    optionA: "The nature of the act, or that what was being done was either wrong or contrary to law",
+    optionB: "Only that the act would cause economic loss to others",
+    optionC: "The civil remedies available to the victim",
+    optionD: "The specific sections of the Penal Code under which he is triable",
+    correctOption: "A",
+    explanation: "Section 84 IPC incorporates the legal standard from the English M'Naghten Rules (1843), requiring cognitive incapacity regarding the nature of the act or its wrongfulness/illegality.",
+  },
+  {
+    subjectCode: "MGT103",
+    unit: "Unit 1",
+    topic: "Price Elasticity",
+    question: "In microeconomics, when price elasticity of demand (|Ed|) is greater than 1, a decrease in the price of the commodity causes total revenue of the firm to:",
+    optionA: "Increase",
+    optionB: "Decrease",
+    optionC: "Remain unchanged",
+    optionD: "Drop immediately to zero",
+    correctOption: "A",
+    explanation: "When demand is elastic (|Ed| > 1), the percentage increase in quantity demanded exceeds the percentage decrease in price, leading to an increase in total revenue (TR = P * Q).",
+  },
+  {
+    subjectCode: "AGR201",
+    unit: "Unit 2",
+    topic: "Integrated Pest Management",
+    question: "In Integrated Pest Management (IPM), the Economic Threshold (ET) is formally defined as the pest population density at which control measures should be applied to prevent the population from reaching:",
+    optionA: "The Economic Injury Level (EIL)",
+    optionB: "Complete extinction",
+    optionC: "The General Equilibrium Position (GEP)",
+    optionD: "Zero population density",
+    correctOption: "A",
+    explanation: "The Economic Threshold (ET) is the operational action threshold. It is always set below the Economic Injury Level (EIL) to provide adequate response time for control measures before economic loss occurs.",
+  },
+  {
+    subjectCode: "INT219",
+    unit: "Unit 2",
+    topic: "Asynchronous JavaScript",
+    question: "In JavaScript's Event Loop execution model, which of the following queues takes priority over the standard Task (Macrotask) Queue upon completion of current call stack execution?",
+    optionA: "Microtask Queue (Promise callbacks, queueMicrotask)",
+    optionB: "DOM Timer Queue (setTimeout callbacks)",
+    optionC: "I/O Polling Queue",
+    optionD: "SetImmediate Queue",
+    correctOption: "A",
+    explanation: "The Event Loop continuously executes the call stack, empties the entire Microtask Queue (Promises, mutation observers) before picking the next single macrotask from the Macrotask Queue.",
+  },
+  {
+    subjectCode: "PSY101",
+    unit: "Unit 1",
+    topic: "Classical Conditioning",
+    question: "In Ivan Pavlov's classical conditioning experiments with canines, what was the meat powder classified as prior to any pairing with the metronome?",
+    optionA: "Unconditioned Stimulus (UCS)",
+    optionB: "Conditioned Stimulus (CS)",
+    optionC: "Conditioned Response (CR)",
+    optionD: "Neutral Stimulus (NS)",
+    correctOption: "A",
+    explanation: "The meat powder naturally and automatically triggered salivation without prior training, making it an Unconditioned Stimulus (UCS), producing an Unconditioned Response (UCR).",
+  },
 ];
 
 export const VERIFIED_SUBJECTIVE_QUESTIONS = [
@@ -355,10 +488,67 @@ export const VERIFIED_SUBJECTIVE_QUESTIONS = [
     maxMarks: 10,
     difficulty: "Medium",
   },
+  {
+    subjectCode: "CSE310",
+    questionText: "Explain the criteria for a decomposition to be lossless and dependency-preserving. Decompose relation R(A, B, C, D) with FDs {A -> B, B -> C, C -> D} into 3NF and verify BCNF compliance.",
+    contextScenario: "A database architect is redesigning a legacy university registry table to eliminate update and deletion anomalies.",
+    statuteOrCitation: "Codd (1970); Date & Darwen Relational Database Design Standards",
+    modelAnswer: "A decomposition of R into R1 and R2 is lossless-join if R1 ∩ R2 forms a superkey of either R1 or R2. Dependency preservation requires that the union of FDs enforceable within decomposed schemas covers the original closure F+. Given R(A, B, C, D) with FDs {A -> B, B -> C, C -> D}: Candidate key is A. Canonical 3NF decomposition yields R1(A, B), R2(B, C), and R3(C, D). In each decomposed relation, the determinant is a superkey within its projection, satisfying both 3NF and BCNF while fully preserving all functional dependencies without cross-table joins.",
+    maxMarks: 15,
+    difficulty: "Hard",
+  },
+  {
+    subjectCode: "LAW202",
+    questionText: "Analyse the scope and statutory limitations of the Right of Private Defence of the body under Sections 96 to 102 of the IPC. When does the right extend to causing the death of the assailant?",
+    contextScenario: "A shopkeeper was attacked late at night by armed intruders brandishing lethal weapons. In defending his life, he discharged a licensed firearm, fatally wounding one attacker.",
+    statuteOrCitation: "Indian Penal Code 1860, Sections 96-106; Amjad Khan v. State (1952 SCR 567); Darshan Singh v. State of Punjab (2010) 2 SCC 333",
+    modelAnswer: "Section 96 IPC affirms that nothing is an offense which is done in the exercise of the right of private defence. Under Section 102, the right commences as soon as a reasonable apprehension of danger to the body arises from an attempt or threat to commit the offense, and continues as long as such apprehension exists. Section 100 authorises causing death only when the assault reasonably causes apprehension of: (1) death, (2) grievous hurt, (3) rape, (4) unnatural lust, (5) kidnapping/abduction, (6) wrongful confinement, or (7) acid attack (Criminal Law Amendment Act 2013). As held in Darshan Singh (2010), the right is defensive and not retributive; force used must not exceed the harm necessary to repel the unlawful threat.",
+    maxMarks: 15,
+    difficulty: "Hard",
+  },
+  {
+    subjectCode: "MGT103",
+    questionText: "Compare short-run equilibrium and long-run equilibrium of a firm under Monopolistic Competition versus Perfect Competition. Explain why excess capacity exists under Monopolistic Competition.",
+    contextScenario: "A retail coffee chain operates in a competitive metropolitan area where each outlet possesses modest brand loyalty and distinct ambiance.",
+    statuteOrCitation: "Chamberlin (1933) Theory of Monopolistic Competition; Varian Microeconomic Analysis",
+    modelAnswer: "Under perfect competition, firms produce at the minimum point of their Long-Run Average Cost (LAC) curve where P = MR = MC = minimum LAC, achieving both allocative and productive efficiency. Under monopolistic competition, product differentiation creates a downward-sloping demand curve (AR). While free entry eliminates economic profits in the long run (tangency of AR and LAC), tangency occurs on the falling portion of the LAC curve (where slope of AR is negative). Consequently, output is less than the socially optimum minimum-cost output, giving rise to Chamberlin's 'Excess Capacity'.",
+    maxMarks: 15,
+    difficulty: "Medium",
+  },
+  {
+    subjectCode: "AGR201",
+    questionText: "Formulate an Integrated Pest Management (IPM) schedule for Brown Plant Hopper (Nilaparvata lugens) in paddy cultivation. Detail cultural, biological, and chemical intervention thresholds.",
+    contextScenario: "A regional agricultural extension officer reports yellowing, drying, and hopper burn patches across irrigated rice fields during the panicle initiation stage.",
+    statuteOrCitation: "ICAR Directorate of Rice Research; Plant Protection Guidelines (Ministry of Agriculture)",
+    modelAnswer: "Integrated management of Brown Plant Hopper (BPH) requires: (1) Cultural controls: Alternate wetting and drying (AWD) of paddy fields rather than continuous flooding; formation of 'alleyways' every 2 metres for aeration; avoiding excess nitrogenous fertilisation (>120 kg N/ha). (2) Biological controls: Conservation of natural predators including mirid bugs (Cyrtorhinus lividipennis) and wolf spiders (Lycosa pseudoannulata). (3) Chemical interventions: Scout 10 hills randomly; trigger spray when population reaches Economic Threshold (5-10 nymphs/hill in vegetative phase, 1-2 per tiller in heading phase). Direct targeted spray of systemic insecticides such as Pymetrozine 50 WG or Triflumezopyrim 10 SC towards the base of tillers, strictly avoiding broad-spectrum synthetic pyrethroids which induce resurgence.",
+    maxMarks: 15,
+    difficulty: "Hard",
+  },
+  {
+    subjectCode: "INT219",
+    questionText: "Design a robust asynchronous client module using modern JavaScript Fetch API. Explain how to handle HTTP network errors, 4xx/5xx responses, request cancellation via AbortController, and JSON parsing safely.",
+    contextScenario: "A financial dashboard fetches streaming equity prices from multiple REST endpoints with a 5-second timeout requirement.",
+    statuteOrCitation: "WHATWG Fetch Standard; W3C Web Platform Architecture Guidelines",
+    modelAnswer: "The Fetch API does not reject promises on HTTP error statuses (like 404 or 500); it only rejects on network disconnection or DNS failure. A robust implementation requires inspecting response.ok boolean before parsing JSON payload. Request cancellation must utilise AbortController: const controller = new AbortController(); fetch(url, { signal: controller.signal }). If timeout expires, controller.abort() cancels pending in-flight TCP streams without leaking memory. Error handling must distinguish between AbortError (intentional cancellation) and genuine network failures, returning strongly-typed state to UI components.",
+    maxMarks: 15,
+    difficulty: "Medium",
+  },
+  {
+    subjectCode: "PSY101",
+    questionText: "Differentiate between the Availability Heuristic and the Representativeness Heuristic as identified by Kahneman and Tversky. Provide concrete behavioral examples of each.",
+    contextScenario: "An executive risk committee repeatedly miscalculates product launch failure probabilities due to cognitive biases in statistical estimation.",
+    statuteOrCitation: "Tversky & Kahneman (1974), Judgment under Uncertainty: Heuristics and Biases, Science",
+    modelAnswer: "Amos Tversky and Daniel Kahneman established that human cognition relies on mental shortcuts (heuristics) that deviate from rational probabilistic calculation: (1) Availability Heuristic: Assessing the frequency or probability of an event based on how easily concrete instances come to mind. For example, individuals vastly overestimate the likelihood of plane crashes compared to car accidents because aviation disasters receive intense emotional and media salience. (2) Representativeness Heuristic: Evaluating the probability that an entity belongs to a category based on similarity to a mental prototype, ignoring base-rate frequencies. For example, describing an introverted, detail-oriented person and erroneously assuming they are more likely to be a librarian than a salesperson, even when salespeople outnumber librarians in the population by 20 to 1.",
+    maxMarks: 15,
+    difficulty: "Medium",
+  },
 ];
 
 export async function seedVerifiedAcademicContent() {
   console.log("🌱 Starting Verified Multidisciplinary Academic Seeding...");
+
+  // 0. Ensure complete multidisciplinary academic catalog and curriculum mappings
+  await ensureMultidisciplinarySeedData();
 
   // 1. Fetch admin user for author attribution
   let adminUser = (await db.select().from(users).where(eq(users.isAdmin, true)))[0];
@@ -555,6 +745,24 @@ export async function seedVerifiedAcademicContent() {
       cards: [
         { front: "Primary Tillage Implements", back: "Mouldboard (MB) plough, disc plough, and chisel plough used for deep soil loosening." },
         { front: "Major Kharif Crops", back: "Rice (Oryza sativa), Maize, Cotton, Groundnut, Soybean (grown during SW monsoon)." },
+      ],
+    },
+    {
+      subjectCode: "CSE310",
+      title: "CSE310 Normal Forms & ACID",
+      description: "Quick revision deck on Boyce-Codd Normal Form and ACID transaction guarantees.",
+      cards: [
+        { front: "ACID Guarantees", back: "Atomicity (all or nothing), Consistency (preserves database invariants), Isolation (concurrent execution serializability), Durability (committed changes survive crashes)." },
+        { front: "Boyce-Codd Normal Form (BCNF)", back: "Strict condition: In every non-trivial functional dependency X -> Y, X must be a candidate key (superkey)." },
+      ],
+    },
+    {
+      subjectCode: "PSY101",
+      title: "PSY101 Conditioning Paradigms",
+      description: "Foundational concepts in behavioral conditioning and heuristics.",
+      cards: [
+        { front: "Classical vs Operant Conditioning", back: "Classical: associations between stimuli and involuntary responses (Pavlov). Operant: association between voluntary behaviors and consequences (Skinner)." },
+        { front: "Availability Heuristic", back: "Estimating probability based on ease with which vivid examples come to mind, leading to systematic biases in risk judgment." },
       ],
     },
   ];
