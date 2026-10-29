@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useRoute, Link } from "wouter";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { SEO } from "@/components/seo";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { CardSkeleton } from "@/components/ui/LoadingSkeleton";
@@ -24,6 +24,10 @@ import {
   Briefcase,
   Sprout,
   Atom,
+  Bookmark,
+  BookmarkCheck,
+  Code,
+  Brain,
 } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/site-config";
 
@@ -31,6 +35,7 @@ export default function ResourceDetailPage() {
   const [, params] = useRoute("/resources/:id");
   const resourceId = Number(params?.id);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [downloading, setDownloading] = useState(false);
 
   const { data: resource, isLoading, isError } = useQuery({
@@ -41,6 +46,53 @@ export default function ResourceDetailPage() {
       return res.json();
     },
     enabled: !isNaN(resourceId) && resourceId > 0,
+  });
+
+  const { data: bookmarkStatus } = useQuery<{ isBookmarked: boolean }>({
+    queryKey: ["/api/ecosystem/bookmarks/status", "RESOURCE", resourceId],
+    queryFn: async () => {
+      const res = await fetch(`/api/ecosystem/bookmarks/status?itemType=RESOURCE&itemId=${resourceId}`, { credentials: "include" });
+      if (!res.ok) return { isBookmarked: false };
+      return res.json();
+    },
+    enabled: !isNaN(resourceId) && resourceId > 0,
+  });
+
+  const toggleBookmark = useMutation({
+    mutationFn: async () => {
+      const res = await fetch("/api/ecosystem/bookmarks/toggle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          itemType: "RESOURCE",
+          itemId: resourceId,
+          title: resource?.title,
+          course: resource?.subject,
+        }),
+      });
+      if (res.status === 401) throw new Error("Please log in to save bookmarks to your study workspace.");
+      if (!res.ok) throw new Error("Failed to update bookmark.");
+      return res.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/ecosystem/bookmarks/status", "RESOURCE", resourceId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/ecosystem/bookmarks"] });
+      const isSaved = Boolean(data.bookmarked ?? data.isBookmarked);
+      toast({
+        title: isSaved ? "Bookmarked" : "Bookmark Removed",
+        description: isSaved 
+          ? "Resource added to your study workspace." 
+          : "Resource removed from your study workspace.",
+      });
+    },
+    onError: (err: any) => {
+      toast({
+        title: "Bookmark Action",
+        description: err.message,
+        variant: "destructive",
+      });
+    },
   });
 
   const handleDownload = async () => {
@@ -195,14 +247,40 @@ export default function ResourceDetailPage() {
               </span>
             </div>
 
-            <button
-              onClick={handleShare}
-              className="p-2 rounded-lg border border-[var(--border)] hover:bg-[var(--surface-muted)] text-[var(--text-secondary)] transition-colors"
-              title="Share Document"
-              aria-label="Share document"
-            >
-              <Share2 className="w-4 h-4" />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => toggleBookmark.mutate()}
+                disabled={toggleBookmark.isPending}
+                className={`p-2 rounded-lg border transition-colors flex items-center gap-1.5 text-xs font-medium ${
+                  bookmarkStatus?.isBookmarked
+                    ? "bg-amber-500/15 border-amber-500/40 text-amber-600 dark:text-amber-400"
+                    : "border-[var(--border)] hover:bg-[var(--surface-muted)] text-[var(--text-secondary)]"
+                }`}
+                title={bookmarkStatus?.isBookmarked ? "Remove Bookmark" : "Save Bookmark"}
+                aria-label="Bookmark resource"
+              >
+                {bookmarkStatus?.isBookmarked ? (
+                  <>
+                    <BookmarkCheck className="w-4 h-4 text-amber-500" />
+                    <span className="hidden sm:inline">Bookmarked</span>
+                  </>
+                ) : (
+                  <>
+                    <Bookmark className="w-4 h-4" />
+                    <span className="hidden sm:inline">Bookmark</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                onClick={handleShare}
+                className="p-2 rounded-lg border border-[var(--border)] hover:bg-[var(--surface-muted)] text-[var(--text-secondary)] transition-colors"
+                title="Share Document"
+                aria-label="Share document"
+              >
+                <Share2 className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -246,7 +324,7 @@ export default function ResourceDetailPage() {
             </div>
           </div>
 
-          {/* Discipline-Specific Academic Guidance Banner */}
+          {/* Discipline-Specific Academic Guidance Banners */}
           {resource.subject?.startsWith("LAW") && (
             <div className="p-3.5 rounded-xl bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 text-xs space-y-1">
               <div className="flex items-center gap-1.5 font-bold text-amber-900 dark:text-amber-300">
@@ -276,6 +354,28 @@ export default function ResourceDetailPage() {
               </div>
               <p className="text-foreground/80 leading-relaxed">
                 Conforms to ICAR agronomy syllabus. Includes soil profiling guidelines, Kharif/Rabi tillage schedules, and field trial observations.
+              </p>
+            </div>
+          )}
+
+          {(resource.subject?.startsWith("CSE") || resource.subject?.startsWith("INT")) && (
+            <div className="p-3.5 rounded-xl bg-cyan-50/70 dark:bg-cyan-950/20 border border-cyan-200/60 dark:border-cyan-900/40 text-xs space-y-1">
+              <div className="flex items-center gap-1.5 font-bold text-cyan-900 dark:text-cyan-300">
+                <Code className="w-4 h-4" /> Computer Science & Engineering Principles
+              </div>
+              <p className="text-foreground/80 leading-relaxed">
+                Adheres to ACM/IEEE computing curriculum standards. Analyzes algorithmic time-space complexity, memory allocation safety, and database transactional integrity.
+              </p>
+            </div>
+          )}
+
+          {resource.subject?.startsWith("PSY") && (
+            <div className="p-3.5 rounded-xl bg-purple-50/70 dark:bg-purple-950/20 border border-purple-200/60 dark:border-purple-900/40 text-xs space-y-1">
+              <div className="flex items-center gap-1.5 font-bold text-purple-900 dark:text-purple-300">
+                <Brain className="w-4 h-4" /> Psychological Science & Behavioral Standards
+              </div>
+              <p className="text-foreground/80 leading-relaxed">
+                Conforms to empirical psychological research methodologies. Covers foundational cognitive paradigms, psychometrics, and neurobiological foundations of behavior.
               </p>
             </div>
           )}
