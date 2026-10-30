@@ -1041,7 +1041,7 @@ const ACADEMIC_TUTOR_STOPWORDS = new Set([
 
 function tokenizeAcademicQuery(value: string): string[] {
   return [...new Set(
-    (value.toLowerCase().normalize("NFKD").replace(/[\\u0300-\\u036f]/g, "").match(/[a-z0-9]{3,}/g) || [])
+    (value.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").match(/[a-z0-9]{3,}/g) || [])
       .filter((token) => !ACADEMIC_TUTOR_STOPWORDS.has(token))
   )];
 }
@@ -1142,12 +1142,12 @@ export async function getConceptExplanation(
     const explanation = selected.map((candidate) => {
       const subsectionContent = (candidate.section.subsections || [])
         .map((subsection) =>
-          `#### ${subsection.subheading}\\n${subsection.content}\\n${(subsection.keyPoints || []).map((point) => `- ${point}`).join("\\n")}`
+          `#### ${subsection.subheading}\n${subsection.content}\n${(subsection.keyPoints || []).map((point) => `- ${point}`).join("\n")}`
         )
-        .join("\\n\\n");
-      const content = [candidate.section.content, subsectionContent].filter(Boolean).join("\\n\\n");
-      return `### Unit ${candidate.unit.unitNumber}: ${candidate.unit.title}\\n**${candidate.section.heading}**\\n\\n${content.slice(0, 1800)}`;
-    }).join("\\n\\n---\\n\\n");
+        .join("\n\n");
+      const content = [candidate.section.content, subsectionContent].filter(Boolean).join("\n\n");
+      return `### Unit ${candidate.unit.unitNumber}: ${candidate.unit.title}\n**${candidate.section.heading}**\n\n${content.slice(0, 1800)}`;
+    }).join("\n\n---\n\n");
 
     const sources = selected.map((candidate) => ({
       subjectCode: subject!.code,
@@ -1206,11 +1206,11 @@ export async function getConceptExplanation(
     mode: "RULE_BASED_RETRIEVAL",
     evidenceAvailable: true,
     explanation:
-      `### Matching registered syllabus topics — ${subject.name}\\n\\n` +
+      `### Matching registered syllabus topics — ${subject.name}\n\n` +
       candidates.map((candidate) =>
-        `- **Unit ${candidate.unit.unitNumber}: ${candidate.unit.unitName}**\\n  ${candidate.unitTopics.filter((name) => academicTextMatchScore(tokens, name) > 0).join("; ") || "Unit title match"}`
-      ).join("\\n") +
-      "\\n\\nThe database contains matching syllabus taxonomy, but no explanatory notes are indexed here. Open the referenced unit before treating this as a complete explanation.",
+        `- **Unit ${candidate.unit.unitNumber}: ${candidate.unit.unitName}**\n  ${candidate.unitTopics.filter((name) => academicTextMatchScore(tokens, name) > 0).join("; ") || "Unit title match"}`
+      ).join("\n") +
+      "\n\nThe database contains matching syllabus taxonomy, but no explanatory notes are indexed here. Open the referenced unit before treating this as a complete explanation.",
     keyPoints: sources.map((source) => `Review Unit ${source.unitNumber}: ${source.sectionTitle}`),
     sources,
     disclaimer: "Rule-based retrieval from registered unit/topic metadata. No external AI inference was used; topic labels are not a model answer."
