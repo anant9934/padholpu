@@ -38,6 +38,7 @@ jobs:
       - name: Run Unit & Security Test Suites
         run: npm run test:unit
         env:
+          RUN_LIVE_DB_TESTS: 'false'
           NODE_ENV: test
           JWT_SECRET: test_ci_jwt_secret_must_be_sufficiently_long_and_complex_12345
           ADMIN_PASSCODE: test_ci_admin_passcode_for_security_suite_verification
