@@ -152,7 +152,7 @@ export default function SubjectOverviewPage() {
     <>
       <SEO
         title={`${subject.name} (${code}) Syllabus & Learning Workspace — Padho LPU`}
-        description={`Syllabus-aligned notes, 360 MCQs, 120 subjective questions with model answers, flashcards, and practicals for ${subject.name} (${code}) at LPU.`}
+        description={`Syllabus-aligned notes, unit-wise practice questions, subjective answers, flashcards, and practicals for ${subject.name} (${code}) at LPU.`}
         canonicalUrl={`/programmes/${programmeCode}/semesters/${semester}/${code}`}
       />
 
@@ -258,11 +258,11 @@ export default function SubjectOverviewPage() {
                   </div>
                   <div className="flex justify-between py-1 border-b border-border/30">
                     <span className="text-muted-foreground">MCQs Attempted:</span>
-                    <span className="font-semibold">{progressData?.mcqAttemptedCount || 0} / 360</span>
+                    <span className="font-semibold">{progressData?.mcqAttemptedCount || 0} / {syllabusData?.stats?.totalMcqs ?? 0}</span>
                   </div>
                   <div className="flex justify-between py-1">
                     <span className="text-muted-foreground">Subjective Drafts:</span>
-                    <span className="font-semibold">{progressData?.subjectiveDraftsCount || 0} / 120</span>
+                    <span className="font-semibold">{progressData?.subjectiveDraftsCount || 0} / {syllabusData?.stats?.totalSubjectiveQuestions ?? 0}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -329,7 +329,7 @@ export default function SubjectOverviewPage() {
                   <BookOpen className="w-5 h-5 text-[#9A6205]" /> Syllabus Units Directory (6 Units)
                 </h2>
                 <p className="text-xs text-muted-foreground">
-                  Complete syllabus modules with dedicated notes, 60 MCQs, 20 subjective model answers, and flashcards per unit.
+                  Syllabus modules with notes, unit-wise practice, written questions, and flashcard review.
                 </p>
               </div>
               <Badge variant="secondary" className="text-xs">
