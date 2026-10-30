@@ -81,23 +81,27 @@ export default function SubjectOverviewPage() {
 
   const subject = syllabusData?.subject;
   const units = syllabusData?.units || [];
-  const grading = syllabusData?.grading || (Array.isArray(syllabusData?.gradingStructure) ? {
-    totalMarks: 100,
-    components: syllabusData.gradingStructure.map((g: any) => ({
-      name: g.component,
-      type: g.component,
-      weightage: parseInt(g.weightage, 10) || 20,
-      marks: g.marks,
-      details: g.details,
-      coverage: g.component.includes("Mid-Term") 
-        ? "Units 1, 2 & 3" 
-        : g.component.includes("End-Term") 
-        ? "Units 1 through 6 (Comprehensive)" 
-        : g.component.includes("Continuous") 
-        ? "Continuous Descriptive Assessments" 
-        : "12 Practical Lab Activities & Viva"
-    }))
-  } : null);
+  const grading = syllabusData?.grading || (
+    Array.isArray(syllabusData?.gradingStructure) && syllabusData.gradingStructure.length > 0
+      ? {
+          totalMarks: 100,
+          components: syllabusData.gradingStructure.map((g: any) => ({
+            name: g.component,
+            type: g.component,
+            weightage: Number.parseInt(g.weightage, 10),
+            marks: g.marks,
+            details: g.details,
+            coverage: g.component.includes("Mid-Term")
+              ? "Units 1, 2 & 3"
+              : g.component.includes("End-Term")
+              ? "Units 1 through 6 (Comprehensive)"
+              : g.component.includes("Continuous")
+              ? "Continuous Assessments"
+              : "Practical activities"
+          }))
+        }
+      : null
+  );
   const courseOutcomes = syllabusData?.courseOutcomes || [];
   const textbooks = syllabusData?.textbooks || [];
   const practicals = Array.isArray(practicalsData) ? practicalsData : (practicalsData?.practicals || []);
@@ -277,7 +281,7 @@ export default function SubjectOverviewPage() {
                     <BarChart3 className="w-5 h-5 text-[#9A6205]" /> Examination & Grading Architecture
                   </h2>
                   <p className="text-xs text-muted-foreground">
-                    Verified LPU course evaluation weightages (Continuous Assessment, Mid-Term, End-Term & Practicals).
+                    Assessment details from a verified course-specific source.
                   </p>
                 </div>
                 <Badge variant="outline" className="text-xs font-mono">
@@ -307,6 +311,13 @@ export default function SubjectOverviewPage() {
                   </Card>
                 ))}
               </div>
+            </section>
+          )}
+
+          {!grading && syllabusData?.gradingDisclosure && (
+            <section className="rounded-xl border border-border bg-muted/20 px-4 py-3">
+              <h2 className="text-sm font-semibold text-foreground">Assessment pattern</h2>
+              <p className="mt-1 text-sm text-muted-foreground">{syllabusData.gradingDisclosure}</p>
             </section>
           )}
 
