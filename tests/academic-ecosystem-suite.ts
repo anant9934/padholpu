@@ -1,4 +1,5 @@
 import { calculateSM2, getConceptExplanation, distributeStudyPlanUnits } from "../server/services/academic-ecosystem";
+import { generateNextBestAction } from "../server/services/academic-os";
 
 function assert(condition: boolean, msg: string) {
   if (!condition) {
@@ -40,6 +41,16 @@ async function runAcademicSuite() {
   // 5. SM-2 Ease Factor Floor (1.3 minimum)
   const floor = calculateSM2(0, 1.35, 1, 0);
   assert(floor.easeFactor === 1.3, "Ease factor cannot drop below hard minimum floor of 1.3");
+
+  // 6. Multidisciplinary onboarding never assumes CSE for a student without course context.
+  const onboarding = generateNextBestAction({
+    unitsMastery: [],
+    overallCoverage: 0,
+    totalAttempts: 0,
+  });
+  assert(onboarding.type === "EXPLORE_COURSES", "Unprofiled student is directed to programme discovery");
+  assert(onboarding.destination === "/programmes", "Unprofiled student is not routed to an arbitrary CSE course");
+  assert(onboarding.course === "", "No unsupported default subject code is assigned");
 
   // 6. The deterministic planner schedules only supplied syllabus units, before the exam date.
   const scheduled = distributeStudyPlanUnits([
