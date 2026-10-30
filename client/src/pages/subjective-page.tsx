@@ -148,7 +148,7 @@ export default function SubjectivePage() {
   };
 
   // Trigger AI Concept Explanation
-  const askAITutor = async (qText: string) => {
+  const askAITutor = async (qText: string, subjectId?: number) => {
     setAiConcept(qText);
     setAiModalOpen(true);
     setAiLoading(true);
@@ -158,12 +158,12 @@ export default function SubjectivePage() {
       const res = await fetch("/api/ecosystem/ai/explain", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ concept: qText }),
+        body: JSON.stringify({ concept: qText, subjectId }),
       });
       const data = await res.json();
       setAiResult(data);
     } catch {
-      toast({ title: "AI tutor is temporarily busy. Showing syllabus outline.", variant: "destructive" });
+      toast({ title: "Academic material could not be retrieved.", description: "Try opening the subject unit or searching with syllabus wording.", variant: "destructive" });
     } finally {
       setAiLoading(false);
     }
@@ -319,7 +319,7 @@ export default function SubjectivePage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => askAITutor(q.questionText)}
+                        onClick={() => askAITutor(q.questionText, q.subjectId ?? undefined)}
                         className="text-xs text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950/40 gap-1 h-8 px-2.5"
                       >
                         <BrainCircuit className="w-3.5 h-3.5" /> Explain Concept
@@ -461,7 +461,7 @@ export default function SubjectivePage() {
           <DialogHeader>
             <div className="flex items-center gap-2 mb-1">
               <Badge variant="outline" className="text-orange-600 border-orange-500/30 text-[10px]">
-                {aiResult?.isAIGenerated ? "Google Gemini Powered" : "Curated Syllabus Fallback"}
+                {aiResult?.isAIGenerated ? "External model" : "Rule-based · No external model"}
               </Badge>
             </div>
             <DialogTitle className="text-lg font-bold">Concept Explanation & Exam Focus</DialogTitle>
