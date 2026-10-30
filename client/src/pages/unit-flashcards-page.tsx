@@ -234,7 +234,7 @@ export default function UnitFlashcardsPage() {
                   <Award className="w-3.5 h-3.5" /> Subjective (20)
                 </span>
               </Link>
-              <span className="font-semibold text-[#9A6205] border-b-2 border-[#9A6205] pb-1 flex items-center gap-1.5 whitespace-nowrap">
+              <span className="font-semibold text-[#734700] dark:text-[#e69c24] border-b-2 border-[#734700] dark:border-[#e69c24] pb-1 flex items-center gap-1.5 whitespace-nowrap">
                 <Layers className="w-3.5 h-3.5" /> Flashcards ({cards.length})
               </span>
             </div>
@@ -250,8 +250,8 @@ export default function UnitFlashcardsPage() {
                 Card {currentIndex + 1} of {cards.length}
               </span>
               <div className="flex items-center gap-3 font-mono">
-                <span className="text-emerald-600">Learned: <strong>{learnedCount}</strong></span>
-                <span className="text-rose-500">Needs Revision: <strong>{needsRevisionCount}</strong></span>
+                <span className="text-[#2E6930] dark:text-[#4ade80]">Learned: <strong>{learnedCount}</strong></span>
+                <span className="text-[#9E2A2B] dark:text-[#f87171]">Needs Revision: <strong>{needsRevisionCount}</strong></span>
               </div>
             </div>
             <Progress value={((currentIndex + 1) / cards.length) * 100} className="h-1.5" />
@@ -262,72 +262,89 @@ export default function UnitFlashcardsPage() {
             <div className="perspective-1000 py-4">
               <div
                 onClick={handleFlip}
-                className="w-full min-h-[300px] md:min-h-[340px] rounded-2xl border border-border/80 bg-card p-6 md:p-8 flex flex-col justify-between cursor-pointer select-none shadow-md hover:shadow-lg transition-all relative overflow-hidden"
+                className={`w-full min-h-[320px] md:min-h-[360px] transform-style-3d transition-transform duration-300 relative cursor-pointer select-none ${
+                  isFlipped ? "rotate-y-180" : ""
+                }`}
               >
-                {/* Card Top Pill */}
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <Badge variant="outline" className="font-mono text-[10px]">
-                    Unit {unitNumber} · Card {currentIndex + 1}
-                  </Badge>
-
-                  <span className="text-[11px] text-[#9A6205] font-semibold flex items-center gap-1">
-                    <Sparkles className="w-3.5 h-3.5" /> {isFlipped ? "Answer" : "Question / Concept (Click to flip)"}
-                  </span>
-                </div>
-
-                {/* Card Main Body */}
-                <div className="py-8 text-center flex flex-col items-center justify-center space-y-4">
-                  {!isFlipped ? (
-                    <div className="space-y-3">
-                      <span className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-                        Concept / Term
-                      </span>
-                      <h2 className="text-xl md:text-2xl font-bold font-serif text-foreground leading-snug">
-                        {currentCard.front}
-                      </h2>
-                    </div>
-                  ) : (
-                    <div className="space-y-3 animate-in fade-in">
-                      <span className="text-xs uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-semibold">
-                        Explanation & Key Details
-                      </span>
-                      <p className="text-sm md:text-base text-foreground leading-relaxed max-w-lg mx-auto">
-                        {currentCard.back}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Card Footer / Hint */}
-                <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-border/30 pt-3">
-                  {currentCard.hint && !isFlipped ? (
-                    <div>
-                      {showHint ? (
-                        <span className="text-amber-700 dark:text-amber-300 italic flex items-center gap-1">
-                          <Lightbulb className="w-3.5 h-3.5" /> Hint: {currentCard.hint}
-                        </span>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowHint(true);
-                          }}
-                          className="text-[#9A6205] hover:underline flex items-center gap-1"
-                        >
-                          <Lightbulb className="w-3.5 h-3.5" /> Show Hint
-                        </button>
-                      )}
-                    </div>
-                  ) : (
-                    <span className="text-[11px] text-muted-foreground">
-                      Space to flip · ← Needs Revision · → Know This
+                {/* FRONT FACE */}
+                <div className="absolute inset-0 backface-hidden rounded-2xl border border-[#E7E1D7] dark:border-[#2b2722] bg-[#FFFEFB] dark:bg-[#191714] p-6 md:p-8 flex flex-col justify-between shadow-md hover:shadow-lg transition-shadow">
+                  {/* Top Meta */}
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <Badge variant="outline" className="font-mono text-[10px] border-[#E7E1D7] dark:border-[#2b2722]">
+                      Unit {unitNumber} · Card {currentIndex + 1}
+                    </Badge>
+                    <span className="text-[11px] text-[#734700] dark:text-[#e69c24] font-semibold flex items-center gap-1">
+                      <Sparkles className="w-3.5 h-3.5" /> Concept (Tap to flip)
                     </span>
-                  )}
+                  </div>
 
-                  <span className="font-mono text-[11px]">
-                    {isFlipped ? "✓ Back" : "Front"}
-                  </span>
+                  {/* Center Body */}
+                  <div className="py-6 text-center flex flex-col items-center justify-center space-y-3">
+                    <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                      Concept / Term
+                    </span>
+                    <h2 className="text-xl md:text-2xl font-bold font-serif text-[#181510] dark:text-[#f0ece4] leading-snug">
+                      {currentCard.front}
+                    </h2>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-[#E7E1D7]/60 dark:border-[#2b2722]/60 pt-3">
+                    {currentCard.hint ? (
+                      <div>
+                        {showHint ? (
+                          <span className="text-[#734700] dark:text-[#e69c24] italic flex items-center gap-1">
+                            <Lightbulb className="w-3.5 h-3.5" /> Hint: {currentCard.hint}
+                          </span>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowHint(true);
+                            }}
+                            className="text-[#734700] dark:text-[#e69c24] hover:underline flex items-center gap-1 font-medium cursor-pointer"
+                          >
+                            <Lightbulb className="w-3.5 h-3.5" /> Show Hint
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-[11px] text-muted-foreground">Space to flip</span>
+                    )}
+                    <span className="font-mono text-[11px] text-[#734700] font-semibold">Front ↻</span>
+                  </div>
+                </div>
+
+                {/* BACK FACE */}
+                <div className="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border border-[#734700]/30 bg-[#FFFEFB] dark:bg-[#191714] p-6 md:p-8 flex flex-col justify-between shadow-md hover:shadow-lg transition-shadow">
+                  {/* Top Meta */}
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <Badge variant="outline" className="font-mono text-[10px] border-[#734700]/30 bg-[#F4E7CA]/40 text-[#734700] dark:text-[#e69c24]">
+                      Answer & Synthesis
+                    </Badge>
+                    <span className="text-[11px] text-[#2E6930] dark:text-[#4ade80] font-semibold flex items-center gap-1">
+                      <Check className="w-3.5 h-3.5" /> Verified Explanation
+                    </span>
+                  </div>
+
+                  {/* Center Body */}
+                  <div className="py-6 text-center flex flex-col items-center justify-center space-y-3">
+                    <span className="text-[11px] uppercase tracking-wider text-[#2E6930] dark:text-[#4ade80] font-semibold">
+                      Explanation & Key Details
+                    </span>
+                    <p className="text-sm md:text-base text-[#181510] dark:text-[#f0ece4] leading-relaxed max-w-lg mx-auto">
+                      {currentCard.back}
+                    </p>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-[#E7E1D7]/60 dark:border-[#2b2722]/60 pt-3">
+                    <span className="text-[11px] text-muted-foreground">
+                      ← Needs Revision · → I Know This
+                    </span>
+                    <span className="font-mono text-[11px] text-[#2E6930] font-semibold">✓ Back</span>
+                  </div>
                 </div>
               </div>
             </div>

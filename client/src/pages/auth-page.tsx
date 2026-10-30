@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useLocation, Link } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { motion, AnimatePresence } from "framer-motion";
 import { insertUserSchema } from "@shared/schema";
 import {
   Form,
@@ -13,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, ArrowLeft, X, Eye, EyeOff, Check } from "lucide-react";
+import { Loader2, ArrowLeft, X, Eye, EyeOff, Check, GraduationCap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { SEO } from "@/components/seo";
@@ -187,36 +188,36 @@ export default function AuthPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#f5f0e8] dark:bg-[#141210] flex flex-col justify-center items-center px-4 py-12 transition-colors google-anno-skip">
+    <div className="min-h-screen bg-[#F7F4EE] dark:bg-[#141210] flex flex-col justify-center items-center px-4 py-12 transition-colors google-anno-skip">
       <SEO
         title="Sign In or Register — Padho LPU"
-        description="Access your Padho LPU student account to track progress, save notes, and practice exams."
+        description="Access your Padho LPU student account to track progress, save notes, and practice exams across all LPU disciplines."
         noindex={true}
       />
       {/* Back to Home Link */}
       <div className="w-full max-w-[440px] mb-6">
         <Link href="/">
-          <span className="inline-flex items-center gap-2 text-xs font-medium text-[#8a7a66] hover:text-[#1a1208] dark:hover:text-[#f0ece4] transition-colors cursor-pointer">
+          <span className="inline-flex items-center gap-2 text-xs font-medium text-[#696158] hover:text-[#181510] dark:text-[#c8bfb0] dark:hover:text-[#f0ece4] transition-colors cursor-pointer">
             <ArrowLeft className="w-3.5 h-3.5" /> Return to Padho LPU
           </span>
         </Link>
       </div>
 
       {/* Main Editorial Card */}
-      <div className="w-full max-w-[440px] editorial-card bg-[#ffffff] dark:bg-[#1c1916] p-5 sm:p-8 md:p-10 space-y-6">
+      <div className="w-full max-w-[440px] bg-[#FFFEFB] dark:bg-[#191714] border border-[#E7E1D7] dark:border-[#2b2722] shadow-xl rounded-2xl p-6 sm:p-8 md:p-10 space-y-6">
         {/* Masthead Brand */}
         <div className="text-center space-y-3">
           <img
             src="/favicon.png"
             alt="Padho LPU"
-            className="w-12 h-12 rounded-xl object-contain mx-auto shadow-sm transition-transform hover:scale-105"
+            className="w-12 h-12 rounded-xl object-contain mx-auto shadow-xs transition-transform hover:scale-105"
             width={48}
             height={48}
           />
-          <h1 className="font-serif text-2xl sm:text-3xl font-normal text-[#1a1208] dark:text-[#f0ece4] tracking-tight">
+          <h1 className="font-serif text-2xl sm:text-3xl font-normal text-[#181510] dark:text-[#f0ece4] tracking-tight">
             {activeTab === "login" ? "Welcome back." : "Create your scholar record."}
           </h1>
-          <p className="text-xs text-[#8a7a66] leading-relaxed">
+          <p className="text-xs text-[#696158] dark:text-[#c8bfb0] leading-relaxed">
             {activeTab === "login"
               ? "Access your academic notes, mock quizzes, and study streaks."
               : "Register your university profile to join the student platform."}
@@ -229,16 +230,16 @@ export default function AuthPage() {
           onValueChange={(v) => setActiveTab(v as any)}
           className="w-full"
         >
-          <TabsList className="grid grid-cols-2 w-full bg-[#ede8de] dark:bg-[#141210] rounded-full p-1 h-10 border border-[rgba(200,131,10,0.18)]">
+          <TabsList className="grid grid-cols-2 w-full bg-[#F7F4EE] dark:bg-[#201d19] rounded-xl p-1 h-11 border border-[#E7E1D7] dark:border-[#2b2722]">
             <TabsTrigger
               value="login"
-              className="rounded-full data-[state=active]:bg-[#ffffff] dark:data-[state=active]:bg-[#1c1916] data-[state=active]:text-[#1a1208] dark:data-[state=active]:text-[#f0ece4] data-[state=active]:shadow-sm text-xs font-medium text-[#8a7a66] transition-all"
+              className="relative rounded-lg text-xs font-medium text-[#696158] dark:text-[#c8bfb0] data-[state=active]:text-[#181510] dark:data-[state=active]:text-[#f0ece4] data-[state=active]:bg-[#FFFEFB] dark:data-[state=active]:bg-[#191714] data-[state=active]:shadow-xs transition-all h-9 cursor-pointer"
             >
               Sign In
             </TabsTrigger>
             <TabsTrigger
               value="register"
-              className="rounded-full data-[state=active]:bg-[#ffffff] dark:data-[state=active]:bg-[#1c1916] data-[state=active]:text-[#1a1208] dark:data-[state=active]:text-[#f0ece4] data-[state=active]:shadow-sm text-xs font-medium text-[#8a7a66] transition-all"
+              className="relative rounded-lg text-xs font-medium text-[#696158] dark:text-[#c8bfb0] data-[state=active]:text-[#181510] dark:data-[state=active]:text-[#f0ece4] data-[state=active]:bg-[#FFFEFB] dark:data-[state=active]:bg-[#191714] data-[state=active]:shadow-xs transition-all h-9 cursor-pointer"
             >
               Register
             </TabsTrigger>
@@ -262,12 +263,12 @@ export default function AuthPage() {
                   name="username"
                   render={({ field }) => (
                     <FormItem className="space-y-1.5">
-                      <FormLabel className="text-xs font-medium uppercase tracking-[0.08em] text-[#4a3f2f] dark:text-[#c8bfb0]">
+                      <FormLabel className="text-xs font-semibold uppercase tracking-[0.08em] text-[#181510] dark:text-[#c8bfb0]">
                         Username
                       </FormLabel>
                       <FormControl>
                         <input
-                          className="editorial-input h-11"
+                          className="editorial-input h-11 w-full rounded-xl border border-[#E7E1D7] dark:border-[#2b2722] bg-[#FFFEFB] dark:bg-[#191714] px-3.5 text-sm focus:border-[#734700] focus:ring-2 focus:ring-[#734700]/15 outline-none transition-all"
                           placeholder="e.g. rahul123"
                           {...field}
                         />
@@ -281,21 +282,21 @@ export default function AuthPage() {
                   name="password"
                   render={({ field }) => (
                     <FormItem className="space-y-1.5">
-                      <FormLabel className="text-xs font-medium uppercase tracking-[0.08em] text-[#4a3f2f] dark:text-[#c8bfb0]">
+                      <FormLabel className="text-xs font-semibold uppercase tracking-[0.08em] text-[#181510] dark:text-[#c8bfb0]">
                         Password
                       </FormLabel>
                       <FormControl>
                         <div className="relative">
                           <input
                             type={showLoginPw ? "text" : "password"}
-                            className="editorial-input h-11 pr-10"
+                            className="editorial-input h-11 w-full rounded-xl border border-[#E7E1D7] dark:border-[#2b2722] bg-[#FFFEFB] dark:bg-[#191714] pl-3.5 pr-11 text-sm focus:border-[#734700] focus:ring-2 focus:ring-[#734700]/15 outline-none transition-all"
                             placeholder="••••••••"
                             {...field}
                           />
                           <button
                             type="button"
                             onClick={() => setShowLoginPw((v) => !v)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8a7a66] hover:text-[#1a1208] dark:hover:text-[#f0ece4] transition-colors"
+                            className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center rounded-lg text-[#696158] hover:text-[#181510] dark:text-[#c8bfb0] dark:hover:text-[#f0ece4] transition-colors focus:outline-none"
                             aria-label={showLoginPw ? "Hide password" : "Show password"}
                           >
                             {showLoginPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -316,7 +317,7 @@ export default function AuthPage() {
                       setResetErrorMessage(null);
                       setResetStatusMessage(null);
                     }}
-                    className="text-xs text-[#c8830a] hover:underline font-medium focus:outline-none"
+                    className="text-xs text-[#734700] dark:text-[#e69c24] hover:underline font-semibold focus:outline-none cursor-pointer"
                   >
                     Forgot password?
                   </button>
@@ -330,8 +331,8 @@ export default function AuthPage() {
                     onClick={() => setAcceptedTerms(!acceptedTerms)}
                     className={`w-4 h-4 rounded border mt-0.5 flex items-center justify-center transition-colors cursor-pointer shrink-0 ${
                       acceptedTerms
-                        ? "bg-[#c8830a] border-[#c8830a] text-white"
-                        : "border-[#8a7a66] hover:border-[#c8830a] bg-transparent"
+                        ? "bg-[#734700] border-[#734700] text-white"
+                        : "border-[#696158] hover:border-[#734700] bg-transparent"
                     }`}
                   >
                     {acceptedTerms && <Check className="w-3 h-3 stroke-[3]" />}
@@ -344,7 +345,7 @@ export default function AuthPage() {
                     <Link
                       href="/terms"
                       onClick={(e) => e.stopPropagation()}
-                      className="text-[#c8830a] underline font-medium hover:text-[#995c00]"
+                      className="text-[#734700] dark:text-[#e69c24] underline font-semibold hover:text-[#5C3800]"
                     >
                       Terms of Service
                     </Link>{" "}
@@ -352,7 +353,7 @@ export default function AuthPage() {
                     <Link
                       href="/privacy"
                       onClick={(e) => e.stopPropagation()}
-                      className="text-[#c8830a] underline font-medium hover:text-[#995c00]"
+                      className="text-[#734700] dark:text-[#e69c24] underline font-semibold hover:text-[#5C3800]"
                     >
                       Privacy Policy
                     </Link>
@@ -363,7 +364,7 @@ export default function AuthPage() {
 
                 <button
                   type="submit"
-                  className="btn-primary w-full h-11 text-sm mt-2 cursor-pointer"
+                  className="btn-primary w-full h-11 text-sm mt-2 cursor-pointer shadow-md inline-flex items-center justify-center font-medium"
                   disabled={loginMutation.isPending}
                 >
                   {loginMutation.isPending ? (
@@ -467,14 +468,14 @@ export default function AuthPage() {
                           <div className="relative">
                             <input
                               type={showRegPw ? "text" : "password"}
-                              className="editorial-input h-11 pr-10"
+                              className="editorial-input h-11 w-full rounded-xl border border-[#E7E1D7] dark:border-[#2b2722] bg-[#FFFEFB] dark:bg-[#191714] pl-3.5 pr-11 text-sm focus:border-[#734700] focus:ring-2 focus:ring-[#734700]/15 outline-none transition-all"
                               placeholder="••••••••"
                               {...field}
                             />
                             <button
                               type="button"
                               onClick={() => setShowRegPw((v) => !v)}
-                              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8a7a66] hover:text-[#1a1208] dark:hover:text-[#f0ece4] transition-colors"
+                              className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center rounded-lg text-[#696158] hover:text-[#181510] dark:text-[#c8bfb0] dark:hover:text-[#f0ece4] transition-colors focus:outline-none"
                               aria-label={showRegPw ? "Hide password" : "Show password"}
                             >
                               {showRegPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -490,21 +491,21 @@ export default function AuthPage() {
                     name="passwordConfirm"
                     render={({ field }) => (
                       <FormItem className="space-y-1.5">
-                        <FormLabel className="text-xs font-medium uppercase tracking-[0.08em] text-[#4a3f2f] dark:text-[#c8bfb0]">
+                        <FormLabel className="text-xs font-semibold uppercase tracking-[0.08em] text-[#181510] dark:text-[#c8bfb0]">
                           Confirm
                         </FormLabel>
                         <FormControl>
                           <div className="relative">
                             <input
                               type={showRegConfirmPw ? "text" : "password"}
-                              className="editorial-input h-11 pr-10"
+                              className="editorial-input h-11 w-full rounded-xl border border-[#E7E1D7] dark:border-[#2b2722] bg-[#FFFEFB] dark:bg-[#191714] pl-3.5 pr-11 text-sm focus:border-[#734700] focus:ring-2 focus:ring-[#734700]/15 outline-none transition-all"
                               placeholder="••••••••"
                               {...field}
                             />
                             <button
                               type="button"
                               onClick={() => setShowRegConfirmPw((v) => !v)}
-                              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8a7a66] hover:text-[#1a1208] dark:hover:text-[#f0ece4] transition-colors"
+                              className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center rounded-lg text-[#696158] hover:text-[#181510] dark:text-[#c8bfb0] dark:hover:text-[#f0ece4] transition-colors focus:outline-none"
                               aria-label={showRegConfirmPw ? "Hide confirm password" : "Show confirm password"}
                             >
                               {showRegConfirmPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -517,8 +518,8 @@ export default function AuthPage() {
                   />
                 </div>
 
-                <div className="text-[11px] text-[#8a7a66] bg-[#ede8de]/50 dark:bg-[#141210]/50 p-2.5 rounded-lg border border-[rgba(200,131,10,0.12)] space-y-1">
-                  <p className="font-medium text-[#4a3f2f] dark:text-[#c8bfb0]">Password requirements:</p>
+                <div className="text-[11px] text-[#696158] dark:text-[#c8bfb0] bg-[#F7F4EE] dark:bg-[#201d19] p-3 rounded-xl border border-[#E7E1D7] dark:border-[#2b2722] space-y-1">
+                  <p className="font-semibold text-[#181510] dark:text-[#f0ece4]">Password requirements:</p>
                   <p>• Minimum 12 characters</p>
                   <p>• At least one uppercase, lowercase, number & special character</p>
                 </div>
@@ -531,8 +532,8 @@ export default function AuthPage() {
                     onClick={() => setAcceptedTerms(!acceptedTerms)}
                     className={`w-4 h-4 rounded border mt-0.5 flex items-center justify-center transition-colors cursor-pointer shrink-0 ${
                       acceptedTerms
-                        ? "bg-[#c8830a] border-[#c8830a] text-white"
-                        : "border-[#8a7a66] hover:border-[#c8830a] bg-transparent"
+                        ? "bg-[#734700] border-[#734700] text-white"
+                        : "border-[#696158] hover:border-[#734700] bg-transparent"
                     }`}
                   >
                     {acceptedTerms && <Check className="w-3 h-3 stroke-[3]" />}
@@ -545,7 +546,7 @@ export default function AuthPage() {
                     <Link
                       href="/terms"
                       onClick={(e) => e.stopPropagation()}
-                      className="text-[#c8830a] underline font-medium hover:text-[#995c00]"
+                      className="text-[#734700] dark:text-[#e69c24] underline font-semibold hover:text-[#5C3800]"
                     >
                       Terms of Service
                     </Link>{" "}
@@ -553,7 +554,7 @@ export default function AuthPage() {
                     <Link
                       href="/privacy"
                       onClick={(e) => e.stopPropagation()}
-                      className="text-[#c8830a] underline font-medium hover:text-[#995c00]"
+                      className="text-[#734700] dark:text-[#e69c24] underline font-semibold hover:text-[#5C3800]"
                     >
                       Privacy Policy
                     </Link>
@@ -564,7 +565,7 @@ export default function AuthPage() {
 
                 <button
                   type="submit"
-                  className="btn-primary w-full h-11 text-sm mt-2 cursor-pointer"
+                  className="btn-primary w-full h-11 text-sm mt-2 cursor-pointer shadow-md inline-flex items-center justify-center font-medium"
                   disabled={registerMutation.isPending}
                 >
                   {registerMutation.isPending ? (

@@ -184,13 +184,13 @@ export default function SubjectOverviewPage() {
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
               <div className="space-y-3 max-w-3xl">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <Badge className="bg-[#9A6205] text-white font-mono text-xs px-2.5 py-0.5">
+                  <Badge className="bg-[#734700] text-white font-mono text-xs px-2.5 py-0.5">
                     {subject.code}
                   </Badge>
-                  <Badge variant="outline" className="text-xs bg-amber-500/10 border-amber-500/30 text-amber-700 dark:text-amber-300">
+                  <Badge variant="outline" className="text-xs bg-[#F4E7CA]/50 border-[#734700]/30 text-[#734700] dark:text-[#e69c24]">
                     {subject.category || "Core"}
                   </Badge>
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs border-[#E7E1D7] dark:border-[#2b2722]">
                     {subject.credits} Credits ({subject.ltp || "L:1 T:0 P:2"})
                   </Badge>
                   <Badge variant="outline" className="text-xs bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30">
@@ -209,14 +209,14 @@ export default function SubjectOverviewPage() {
                 {/* Primary CTA Buttons */}
                 <div className="flex items-center gap-3 pt-3 flex-wrap">
                   <Link href={getUnitRoute(1, "notes")}>
-                    <Button className="bg-[#9A6205] hover:bg-[#835203] text-white gap-2 font-medium shadow-sm">
+                    <Button className="bg-[#734700] hover:bg-[#5C3800] text-white gap-2 font-medium shadow-xs h-10 px-5 rounded-xl">
                       <BookOpen className="w-4 h-4" /> Start Unit 1 Notes
                     </Button>
                   </Link>
 
                   <Link href={getUnitRoute(1, "mcqs")}>
-                    <Button variant="outline" className="gap-2 border-border/80 hover:bg-muted">
-                      <FileText className="w-4 h-4 text-[#9A6205]" /> Practice MCQs
+                    <Button variant="outline" className="gap-2 border-[#E7E1D7] dark:border-[#2b2722] hover:bg-[#F7F4EE] dark:hover:bg-[#201d19] h-10 px-4 rounded-xl">
+                      <FileText className="w-4 h-4 text-[#734700] dark:text-[#e69c24]" /> Practice MCQs
                     </Button>
                   </Link>
 
@@ -385,24 +385,24 @@ export default function SubjectOverviewPage() {
                       {/* Action Buttons for Unit */}
                       <div className="flex items-center gap-2 flex-wrap shrink-0 lg:flex-col lg:items-stretch lg:w-56 pt-2 lg:pt-0">
                         <Link href={getUnitRoute(unit.unitNumber, "notes")}>
-                          <Button size="sm" className="w-full bg-[#9A6205] hover:bg-[#835203] text-white text-xs h-8 gap-1.5">
+                          <Button size="sm" className="w-full bg-[#734700] hover:bg-[#5C3800] text-white text-xs h-9 gap-1.5 rounded-xl font-medium">
                             <BookOpen className="w-3.5 h-3.5" /> Read Notes
                           </Button>
                         </Link>
 
                         <div className="grid grid-cols-3 gap-1.5 w-full">
                           <Link href={getUnitRoute(unit.unitNumber, "mcqs")}>
-                            <Button size="sm" variant="outline" className="w-full text-[11px] h-7 px-1">
+                            <Button size="sm" variant="outline" className="w-full text-[11px] h-8 px-1 border-[#E7E1D7] dark:border-[#2b2722] hover:bg-[#F7F4EE] rounded-lg">
                               MCQs (60)
                             </Button>
                           </Link>
                           <Link href={getUnitRoute(unit.unitNumber, "subjective")}>
-                            <Button size="sm" variant="outline" className="w-full text-[11px] h-7 px-1">
+                            <Button size="sm" variant="outline" className="w-full text-[11px] h-8 px-1 border-[#E7E1D7] dark:border-[#2b2722] hover:bg-[#F7F4EE] rounded-lg">
                               Written (20)
                             </Button>
                           </Link>
                           <Link href={getUnitRoute(unit.unitNumber, "flashcards")}>
-                            <Button size="sm" variant="outline" className="w-full text-[11px] h-7 px-1">
+                            <Button size="sm" variant="outline" className="w-full text-[11px] h-8 px-1 border-[#E7E1D7] dark:border-[#2b2722] hover:bg-[#F7F4EE] rounded-lg">
                               Cards (20)
                             </Button>
                           </Link>

@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
   BookOpen,
@@ -11,6 +12,11 @@ import {
   HelpCircle,
   GraduationCap,
   Compass,
+  CheckCircle2,
+  Scale,
+  Cpu,
+  Sprout,
+  Briefcase
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { SEO } from "@/components/seo";
@@ -28,122 +34,251 @@ interface SystemStats {
   totalUsers: number;
 }
 
+/* ═══════════════ MULTIDISCIPLINARY HERO DEMOS ═════════════════ */
+const DEMO_DISCIPLINES = [
+  {
+    id: "agri",
+    label: "Agriculture",
+    icon: Sprout,
+    badge: "AEE103 · Ext. Education",
+    subjectName: "Fundamentals of Extension Education",
+    degree: "B.Sc. (Hons.) Agri · Sem 3",
+    readiness: 78,
+    actionTitle: "Revise Unit 2 — Programme Planning & Steps",
+    actionSubtext: "Focus on extension programme planning principles and evaluation steps before taking the 15-question CA drill.",
+    accuracy: "68%",
+    reviewHref: "/programmes/BSC-AGRI/semesters/3/AEE103/units/2/notes",
+    practiceHref: "/programmes/BSC-AGRI/semesters/3/AEE103/units/2/mcqs",
+    pulses: [
+      { unit: "Unit 1–2", status: "85% Ready", color: "text-[#2E6930]" },
+      { unit: "Unit 3–4", status: "72% Ready", color: "text-[#734700]" },
+      { unit: "Unit 5–6", status: "58% Revise", color: "text-[#9E2A2B]" },
+    ]
+  },
+  {
+    id: "cse",
+    label: "Computer Science",
+    icon: Cpu,
+    badge: "CSE111 · Programming",
+    subjectName: "Object-Oriented Programming & DS",
+    degree: "B.Tech CSE · Sem 3",
+    readiness: 72,
+    actionTitle: "Revise Unit 4 — Binary Trees & Graph Traversals",
+    actionSubtext: "Your previous practice showed weakness in tree balancing and traversals. Review the unit summaries before taking the drill.",
+    accuracy: "52%",
+    reviewHref: "/learn",
+    practiceHref: "/practice",
+    pulses: [
+      { unit: "Unit 1–2", status: "88% Ready", color: "text-[#2E6930]" },
+      { unit: "Unit 3", status: "64% Ready", color: "text-[#734700]" },
+      { unit: "Unit 4–5", status: "52% Revise", color: "text-[#9E2A2B]" },
+    ]
+  },
+  {
+    id: "law",
+    label: "Law",
+    icon: Scale,
+    badge: "LAW201 · Constitutional Law",
+    subjectName: "Constitutional Law of India — I",
+    degree: "LL.B / B.A. LL.B · Sem 3",
+    readiness: 82,
+    actionTitle: "Revise Unit 3 — Fundamental Rights & Judicial Review",
+    actionSubtext: "Article 21 procedure established by law vs due process case precedents need review before midterm simulation.",
+    accuracy: "76%",
+    reviewHref: "/learn",
+    practiceHref: "/practice",
+    pulses: [
+      { unit: "Unit 1–2", status: "92% Ready", color: "text-[#2E6930]" },
+      { unit: "Unit 3", status: "68% Ready", color: "text-[#734700]" },
+      { unit: "Unit 4–5", status: "62% Revise", color: "text-[#9E2A2B]" },
+    ]
+  },
+  {
+    id: "mgt",
+    label: "Management",
+    icon: Briefcase,
+    badge: "MGT102 · Org. Behaviour",
+    subjectName: "Organizational Behaviour & Leadership",
+    degree: "BBA / MBA · Sem 2",
+    readiness: 75,
+    actionTitle: "Revise Unit 3 — Leadership Models & Motivation",
+    actionSubtext: "Compare Herzberg's two-factor theory and Vroom's expectancy model with real case questions.",
+    accuracy: "64%",
+    reviewHref: "/learn",
+    practiceHref: "/practice",
+    pulses: [
+      { unit: "Unit 1–2", status: "86% Ready", color: "text-[#2E6930]" },
+      { unit: "Unit 3", status: "62% Ready", color: "text-[#734700]" },
+      { unit: "Unit 4–5", status: "70% Revise", color: "text-[#9E2A2B]" },
+    ]
+  }
+];
+
 /* ═══════════════ LANDING VIEW (Unauthenticated) ═════════════════ */
 function LandingView({ stats }: { stats?: SystemStats }) {
+  const [activeDemoIdx, setActiveDemoIdx] = useState(0);
+  const activeDemo = DEMO_DISCIPLINES[activeDemoIdx];
+
   return (
     <div className="relative space-y-16 sm:space-y-24 md:space-y-32 google-anno-skip">
       <SEO
         title="Padho LPU — LPU Study Material, Notes, Quizzes & Exam Preparation"
-        description="Padho LPU is an independent study platform for LPU students, bringing together study material, notes, practice questions, quizzes, mock exams and exam-preparation resources."
+        description="Padho LPU is an independent study platform for LPU students, bringing together study material, notes, practice questions, quizzes, mock exams and exam-preparation resources across Engineering, Law, Agriculture, Management and Sciences."
         canonicalUrl="https://padholpu.online/"
       />
 
-      {/* ── 1. HERO SECTION WITH PRODUCT PREVIEW ──────────── */}
+      {/* ── 1. HERO SECTION WITH MULTIDISCIPLINARY DEMO ──────────── */}
       <section className="relative pt-6 md:pt-16 pb-8 overflow-visible">
-        <AmbientOrb
-          size={440}
-          className="top-[-100px] left-1/2 -translate-x-1/2 opacity-30"
+        {/* Compositor-friendly static radial glow background (0 GPU repaints) */}
+        <div 
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 -top-24 h-96 -z-10 opacity-70 dark:opacity-30"
+          style={{
+            background: "radial-gradient(ellipse 65% 55% at 50% 0%, rgba(200, 131, 10, 0.12) 0%, rgba(200, 131, 10, 0.03) 60%, transparent 80%)"
+          }}
         />
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Left Column: Copy & CTAs */}
           <div className="lg:col-span-7 space-y-5 sm:space-y-6 text-center lg:text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F4E7CA]/70 dark:bg-[#2d2315] border border-[#734700]/20 text-[#734700] text-xs font-semibold uppercase tracking-wider">
-              <span>Independent Platform for LPU Students</span>
+              <span>Independent Academic Platform for LPU Students</span>
             </div>
 
-            <h1 className="font-serif text-[clamp(2rem,5vw,4.2rem)] text-[#181510] dark:text-[#f0ece4] font-normal tracking-tight leading-[1.08]">
+            <h1 className="font-serif text-[clamp(2.1rem,5vw,4.2rem)] text-[#181510] dark:text-[#f0ece4] font-normal tracking-tight leading-[1.08]">
               Padho LPU — LPU Study Material, Quizzes & Exam Preparation
             </h1>
 
             <p className="text-[#696158] dark:text-[#c8bfb0] text-base md:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed font-sans">
-              Padho LPU is an independent study platform for LPU students, bringing together study material, notes, practice questions, quizzes, mock exams and exam-preparation resources.
+              Engineered for Lovely Professional University students across Engineering, Agriculture, Law, Management, and Sciences. One focused workspace for syllabus notes, 60-question unit drills, and timed semester mock exams.
             </p>
 
             <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3">
               <Link href="/auth" className="btn-primary text-sm h-12 px-8 shadow-md w-full sm:w-auto inline-flex items-center justify-center">
-                Start Preparing <ArrowRight className="w-4 h-4 ml-1.5" />
+                Start Preparing Free <ArrowRight className="w-4 h-4 ml-1.5" />
               </Link>
-              <Link href="/learn" className="btn-secondary text-sm h-12 px-7 w-full sm:w-auto inline-flex items-center justify-center">
-                Explore Resources
+              <Link href="/programmes" className="btn-secondary text-sm h-12 px-7 w-full sm:w-auto inline-flex items-center justify-center">
+                Browse All Programmes
               </Link>
             </div>
 
-            <p className="text-xs text-[#696158] pt-1">
-              Curated notes, subject syllabus, and exam prep for Lovely Professional University coursework.
-            </p>
+            {/* Multidisciplinary School Indicators */}
+            <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-2 text-[11px] text-[#696158] dark:text-[#c8bfb0]">
+              <span className="font-semibold text-[#181510] dark:text-[#f0ece4]">Faculties:</span>
+              <span className="px-2 py-0.5 rounded-md bg-[#EFE9DE] dark:bg-[#25211c]">Agriculture</span>
+              <span className="px-2 py-0.5 rounded-md bg-[#EFE9DE] dark:bg-[#25211c]">Law</span>
+              <span className="px-2 py-0.5 rounded-md bg-[#EFE9DE] dark:bg-[#25211c]">Computer Science</span>
+              <span className="px-2 py-0.5 rounded-md bg-[#EFE9DE] dark:bg-[#25211c]">Management</span>
+              <span className="px-2 py-0.5 rounded-md bg-[#EFE9DE] dark:bg-[#25211c]">Sciences</span>
+            </div>
           </div>
 
-          {/* Right Column: Actual Live Interactive Product Preview */}
+          {/* Right Column: Actual Live Interactive Multidisciplinary Product Preview */}
           <div className="lg:col-span-5 w-full min-w-0">
-            <div className="action-card-primary p-4 sm:p-6 space-y-4 sm:space-y-5 bg-[#FFFEFB] dark:bg-[#191714] shadow-2xl overflow-hidden rounded-2xl">
-              {/* Product Header */}
-              <div className="flex items-start sm:items-center justify-between gap-3 border-b border-[#E7E1D7] dark:border-[#2b2722] pb-4">
-                <div className="space-y-1.5 min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="badge-amber text-[10px] px-2.5 py-0.5 truncate max-w-[200px]">
-                      CSE111 · Programming
-                    </span>
-                    <span className="text-[9px] uppercase font-mono px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-200 border border-amber-600/20 font-semibold shrink-0">
-                      Sample View
-                    </span>
+            <div className="action-card-primary p-4 sm:p-6 space-y-4 sm:space-y-5 bg-[#FFFEFB] dark:bg-[#191714] shadow-2xl overflow-hidden rounded-2xl border border-[#E7E1D7] dark:border-[#2b2722]">
+              {/* Discipline Switcher Tabs */}
+              <div className="flex items-center justify-between gap-1 p-1 rounded-xl bg-[#F7F4EE] dark:bg-[#201d19] border border-[#E7E1D7] dark:border-[#2b2722] overflow-x-auto">
+                {DEMO_DISCIPLINES.map((d, idx) => {
+                  const Icon = d.icon;
+                  const isActive = idx === activeDemoIdx;
+                  return (
+                    <button
+                      key={d.id}
+                      type="button"
+                      onClick={() => setActiveDemoIdx(idx)}
+                      className={`relative flex-1 min-w-[70px] py-1.5 px-2 text-[11px] font-medium rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5 ${
+                        isActive
+                          ? "text-[#734700] dark:text-[#e69c24] font-semibold"
+                          : "text-[#696158] dark:text-[#c8bfb0] hover:text-[#181510]"
+                      }`}
+                    >
+                      {isActive && (
+                        <motion.div
+                          layoutId="demoTabActivePill"
+                          className="absolute inset-0 bg-[#FFFEFB] dark:bg-[#191714] rounded-lg shadow-xs border border-[#734700]/20"
+                          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                        />
+                      )}
+                      <span className="relative z-10 flex items-center gap-1">
+                        <Icon className="w-3 h-3 shrink-0" />
+                        <span className="truncate">{d.label}</span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Dynamic Demo Card Content */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeDemo.id}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.16 }}
+                  className="space-y-4"
+                >
+                  {/* Product Header */}
+                  <div className="flex items-start sm:items-center justify-between gap-3 border-b border-[#E7E1D7] dark:border-[#2b2722] pb-3.5">
+                    <div className="space-y-1 min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="badge-amber text-[10px] px-2.5 py-0.5 truncate max-w-[220px]">
+                          {activeDemo.badge}
+                        </span>
+                        <span className="text-[9px] uppercase font-mono px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-200 border border-amber-600/20 font-semibold shrink-0">
+                          {activeDemo.degree}
+                        </span>
+                      </div>
+                      <p className="font-serif text-base sm:text-lg font-medium text-[#181510] dark:text-[#f0ece4] truncate">
+                        {activeDemo.subjectName}
+                      </p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <span className="text-[10px] uppercase font-mono text-[#696158] block">Readiness</span>
+                      <p className="stat-value text-xl sm:text-2xl text-[#734700]">{activeDemo.readiness}%</p>
+                    </div>
                   </div>
-                  <p className="font-serif text-base sm:text-lg font-medium text-[#181510] dark:text-[#f0ece4] truncate">
-                    Semester Preparedness
-                  </p>
-                </div>
-                <div className="text-right shrink-0">
-                  <span className="text-[10px] uppercase font-mono text-[#696158] block">Readiness</span>
-                  <p className="stat-value text-xl sm:text-2xl text-[#734700]">72%</p>
-                </div>
-              </div>
 
-              {/* Core Feature Highlight: Next Best Action */}
-              <div className="p-3.5 sm:p-4 rounded-xl bg-[#F7F4EE] dark:bg-[#201d19] border border-[#E7E1D7] dark:border-[#2b2722] space-y-3 overflow-hidden">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="text-[11px] font-semibold text-[#734700] uppercase tracking-wider">
-                    Next Best Action
-                  </span>
-                  <span className="text-[10px] font-mono text-[#9E2A2B] bg-[#9E2A2B]/10 px-2 py-0.5 rounded-full font-medium shrink-0">
-                    Accuracy: 52%
-                  </span>
-                </div>
-                <div>
-                  <p className="font-serif text-base font-medium text-[#181510] dark:text-[#f0ece4] line-clamp-2">
-                    Revise Unit 4 — Binary Trees & Graph Traversals
-                  </p>
-                  <p className="text-xs text-[#696158] leading-relaxed mt-1 line-clamp-3">
-                    Your previous practice showed weakness in tree balancing and traversals. Review the unit summaries before taking the 12-question drill.
-                  </p>
-                </div>
+                  {/* Core Feature Highlight: Next Best Action */}
+                  <div className="p-3.5 sm:p-4 rounded-xl bg-[#F7F4EE] dark:bg-[#201d19] border border-[#E7E1D7] dark:border-[#2b2722] space-y-2.5 overflow-hidden">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <span className="text-[11px] font-semibold text-[#734700] uppercase tracking-wider flex items-center gap-1">
+                        <Sparkles className="w-3 h-3" /> Next Best Action
+                      </span>
+                      <span className="text-[10px] font-mono text-[#9E2A2B] bg-[#9E2A2B]/10 px-2 py-0.5 rounded-full font-medium shrink-0">
+                        Accuracy: {activeDemo.accuracy}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="font-serif text-sm sm:text-base font-medium text-[#181510] dark:text-[#f0ece4] line-clamp-2">
+                        {activeDemo.actionTitle}
+                      </p>
+                      <p className="text-xs text-[#696158] leading-relaxed mt-1 line-clamp-3">
+                        {activeDemo.actionSubtext}
+                      </p>
+                    </div>
 
-                <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
-                  <Link href="/learn" className="btn-primary text-xs h-11 min-h-[44px] px-5 w-full sm:w-auto inline-flex items-center justify-center">
-                    Review Unit
-                  </Link>
-                  <Link href="/practice" className="btn-ghost text-xs h-11 min-h-[44px] px-5 w-full sm:w-auto inline-flex items-center justify-center">
-                    Practice 12 Questions
-                  </Link>
-                </div>
-              </div>
+                    <div className="pt-1.5 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                      <Link href={activeDemo.reviewHref} className="btn-primary text-xs h-10 min-h-[40px] px-5 w-full sm:w-auto inline-flex items-center justify-center">
+                        Review Notes
+                      </Link>
+                      <Link href={activeDemo.practiceHref} className="btn-ghost text-xs h-10 min-h-[40px] px-4 w-full sm:w-auto inline-flex items-center justify-center">
+                        Practice Questions
+                      </Link>
+                    </div>
+                  </div>
 
-              {/* Syllabus Pulse — auto-fit so it never overflows */}
-              <div
-                className="pt-1 text-center text-xs grid grid-cols-3 gap-1.5 sm:gap-2"
-              >
-                <div className="p-1.5 sm:p-2 rounded-lg bg-[#F7F4EE]/60 dark:bg-[#201d19] border border-[#E7E1D7]/80">
-                  <span className="text-[9px] sm:text-[10px] text-[#696158] block truncate">Unit 1–2</span>
-                  <p className="font-semibold text-[11px] sm:text-xs text-[#2E6930] truncate">88% Ready</p>
-                </div>
-                <div className="p-1.5 sm:p-2 rounded-lg bg-[#F7F4EE]/60 dark:bg-[#201d19] border border-[#E7E1D7]/80">
-                  <span className="text-[9px] sm:text-[10px] text-[#696158] block truncate">Unit 3</span>
-                  <p className="font-semibold text-[11px] sm:text-xs text-[#734700] truncate">64% Ready</p>
-                </div>
-                <div className="p-1.5 sm:p-2 rounded-lg bg-[#F7F4EE]/60 dark:bg-[#201d19] border border-[#E7E1D7]/80">
-                  <span className="text-[9px] sm:text-[10px] text-[#696158] block truncate">Unit 4–5</span>
-                  <p className="font-semibold text-[11px] sm:text-xs text-[#9E2A2B] truncate">52% Revise</p>
-                </div>
-              </div>
+                  {/* Syllabus Pulse — auto-fit columns */}
+                  <div className="pt-0.5 text-center text-xs grid grid-cols-3 gap-1.5 sm:gap-2">
+                    {activeDemo.pulses.map((p, pIdx) => (
+                      <div key={pIdx} className="p-1.5 sm:p-2 rounded-lg bg-[#F7F4EE]/60 dark:bg-[#201d19] border border-[#E7E1D7]/80 dark:border-[#2b2722]">
+                        <span className="text-[9px] sm:text-[10px] text-[#696158] block truncate">{p.unit}</span>
+                        <p className={`font-semibold text-[11px] sm:text-xs ${p.color} truncate`}>{p.status}</p>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
         </div>
@@ -151,7 +286,13 @@ function LandingView({ stats }: { stats?: SystemStats }) {
 
       {/* ── 2. THE PROBLEM & TRANSFORMATION WORKFLOW ─────── */}
       <section className="max-w-5xl mx-auto px-4">
-        <div className="academic-card p-5 sm:p-8 md:p-14 space-y-6 sm:space-y-8 bg-[#FFFEFB] dark:bg-[#191714]">
+        <motion.div 
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.28, ease: [0.25, 1, 0.5, 1] }}
+          className="academic-card p-5 sm:p-8 md:p-14 space-y-6 sm:space-y-8 bg-[#FFFEFB] dark:bg-[#191714]"
+        >
           <div className="max-w-2xl space-y-3">
             <span className="section-label">The Core Transformation</span>
             <h2 className="font-serif text-[clamp(1.9rem,4vw,3rem)] font-normal text-[#181510] dark:text-[#f0ece4]">
@@ -184,13 +325,13 @@ function LandingView({ stats }: { stats?: SystemStats }) {
               <p className="text-xs font-medium text-[#181510] dark:text-[#f0ece4]">Test under time</p>
               <p className="text-[11px] text-[#696158]">Timed full mock papers</p>
             </div>
-          <div className="col-span-1 sm:col-span-2 lg:col-span-1 space-y-1.5 p-3 rounded-xl bg-[#F4E7CA]/60 dark:bg-[#2d2315] border border-[#734700]/30">
+            <div className="col-span-1 sm:col-span-2 lg:col-span-1 space-y-1.5 p-3 rounded-xl bg-[#F4E7CA]/60 dark:bg-[#2d2315] border border-[#734700]/30">
               <span className="font-mono text-xs text-[#734700] font-bold">05. IMPROVE</span>
               <p className="text-xs font-medium text-[#181510] dark:text-[#f0ece4]">Next Best Action</p>
               <p className="text-[11px] text-[#696158]">Direct weakness fix</p>
             </div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* ── 3. LEARN: SYLLABUS-LINKED RESOURCES ───────────── */}

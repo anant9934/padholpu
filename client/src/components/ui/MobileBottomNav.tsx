@@ -1,5 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { Home, BookOpen, FileText, Sparkles, TrendingUp } from "lucide-react";
+import { motion } from "framer-motion";
 
 export const mobileBottomNavItems = [
   { href: "/",         label: "Home",     icon: Home       },
@@ -23,50 +24,60 @@ export function MobileBottomNav() {
 
   return (
     <nav
-      className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#f5f0e8]/95 dark:bg-[#141210]/95 backdrop-blur-md border-t border-[rgba(200,131,10,0.18)]"
+      aria-label="Mobile Navigation"
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#F7F4EE]/95 dark:bg-[#141210]/95 backdrop-blur-md border-t border-[#E7E1D7] dark:border-[#2B2722] transition-colors"
     >
       <div
-        className="flex items-stretch"
+        className="flex items-stretch justify-around max-w-lg mx-auto"
         style={{
-          height: "calc(3.5rem + env(safe-area-inset-bottom))",
+          height: "calc(3.75rem + env(safe-area-inset-bottom))",
           paddingBottom: "env(safe-area-inset-bottom)",
         }}
       >
         {mobileBottomNavItems.map((item) => {
           const active = isActive(item.href);
           return (
-            <Link key={item.href} href={item.href} className="flex-1">
-              <div
-                className="flex flex-col items-center justify-center gap-0.5 h-full w-full transition-all duration-150 relative cursor-pointer"
+            <Link key={item.href} href={item.href} className="flex-1 flex justify-center">
+              <motion.div
+                whileTap={{ scale: 0.92 }}
+                transition={{ type: "spring", stiffness: 450, damping: 30 }}
+                className="flex flex-col items-center justify-center gap-0.5 h-full w-full min-w-[48px] py-1 relative cursor-pointer select-none"
                 style={{ WebkitTapHighlightColor: "transparent" }}
               >
                 {/* Active indicator bar */}
-                <div
-                  className={`absolute top-0 w-8 h-[2px] rounded-full transition-all duration-200 ${
-                    active ? "bg-[#c8830a]" : "bg-transparent"
-                  }`}
-                />
+                {active && (
+                  <motion.div
+                    layoutId="mobileNavIndicator"
+                    className="absolute top-0 w-8 h-[2.5px] rounded-full bg-[#734700] dark:bg-[#E69C24]"
+                    transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                  />
+                )}
                 {/* Icon container */}
                 <div
-                  className={`w-9 h-8 rounded-full flex items-center justify-center transition-all duration-150
-                  ${active ? "bg-[rgba(200,131,10,0.12)]" : ""}`}
+                  className={`w-9 h-8 rounded-full flex items-center justify-center transition-colors duration-150 ${
+                    active ? "bg-[#F4E7CA]/60 dark:bg-[#2D2315]" : ""
+                  }`}
                 >
                   <item.icon
-                    className={`transition-all duration-150 ${
-                      active ? "text-[#995c00] dark:text-[#f3a828]" : "text-[#524434] dark:text-[#c4b5a2]"
+                    className={`transition-colors duration-150 ${
+                      active
+                        ? "text-[#734700] dark:text-[#E69C24]"
+                        : "text-[#696158] dark:text-[#C8BFB0]"
                     }`}
-                    size={18}
-                    strokeWidth={active ? 2.3 : 1.8}
+                    size={19}
+                    strokeWidth={active ? 2.4 : 1.8}
                   />
                 </div>
                 <span
-                  className={`text-[9.5px] tracking-tight transition-all duration-150 ${
-                    active ? "text-[#995c00] dark:text-[#f3a828] font-bold" : "text-[#524434] dark:text-[#c4b5a2] font-semibold"
+                  className={`text-[10px] tracking-tight leading-none transition-colors duration-150 ${
+                    active
+                      ? "text-[#734700] dark:text-[#E69C24] font-semibold"
+                      : "text-[#696158] dark:text-[#C8BFB0] font-medium"
                   }`}
                 >
                   {item.label}
                 </span>
-              </div>
+              </motion.div>
             </Link>
           );
         })}

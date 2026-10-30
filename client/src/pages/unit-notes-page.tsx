@@ -44,6 +44,20 @@ export default function UnitNotesPage() {
   // Text size control: 0 = small, 1 = normal, 2 = large
   const [textSize, setTextSize] = useState<number>(1);
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
+  const [scrollProgress, setScrollProgress] = useState<number>(0);
+
+  // Track reading scroll depth
+  useEffect(() => {
+    const handleScroll = () => {
+      const el = document.documentElement;
+      const total = el.scrollHeight - el.clientHeight;
+      if (total > 0) {
+        setScrollProgress(Math.min(100, Math.max(0, (window.scrollY / total) * 100)));
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Check local storage for bookmark
   useEffect(() => {
@@ -143,7 +157,15 @@ export default function UnitNotesPage() {
 
       <div className="min-h-screen bg-background pb-20">
         {/* Top Breadcrumb & Controls Bar */}
-        <div className="border-b border-border/40 bg-muted/20 sticky top-0 z-20 backdrop-blur-md">
+        <div className="border-b border-[#E7E1D7] dark:border-[#2b2722] bg-[#FFFEFB]/90 dark:bg-[#191714]/90 sticky top-0 z-20 backdrop-blur-md">
+          {/* Scroll progress bar */}
+          <div className="w-full bg-[#E7E1D7]/50 dark:bg-[#2b2722]/50 h-0.5">
+            <div 
+              className="bg-[#734700] dark:bg-[#e69c24] h-full transition-all duration-75"
+              style={{ width: `${scrollProgress}%` }}
+            />
+          </div>
+
           <div className="container max-w-5xl mx-auto px-4 py-2.5 flex items-center justify-between text-xs text-muted-foreground">
             <div className="flex items-center gap-1.5 flex-wrap">
               <Link href={`/programmes/${programmeCode}/semesters/${semester}/${code}`} className="hover:text-foreground font-semibold flex items-center gap-1">
@@ -155,24 +177,24 @@ export default function UnitNotesPage() {
 
             {/* Reading Toolbar */}
             <div className="flex items-center gap-2">
-              <div className="flex items-center border border-border/60 rounded-md overflow-hidden bg-background">
+              <div className="flex items-center border border-[#E7E1D7] dark:border-[#2b2722] rounded-lg overflow-hidden bg-background">
                 <button 
                   onClick={() => setTextSize(0)} 
-                  className={`px-2 py-1 text-xs hover:bg-muted ${textSize === 0 ? "font-bold text-[#9A6205]" : ""}`}
+                  className={`px-2.5 py-1 text-xs hover:bg-[#F7F4EE] dark:hover:bg-[#201d19] transition-colors cursor-pointer ${textSize === 0 ? "font-bold text-[#734700] dark:text-[#e69c24] bg-[#F4E7CA]/40" : ""}`}
                   title="Smaller text"
                 >
                   A-
                 </button>
                 <button 
                   onClick={() => setTextSize(1)} 
-                  className={`px-2 py-1 text-xs hover:bg-muted ${textSize === 1 ? "font-bold text-[#9A6205]" : ""}`}
+                  className={`px-2.5 py-1 text-xs hover:bg-[#F7F4EE] dark:hover:bg-[#201d19] transition-colors cursor-pointer ${textSize === 1 ? "font-bold text-[#734700] dark:text-[#e69c24] bg-[#F4E7CA]/40" : ""}`}
                   title="Default text"
                 >
                   100%
                 </button>
                 <button 
                   onClick={() => setTextSize(2)} 
-                  className={`px-2 py-1 text-xs hover:bg-muted ${textSize === 2 ? "font-bold text-[#9A6205]" : ""}`}
+                  className={`px-2.5 py-1 text-xs hover:bg-[#F7F4EE] dark:hover:bg-[#201d19] transition-colors cursor-pointer ${textSize === 2 ? "font-bold text-[#734700] dark:text-[#e69c24] bg-[#F4E7CA]/40" : ""}`}
                   title="Larger text"
                 >
                   A+
@@ -183,22 +205,22 @@ export default function UnitNotesPage() {
                 size="sm" 
                 variant={isBookmarked ? "default" : "outline"} 
                 onClick={handleBookmarkToggle}
-                className={`h-7 px-2 text-xs gap-1 ${isBookmarked ? "bg-[#9A6205] text-white" : ""}`}
+                className={`h-8 px-2.5 text-xs gap-1 border-[#E7E1D7] dark:border-[#2b2722] ${isBookmarked ? "bg-[#734700] text-white hover:bg-[#5C3800]" : ""}`}
               >
                 {isBookmarked ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
                 <span className="hidden sm:inline">{isBookmarked ? "Saved" : "Save"}</span>
               </Button>
 
-              <Button size="sm" variant="ghost" onClick={handleShare} className="h-7 px-2 text-xs">
+              <Button size="sm" variant="ghost" onClick={handleShare} className="h-8 px-2 text-xs">
                 <Share2 className="w-3.5 h-3.5" />
               </Button>
             </div>
           </div>
 
           {/* Unit Subnav Strip */}
-          <div className="container max-w-5xl mx-auto px-4 border-t border-border/30">
+          <div className="container max-w-5xl mx-auto px-4 border-t border-[#E7E1D7]/60 dark:border-[#2b2722]/60">
             <div className="flex items-center gap-4 text-xs overflow-x-auto py-2">
-              <span className="font-semibold text-[#9A6205] border-b-2 border-[#9A6205] pb-1 flex items-center gap-1.5 whitespace-nowrap">
+              <span className="font-semibold text-[#734700] dark:text-[#e69c24] border-b-2 border-[#734700] dark:border-[#e69c24] pb-1 flex items-center gap-1.5 whitespace-nowrap">
                 <BookOpen className="w-3.5 h-3.5" /> Notes
               </span>
               <Link href={getSubRoute(unitNumber, "mcqs")}>

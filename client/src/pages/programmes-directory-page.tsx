@@ -176,7 +176,7 @@ export default function ProgrammesDirectoryPage() {
               onClick={() => setDisciplineFilter(disc)}
               className={`text-xs px-3 py-1.5 rounded-full transition-all cursor-pointer font-medium ${
                 disciplineFilter === disc
-                  ? "bg-[#9A6205] text-white shadow-sm font-semibold"
+                  ? "bg-[#734700] text-white shadow-xs font-semibold"
                   : "bg-muted/40 hover:bg-muted text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -263,9 +263,9 @@ export default function ProgrammesDirectoryPage() {
             return (
               <Card
                 key={prog.id || prog.code}
-                className="group border border-border/70 hover:border-[#9A6205]/40 hover:shadow-md transition-all duration-200 flex flex-col justify-between overflow-hidden"
+                className="group border border-[#E7E1D7] dark:border-[#2b2722] bg-[#FFFEFB] dark:bg-[#191714] hover:border-[#734700]/50 hover:shadow-md transition-all duration-200 flex flex-col justify-between overflow-hidden rounded-2xl"
               >
-                <CardHeader className="bg-muted/15 pb-4">
+                <CardHeader className="bg-[#F7F4EE]/60 dark:bg-[#201d19]/60 pb-4 border-b border-[#E7E1D7]/60 dark:border-[#2b2722]/60">
                   <div className="flex items-center justify-between gap-2 mb-2">
                     <Badge variant="outline" className={`text-[10px] font-semibold border ${badgeClass}`}>
                       <Icon className="w-3 h-3 mr-1 inline" />
@@ -276,7 +276,7 @@ export default function ProgrammesDirectoryPage() {
                     </span>
                   </div>
 
-                  <CardTitle className="text-base font-serif font-bold text-foreground group-hover:text-[#9A6205] transition-colors leading-snug">
+                  <CardTitle className="text-base font-serif font-bold text-foreground group-hover:text-[#734700] dark:group-hover:text-[#e69c24] transition-colors leading-snug">
                     {prog.name}
                   </CardTitle>
 
@@ -290,7 +290,7 @@ export default function ProgrammesDirectoryPage() {
                     {prog.description}
                   </p>
 
-                  <div className="grid grid-cols-3 gap-2 py-2 px-3 rounded-xl bg-muted/30 border border-border/50 text-center text-xs">
+                  <div className="grid grid-cols-3 gap-2 py-2 px-3 rounded-xl bg-[#F7F4EE] dark:bg-[#201d19] border border-[#E7E1D7] dark:border-[#2b2722] text-center text-xs">
                     <div>
                       <span className="text-[10px] uppercase text-muted-foreground block font-medium">Duration</span>
                       <strong className="text-foreground">{prog.durationYears} Yrs</strong>
@@ -305,9 +305,9 @@ export default function ProgrammesDirectoryPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                  <div className="flex items-center gap-2 pt-2 border-t border-[#E7E1D7]/60 dark:border-[#2b2722]/60">
                     <Link href={`/programmes/${prog.code}`} className="flex-1">
-                      <Button size="sm" className="w-full text-xs bg-[#9A6205] hover:bg-[#835203] text-white gap-1">
+                      <Button size="sm" className="w-full text-xs bg-[#734700] hover:bg-[#5C3800] text-white gap-1 rounded-xl h-9">
                         Explore Curriculum <ChevronRight className="w-3.5 h-3.5" />
                       </Button>
                     </Link>

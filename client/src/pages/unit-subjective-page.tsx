@@ -221,7 +221,7 @@ export default function UnitSubjectivePage() {
                   <FileText className="w-3.5 h-3.5" /> MCQs (60)
                 </span>
               </Link>
-              <span className="font-semibold text-[#9A6205] border-b-2 border-[#9A6205] pb-1 flex items-center gap-1.5 whitespace-nowrap">
+              <span className="font-semibold text-[#734700] dark:text-[#e69c24] border-b-2 border-[#734700] dark:border-[#e69c24] pb-1 flex items-center gap-1.5 whitespace-nowrap">
                 <Award className="w-3.5 h-3.5" /> Subjective ({questions.length})
               </span>
               <Link href={getSubRoute("flashcards")}>
@@ -240,17 +240,17 @@ export default function UnitSubjectivePage() {
               <CardHeader className="pb-4 space-y-3">
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                   <div className="flex items-center gap-2">
-                    <Badge className="bg-[#9A6205] text-white font-mono text-xs">
+                    <Badge className="bg-[#734700] text-white font-mono text-xs">
                       Q{currentIndex + 1} of {questions.length}
                     </Badge>
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-xs border-[#E7E1D7] dark:border-[#2b2722]">
                       {currentQ.questionType || "Explanatory"}
                     </Badge>
-                    <Badge variant="secondary" className="text-xs font-mono">
+                    <Badge variant="secondary" className="text-xs font-mono bg-[#F7F4EE] dark:bg-[#201d19]">
                       {currentQ.maxMarks || 10} Marks
                     </Badge>
                   </div>
-                  <span className="text-[11px] text-muted-foreground font-mono">
+                  <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-[#F7F4EE] dark:bg-[#201d19] text-[#696158] dark:text-[#c8bfb0] border border-[#E7E1D7] dark:border-[#2b2722]">
                     {saveStatus}
                   </span>
                 </div>
@@ -260,7 +260,7 @@ export default function UnitSubjectivePage() {
                 </CardTitle>
 
                 {currentQ.contextScenario && (
-                  <p className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg border border-border/40 leading-relaxed italic">
+                  <p className="text-xs text-muted-foreground bg-[#F7F4EE] dark:bg-[#201d19] p-3 rounded-xl border border-[#E7E1D7] dark:border-[#2b2722] leading-relaxed italic">
                     "{currentQ.contextScenario}"
                   </p>
                 )}
@@ -271,7 +271,7 @@ export default function UnitSubjectivePage() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span className="font-semibold text-foreground">Your Practice Answer:</span>
-                    <span>{wordCount} words</span>
+                    <span className="font-mono">{wordCount} words</span>
                   </div>
 
                   <Textarea
@@ -279,7 +279,7 @@ export default function UnitSubjectivePage() {
                     onChange={(e) => handleAnswerChange(e.target.value)}
                     placeholder="Write your answer here before revealing the model answer. Your draft automatically saves locally and to your profile..."
                     rows={6}
-                    className="text-xs leading-relaxed resize-y font-sans"
+                    className="text-xs leading-relaxed resize-y font-sans rounded-xl border-[#E7E1D7] dark:border-[#2b2722] focus:border-[#734700] focus:ring-[#734700]/15"
                   />
                 </div>
 
@@ -289,7 +289,7 @@ export default function UnitSubjectivePage() {
                     type="button"
                     variant={showModelAnswer[currentIndex] ? "default" : "outline"}
                     onClick={() => setShowModelAnswer((prev) => ({ ...prev, [currentIndex]: !prev[currentIndex] }))}
-                    className={`text-xs gap-1.5 ${showModelAnswer[currentIndex] ? "bg-[#9A6205] text-white" : ""}`}
+                    className={`text-xs gap-1.5 rounded-xl h-9 ${showModelAnswer[currentIndex] ? "bg-[#734700] text-white hover:bg-[#5C3800]" : "border-[#E7E1D7] dark:border-[#2b2722] hover:bg-[#F7F4EE]"}`}
                   >
                     <Sparkles className="w-3.5 h-3.5" />
                     {showModelAnswer[currentIndex] ? "Hide Model Answer" : "Reveal Model Answer"}
@@ -299,24 +299,24 @@ export default function UnitSubjectivePage() {
 
                 {/* Model Answer Drawer */}
                 {showModelAnswer[currentIndex] && (
-                  <div className="p-5 rounded-xl bg-amber-500/10 border border-[#9A6205]/40 space-y-4 animate-in fade-in">
-                    <div className="flex items-center justify-between border-b border-border/40 pb-2">
-                      <span className="text-xs font-bold font-serif text-amber-900 dark:text-amber-300 flex items-center gap-1.5">
-                        <Sparkles className="w-4 h-4 text-[#9A6205]" /> Syllabus-Aligned Model Answer (Editorially Reviewed)
+                  <div className="p-5 rounded-2xl bg-[#F4E7CA]/40 dark:bg-[#2d2315] border border-[#734700]/30 space-y-4 animate-in fade-in">
+                    <div className="flex items-center justify-between border-b border-[#E7E1D7] dark:border-[#2b2722] pb-2">
+                      <span className="text-xs font-bold font-serif text-[#734700] dark:text-[#e69c24] flex items-center gap-1.5">
+                        <Sparkles className="w-4 h-4 text-[#734700] dark:text-[#e69c24]" /> Syllabus-Aligned Model Answer (Editorially Reviewed)
                       </span>
-                      <span className="text-[10px] text-muted-foreground">
+                      <span className="text-[10px] text-muted-foreground font-mono">
                         Target: {currentQ.maxMarks} Marks
                       </span>
                     </div>
 
                     {/* Model Answer Body */}
-                    <div className="text-xs text-muted-foreground leading-relaxed whitespace-pre-line">
+                    <div className="text-xs text-[#181510] dark:text-[#f0ece4] leading-relaxed whitespace-pre-line">
                       {currentQ.modelAnswer}
                     </div>
 
                     {/* Outline / Scoring Points Checklist */}
                     {currentQ.outlinePoints && currentQ.outlinePoints.length > 0 && (
-                      <div className="space-y-2 pt-3 border-t border-border/40">
+                      <div className="space-y-2 pt-3 border-t border-[#E7E1D7] dark:border-[#2b2722]">
                         <span className="text-xs font-semibold text-foreground">
                           Scoring Points Checklist (Did you include these in your draft?):
                         </span>
@@ -330,7 +330,7 @@ export default function UnitSubjectivePage() {
                                 onClick={() => togglePoint(pointKey)}
                                 className="flex items-start gap-2 text-xs text-muted-foreground cursor-pointer select-none"
                               >
-                                <span className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 mt-0.5 ${isChecked ? "bg-[#9A6205] text-white border-[#9A6205]" : "border-border/80"}`}>
+                                <span className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 mt-0.5 ${isChecked ? "bg-[#734700] text-white border-[#734700]" : "border-[#E7E1D7] dark:border-[#2b2722]"}`}>
                                   {isChecked && <Check className="w-3 h-3" />}
                                 </span>
                                 <span>{pt}</span>

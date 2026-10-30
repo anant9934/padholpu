@@ -132,26 +132,29 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </Link>
 
           {/* Desktop primary nav — 5 Core Academic Pillars */}
-          <nav className="hidden lg:flex items-center gap-1 justify-center">
-            {primaryNav.map((item) => (
-              <Link key={item.href} href={item.href}>
-                <div
-                  className={`
-                    relative px-4 py-2 text-sm font-medium transition-all duration-150 cursor-pointer rounded-full
-                    ${
-                      isActive(item.href)
-                        ? "text-[#9A6205] bg-[#F4E7CA]/60 dark:bg-[#2d2315] font-semibold"
-                        : "text-[#696158] dark:text-[#c8bfb0] hover:text-[#181510] dark:hover:text-[#f0ece4] hover:bg-[#EFE9DE]/60 dark:hover:bg-[#201d19]"
-                    }
-                  `}
-                >
-                  {item.label}
-                  {isActive(item.href) && (
-                    <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-3 h-[2px] bg-[#9A6205] rounded-full" />
-                  )}
-                </div>
-              </Link>
-            ))}
+          <nav className="hidden lg:flex items-center gap-1 justify-center" aria-label="Main Navigation">
+            {primaryNav.map((item) => {
+              const active = isActive(item.href);
+              return (
+                <Link key={item.href} href={item.href}>
+                  <div
+                    className={`
+                      relative px-4 py-2 text-sm font-medium transition-colors duration-150 cursor-pointer rounded-full select-none
+                      ${
+                        active
+                          ? "text-[#734700] dark:text-[#E69C24] bg-[#F4E7CA]/60 dark:bg-[#2D2315] font-semibold"
+                          : "text-[#696158] dark:text-[#C8BFB0] hover:text-[#181510] dark:hover:text-[#F0ECE4] hover:bg-[#EFE9DE]/60 dark:hover:bg-[#201D19]"
+                      }
+                    `}
+                  >
+                    {item.label}
+                    {active && (
+                      <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-3.5 h-[2px] bg-[#734700] dark:bg-[#E69C24] rounded-full" />
+                    )}
+                  </div>
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Right-side utilities */}

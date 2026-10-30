@@ -217,8 +217,8 @@ export default function ProgrammeDetailPage() {
               </Badge>
             </div>
           </div>
-          <Link href={subj.code === "AEE103" ? `/programmes/${programme.code}/semesters/${activeSemester}/${subj.code}` : `/subjects/${subj.code.toLowerCase()}`}>
-            <CardTitle className="text-base font-bold text-foreground leading-snug hover:text-[#9A6205] transition-colors cursor-pointer">
+          <Link href={`/programmes/${programme.code}/semesters/${activeSemester}/${subj.code}`}>
+            <CardTitle className="text-base font-bold font-serif text-foreground leading-snug hover:text-[#734700] dark:hover:text-[#e69c24] transition-colors cursor-pointer">
               {subj.name}
             </CardTitle>
           </Link>
@@ -230,36 +230,34 @@ export default function ProgrammeDetailPage() {
         </CardHeader>
 
         <CardContent className="pt-4 space-y-3">
-          <div className="flex items-center justify-between text-xs text-muted-foreground bg-muted/30 px-3 py-1.5 rounded-lg border border-border/40">
-            <span>Syllabus: <strong>{subj.totalUnits || 5} Units</strong></span>
+          <div className="flex items-center justify-between text-xs text-muted-foreground bg-[#F7F4EE] dark:bg-[#201d19] px-3 py-1.5 rounded-lg border border-[#E7E1D7] dark:border-[#2b2722]">
+            <span>Syllabus: <strong>{subj.totalUnits || 6} Units</strong></span>
             <span>Level: <strong>Semester {activeSemester}</strong></span>
           </div>
 
           <div className="grid grid-cols-3 gap-2 pt-1">
-            <Link href={subj.code === "AEE103" ? `/programmes/${programme.code}/semesters/${activeSemester}/${subj.code}/units/1/notes` : `/learn?subject=${encodeURIComponent(subj.code)}`}>
-              <Button size="sm" variant="outline" className="w-full text-[11px] h-8 px-2">
-                <BookOpen className="w-3 h-3 mr-1 text-[#8f5200] dark:text-[#c8830a]" /> Notes
+            <Link href={`/programmes/${programme.code}/semesters/${activeSemester}/${subj.code}/units/1/notes`}>
+              <Button size="sm" variant="outline" className="w-full text-[11px] h-8 px-2 border-[#E7E1D7] dark:border-[#2b2722] hover:bg-[#F7F4EE]">
+                <BookOpen className="w-3 h-3 mr-1 text-[#734700] dark:text-[#e69c24]" /> Notes
               </Button>
             </Link>
-            <Link href={subj.code === "AEE103" ? `/programmes/${programme.code}/semesters/${activeSemester}/${subj.code}/units/1/mcqs` : `/practice?course=${encodeURIComponent(subj.code)}`}>
-              <Button size="sm" variant="outline" className="w-full text-[11px] h-8 px-2">
-                <FileText className="w-3 h-3 mr-1 text-[#8f5200] dark:text-[#c8830a]" /> MCQs
+            <Link href={`/programmes/${programme.code}/semesters/${activeSemester}/${subj.code}/units/1/mcqs`}>
+              <Button size="sm" variant="outline" className="w-full text-[11px] h-8 px-2 border-[#E7E1D7] dark:border-[#2b2722] hover:bg-[#F7F4EE]">
+                <FileText className="w-3 h-3 mr-1 text-[#734700] dark:text-[#e69c24]" /> MCQs
               </Button>
             </Link>
-            <Link href={subj.code === "AEE103" ? `/programmes/${programme.code}/semesters/${activeSemester}/${subj.code}/units/1/subjective` : `/subjective?subject=${encodeURIComponent(subj.code)}`}>
-              <Button size="sm" className="w-full text-[11px] h-8 px-2 bg-[#9A6205] hover:bg-[#835203] text-white">
+            <Link href={`/programmes/${programme.code}/semesters/${activeSemester}/${subj.code}/units/1/subjective`}>
+              <Button size="sm" className="w-full text-[11px] h-8 px-2 bg-[#734700] hover:bg-[#5C3800] text-white">
                 <Award className="w-3 h-3 mr-1" /> Written
               </Button>
             </Link>
           </div>
 
-          {subj.code === "AEE103" && (
-            <Link href={`/programmes/${programme.code}/semesters/${activeSemester}/${subj.code}`}>
-              <Button size="sm" variant="ghost" className="w-full text-[11px] h-7 text-[#9A6205] font-semibold hover:bg-amber-500/10">
-                Open Full Subject Learning Workspace →
-              </Button>
-            </Link>
-          )}
+          <Link href={`/programmes/${programme.code}/semesters/${activeSemester}/${subj.code}`}>
+            <Button size="sm" variant="ghost" className="w-full text-[11px] h-7 text-[#734700] dark:text-[#e69c24] font-semibold hover:bg-[#F4E7CA]/40">
+              Open Full Subject Learning Workspace →
+            </Button>
+          </Link>
         </CardContent>
       </Card>
     );

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRoute, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
+import { motion, AnimatePresence } from "framer-motion";
 import { SEO } from "@/components/seo";
 import { useToast } from "@/hooks/use-toast";
 import { 
@@ -258,49 +259,61 @@ export default function UnitMcqPage() {
                   const isAnswered = !!selectedAnswers[currentIndex];
                   const isCorrectOption = currentQ.correctOption === optKey;
 
-                  let optionStyle = "border-border/80 hover:bg-muted/40 text-foreground";
+                  let optionStyle = "border-[#E7E1D7] dark:border-[#2b2722] hover:bg-[#F7F4EE] dark:hover:bg-[#201d19] text-[#181510] dark:text-[#f0ece4]";
                   if (isAnswered) {
                     if (isCorrectOption) {
-                      optionStyle = "border-emerald-500 bg-emerald-500/10 text-emerald-900 dark:text-emerald-300 font-medium";
+                      optionStyle = "border-[#2E6930] bg-[#2E6930]/10 text-[#2E6930] dark:text-[#4ade80] font-semibold";
                     } else if (isSelected) {
-                      optionStyle = "border-rose-500 bg-rose-500/10 text-rose-900 dark:text-rose-300";
+                      optionStyle = "border-[#9E2A2B] bg-[#9E2A2B]/10 text-[#9E2A2B] dark:text-[#f87171]";
                     } else {
-                      optionStyle = "border-border/40 opacity-50";
+                      optionStyle = "border-[#E7E1D7]/50 dark:border-[#2b2722]/50 opacity-45";
                     }
                   }
 
+                  const isIncorrectSelected = isAnswered && isSelected && !isCorrectOption;
+
                   return (
-                    <button
+                    <motion.button
                       key={optKey}
                       type="button"
                       disabled={isAnswered}
+                      whileTap={!isAnswered ? { scale: 0.98 } : undefined}
+                      animate={isIncorrectSelected ? { x: [-3, 3, -2, 2, 0] } : undefined}
+                      transition={{ duration: 0.18 }}
                       onClick={() => handleSelectOption(optKey)}
-                      className={`w-full p-3.5 rounded-lg border text-left text-xs transition-all flex items-start gap-3 ${optionStyle}`}
+                      className={`w-full min-h-[44px] p-3.5 rounded-xl border text-left text-xs transition-colors flex items-start gap-3 cursor-pointer ${optionStyle}`}
                     >
                       <span className="font-mono font-bold w-5 h-5 rounded-full border border-current flex items-center justify-center shrink-0 text-[10px] mt-0.5">
                         {optKey}
                       </span>
                       <span className="flex-1 leading-relaxed">{optText}</span>
                       {isAnswered && isCorrectOption && (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                        <motion.div initial={{ scale: 0.7 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 450, damping: 25 }}>
+                          <CheckCircle2 className="w-4 h-4 text-[#2E6930] dark:text-[#4ade80] shrink-0 mt-0.5" />
+                        </motion.div>
                       )}
-                      {isAnswered && isSelected && !isCorrectOption && (
-                        <XCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                      {isIncorrectSelected && (
+                        <XCircle className="w-4 h-4 text-[#9E2A2B] dark:text-[#f87171] shrink-0 mt-0.5" />
                       )}
-                    </button>
+                    </motion.button>
                   );
                 })}
 
                 {/* Explanation Card unfolds after answer */}
                 {showExplanation[currentIndex] && (
-                  <div className="mt-4 p-4 rounded-lg bg-amber-500/10 border border-[#9A6205]/30 space-y-1.5 animate-in fade-in">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-amber-900 dark:text-amber-300">
-                      <Sparkles className="w-3.5 h-3.5 text-[#9A6205]" /> Correct Answer: Option {currentQ.correctOption}
+                  <motion.div 
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="mt-4 p-4 rounded-xl bg-[#F4E7CA]/50 dark:bg-[#2d2315] border border-[#734700]/25 space-y-1.5"
+                  >
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-[#734700] dark:text-[#e69c24]">
+                      <Sparkles className="w-3.5 h-3.5" /> Verified Syllabus Explanation: Option {currentQ.correctOption}
                     </div>
-                    <p className="text-xs text-muted-foreground leading-relaxed">
+                    <p className="text-xs text-[#696158] dark:text-[#c8bfb0] leading-relaxed">
                       {currentQ.explanation}
                     </p>
-                  </div>
+                  </motion.div>
                 )}
 
                 {/* Question Navigation Buttons */}
@@ -310,7 +323,7 @@ export default function UnitMcqPage() {
                     size="sm"
                     disabled={currentIndex === 0}
                     onClick={() => setCurrentIndex((i) => i - 1)}
-                    className="text-xs gap-1"
+                    className="text-xs gap-1 rounded-xl h-9 border-[#E7E1D7] dark:border-[#2b2722]"
                   >
                     <ArrowLeft className="w-3.5 h-3.5" /> Previous
                   </Button>
@@ -320,7 +333,7 @@ export default function UnitMcqPage() {
                       <Button
                         size="sm"
                         onClick={() => setCurrentIndex((i) => i + 1)}
-                        className="bg-[#9A6205] hover:bg-[#835203] text-white text-xs gap-1"
+                        className="bg-[#734700] hover:bg-[#5C3800] text-white text-xs gap-1 rounded-xl h-9 font-medium shadow-xs"
                       >
                         Next Question <ArrowRight className="w-3.5 h-3.5" />
                       </Button>
