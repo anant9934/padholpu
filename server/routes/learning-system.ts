@@ -73,11 +73,35 @@ router.get(["/api/academic/subjects/:code/syllabus", "/academic/subjects/:code/s
         .innerJoin(flashcards, eq(flashcards.deckId, flashcardDecks.id))
         .where(eq(flashcardDecks.subjectId, subj.id));
 
+      // Unit inventories come from persisted database records, not static source-array sizes.
+      const [mcqCounts, subjectiveCounts, flashcardCounts] = await Promise.all([
+        db.select({
+          unitId: questions.unitId,
+          count: sql<number>`count(*)`
+        }).from(questions).where(eq(questions.subjectId, subj.id)).groupBy(questions.unitId),
+        db.select({
+          unitId: subjectiveQuestions.unitId,
+          count: sql<number>`count(*)`
+        }).from(subjectiveQuestions).where(eq(subjectiveQuestions.subjectId, subj.id)).groupBy(subjectiveQuestions.unitId),
+        db.select({
+          unitId: flashcardDecks.unitId,
+          count: sql<number>`count(${flashcards.id})`
+        }).from(flashcardDecks)
+          .innerJoin(flashcards, eq(flashcards.deckId, flashcardDecks.id))
+          .where(eq(flashcardDecks.subjectId, subj.id))
+          .groupBy(flashcardDecks.unitId)
+      ]);
+
+      const mcqByUnit = new Map(mcqCounts.map((row: any) => [row.unitId, Number(row.count) || 0]));
+      const subjectiveByUnit = new Map(subjectiveCounts.map((row: any) => [row.unitId, Number(row.count) || 0]));
+      const flashcardsByUnit = new Map(flashcardCounts.map((row: any) => [row.unitId, Number(row.count) || 0]));
+
       const unitSummaries = unitData.map((u: any) => {
         const matchingDbUnit = dbUnits.find((du: any) => du.unitNumber === u.unitNumber);
+        const unitId = matchingDbUnit?.id ?? null;
         return {
           unitNumber: u.unitNumber,
-          unitId: matchingDbUnit?.id || u.unitNumber,
+          unitId,
           title: u.title,
           shortDescription: u.shortDescription,
           overview: u.shortDescription,
@@ -85,9 +109,9 @@ router.get(["/api/academic/subjects/:code/syllabus", "/academic/subjects/:code/s
           estimatedMinutes: u.estimatedReadTimeMinutes,
           syllabusTopics: u.syllabusTopics,
           topics: u.syllabusTopics,
-          mcqCount: u.mcqs.length,
-          subjectiveCount: u.subjectiveQuestions.length,
-          flashcardCount: u.flashcards.length
+          mcqCount: unitId === null ? 0 : (mcqByUnit.get(unitId) || 0),
+          subjectiveCount: unitId === null ? 0 : (subjectiveByUnit.get(unitId) || 0),
+          flashcardCount: unitId === null ? 0 : (flashcardsByUnit.get(unitId) || 0)
         };
       });
 
