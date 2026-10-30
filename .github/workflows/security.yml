@@ -26,7 +26,11 @@ jobs:
         run: npm ci
 
       - name: Run npm audit (SCA)
+        id: dependency_audit
         run: npm audit --audit-level=high
+        # Keep validation running so audit findings do not hide type/test/build failures.
+        # The final gate below still fails the job when this step reports vulnerabilities.
+        continue-on-error: true
 
       - name: TypeScript Type Check
         run: npm run check
@@ -52,7 +56,15 @@ jobs:
           echo "Verifying no local .env files or credentials are tracked in Git..."
           ! git ls-files | grep -E '(^\.env$|^\.env\.local$|^\.env\.production$|\.pem$|\.key$)' || (echo "Sensitive file committed!" && exit 1)
           echo "Repository integrity verified: zero sensitive files tracked."
-      
+
+      - name: Enforce dependency audit result
+        if: always()
+        run: |
+          if [ "${{ steps.dependency_audit.outcome }}" = "failure" ]; then
+            echo "::error::npm audit found dependency vulnerabilities. Review the report above; type checks, tests and builds were still executed."
+            exit 1
+          fi
+
   codeql-analysis:
     name: CodeQL (SAST)
     runs-on: ubuntu-latest
