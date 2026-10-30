@@ -1,0 +1,1720 @@
+import { UnitContent } from "./types";
+
+export const unit2Content: UnitContent = {
+  "unitNumber": 2,
+  "title": "Jeevamrit and Beejamrit: Formulations and Microbial Basis",
+  "shortDescription": "Scientific formulations, fermentation biochemistry, and microbial dynamics of key bio-inoculants in Natural Farming: Jeevamrit, Beejamrit, Ghanajeevamrit, and Saptadhanyankur Ark.",
+  "estimatedReadTimeMinutes": 160,
+  "syllabusTopics": [
+    "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods",
+    "Beejamrit: ingredients, biochemical properties, and seed/propagule bio-treatment protocols",
+    "Ghanajeevamrit (solid microbial bio-formulation): preparation, drying, storage, and basal application",
+    "Scientific microbial and biochemical basis: bacterial consortia (PGPR, nitrogen fixers, phosphate solubilizers), enzymes, and organic acids",
+    "Saptadhanyankur Ark and customized bio-enhancers: preparation, hormone dynamics, and foliar bio-nutrition"
+  ],
+  "notes": {
+    "learningObjectives": [
+      "Deconstruct the standardized recipes, stoichiometric proportions, and fermentation conditions of liquid Jeevamrit and solid Ghanajeevamrit.",
+      "Analyze the bio-protective chemistry of Beejamrit for seed and seedling treatment, detailing its suppression of fungal pathobiomes.",
+      "Evaluate the scientific microbial ecology of cow dung-urine consortia, identifying PGPR, free-living diazotrophs, phosphate-solubilizing bacilli, and actinomycetes.",
+      "Examine the enzymatic (dehydrogenase, phosphatase) and organic acid (citric, gluconic) mechanisms that drive nutrient solubilization.",
+      "Synthesize preparation protocols and phytohormonal profiles (auxins, gibberellins, cytokinins) of sprouted-grain extracts (Saptadhanyankur Ark)."
+    ],
+    "sections": [
+      {
+        "id": "sec-agr217-2-1",
+        "heading": "1. Liquid Jeevamrit: Formulation, Fermentation Kinetics, and Application",
+        "content": "Jeevamrit is the premier liquid bio-culture in Natural Farming. It is not designed to supply bulk plant nutrients directly; rather, it serves as a concentrated microbial inoculant and catalytic bio-stimulant that introduces hundreds of millions of beneficial microorganisms into the soil to unlock and cycle native mineral reserves.\n\n### Standardized 200-Liter Formulation (Per Acre)\n- **Fresh Desi Cow Dung (*Bos indicus*):** 10 kg (provides living rumen microflora, cellulolytic bacteria, and organic matter).\n- **Desi Cow Urine (Gomutra):** 5 to 10 liters (supplies urea, uric acid, enzymes, phenolics, and minerals).\n- **Unrefined Organic Jaggery (Gur):** 2 kg (acts as a primary, easily metabolizable soluble carbohydrate/carbon energy source).\n- **Pulse Flour (Besan - Gram/Pigeonpea/Cowpea flour):** 2 kg (supplies protein, amino acids, and nitrogenous food for microbes).\n- **Virgin Soil (Forest or Bund Soil):** A handful (~100\u2013200 g) collected from undisturbed tree roots or field boundaries (acts as the primary microbial seed culture containing diverse local strains).\n- **Clean Water:** 200 liters (free from chlorine/fluoride).\n\n### Preparation and Fermentation Dynamics\nAll ingredients are blended in a 200-liter plastic or wooden barrel kept under strict shade. The mixture is stirred with a wooden pole in a clockwise direction for 5 minutes twice daily (morning and evening). Clockwise stirring aerates the suspension, dissolving atmospheric oxygen to sustain aerobic microbial respiration. Under warm tropical temperatures (28\u201335\u00b0C), the fermentation reaches peak microbial density within **48 to 72 hours**, marked by a pleasant sweetish-sour fermented aroma.\n\n### Application Methods and Doses\n1. **With Irrigation Water (Fertigation):** 200 liters per acre mixed into the irrigation channel or through drip systems (strained through double-layered muslin cloth) twice a month.\n2. **Foliar Spray:** 5% to 10% filtered solution (10\u201320 liters Jeevamrit diluted in 100 liters water) sprayed at vegetative, flowering, and fruit-development stages.",
+        "subsections": [
+          {
+            "subheading": "Storage Life Constraint",
+            "content": "Jeevamrit is an active, perishable biological culture. It should be applied to soil within 7 to 10 days of preparation. Beyond 10\u201312 days, available sugar/protein substrates deplete, causing bacterial populations to decline rapidly."
+          }
+        ]
+      },
+      {
+        "id": "sec-agr217-2-2",
+        "heading": "2. Beejamrit: Formulation and Seed Protection Protocols",
+        "content": "Beejamrit is a specialized bio-protective seed inoculum formulated to shield seeds, tubers, and planting setts from seed- and soil-borne fungal pathogens while colonizing emerging radicles with beneficial bacteria.\n\n### Standard Composition (For 100 kg Seed)\n- **Fresh Desi Cow Dung:** 5 kg\n- **Desi Cow Urine:** 5 liters\n- **Slaked Lime (Chuna - $Ca(OH)_2$):** 50 grams (dissolved separately in 1 liter of water)\n- **Virgin Bund Soil:** A handful (~50\u2013100 g)\n- **Water:** 20 liters\n\n### Preparation and Biochemical Role of Components\nThe dung, urine, soil, and lime water are mixed in a container and allowed to steep overnight (12\u201324 hours). Cow urine contributes hippuric acid, phenolics, and natural enzymes that exhibit antifungal and antibacterial activity. Fresh cow dung and virgin soil provide beneficial rhizospheric bacteria (*Bacillus*, *Pseudomonas*, *Trichoderma*). Slaked lime neutralizes urine acidity, buffers the solution to pH 7.2\u20137.5, and provides soluble calcium ($Ca^{2+}$) to strengthen the cell walls of the emerging seedling.\n\n### Application Protocols\n- **Seed Dressing:** Spread seeds on a clean tarp under shade; sprinkle Beejamrit slurry evenly and mix gently by hand without scratching the seed testa. Air-dry under shade for 30\u201345 minutes; sow within 4\u20136 hours.\n- **Root Dipping:** Bare roots of vegetable seedlings or rice seedlings are submerged in Beejamrit for 5\u201310 minutes prior to transplanting.\n- **Sett Dipping:** Sugarcane setts, ginger rhizomes, or potato tubers are soaked for 10\u201315 minutes.",
+        "subsections": [
+          {
+            "subheading": "Pathogen Suppression",
+            "content": "Beejamrit suppresses *Fusarium oxysporum*, *Rhizoctonia solani*, and *Sclerotium rolfsii* by producing microbial chitinases, glucanases, and siderophores."
+          }
+        ]
+      },
+      {
+        "id": "sec-agr217-2-3",
+        "heading": "3. Ghanajeevamrit: Solid Bio-Formulation for Basal Application",
+        "content": "Ghanajeevamrit is a dehydrated, solid microbial formulation that stores beneficial cow dung-urine microflora in a stable carrier matrix for long-term use, especially suited for rainfed tracts where liquid Jeevamrit cannot be easily applied without irrigation.\n\n### Preparation Protocol\n1. **Base Material:** 100 kg of fresh Desi cow dung is spread on a clean, shaded floor.\n2. **Enrichment Blend:** Mix 2 kg unrefined jaggery, 2 kg pulse flour, 5 liters cow urine, and a handful of virgin soil into a concentrated slurry.\n3. **Incorporation:** The slurry is thoroughly blended into the 100 kg cow dung using spades or gloved hands, forming a homogenous, damp composite.\n4. **Shade Drying and Curing:** The mixture is heaped under shade and covered with moist gunny bags for 48 hours to initiate warm microbial fermentation. Afterward, it is spread thinly under shade and allowed to air-dry over 4\u20136 days until moisture drops below 10\u201312%.\n5. **Pulverization & Sifting:** The dried cakes are pounded wooden mallets into a coarse granular powder.\n\n### Storage and Application\n- **Shelf Life:** Granular Ghanajeevamrit retains viable bacterial and fungal endospores for **6 to 12 months** when stored in dry, breathable gunny bags away from sunlight.\n- **Field Dosage:** Applied at **100 to 200 kg per acre** as a basal soil dressing in sowing furrows or broadcast during final seedbed preparation.",
+        "subsections": [
+          {
+            "subheading": "Spore Encapsulation Mechanism",
+            "content": "Slow drying in shade induces beneficial *Bacillus* and *Actinobacteria* species to form resilient endospores that survive desiccation until revived by field moisture."
+          }
+        ]
+      },
+      {
+        "id": "sec-agr217-2-4",
+        "heading": "4. Scientific Microbial and Biochemical Basis of Cow Formulations",
+        "content": "Contemporary agricultural microbiology confirms that cow-dung and cow-urine formulations operate as complex, multi-species biological consortia that trigger cascading ecological interactions in the rhizosphere.\n\n### Microbial Taxonomic Profiling\nMetagenomic sequencing and culture-dependent assays reveal dense microbial populations:\n- **Plant Growth-Promoting Rhizobacteria (PGPR):** Dominant genera include *Bacillus* (e.g., *B. subtilis*, *B. amyloliquefaciens*), *Pseudomonas fluorescens*, and *Lactobacillus* species.\n- **Diazotrophic Nitrogen Fixers:** High populations of free-living and associative diazotrophs, including *Azotobacter chroococcum*, *Azospirillum brasilense*, and *Beijerinckia*.\n- **Phosphate and Potassium Solubilizers:** Strains such as *Bacillus megaterium* and *Pseudomonas putida* that exude low-molecular-weight organic acids (gluconic, 2-ketogluconic, citric, malic, lactic acids) that chelate $Ca^{2+}$, $Fe^{3+}$, and $Al^{3+}$, liberating bound orthophosphate ($H_2PO_4^-$).\n- **Actinomycetes & Saprophytic Fungi:** *Streptomyces* species that produce chitinases, glucanases, and antibiotics that suppress soil-borne pathogens.\n\n### Phytohormonal and Enzymatic Synthesis\nDuring fermentation, microbial metabolism synthesizes substantial concentrations of natural plant growth regulators:\n- **Indole-3-Acetic Acid (IAA):** Auxin concentrations reach 15\u201330 $\\mu\\text{g/ml}$, stimulating primary root elongation and lateral root branching.\n- **Gibberellins ($GA_3$) and Cytokinins:** Promote cell division, internodal expansion, and delayed leaf senescence.\n- **Soil Enzymatic Activation:** Introducing Jeevamrit stimulates native soil **dehydrogenase**, **alkaline/acid phosphatase**, and **fluorescein diacetate (FDA) hydrolysis**, accelerating nutrient turnover.",
+        "subsections": [
+          {
+            "subheading": "Siderophore Chelation",
+            "content": "Beneficial bacilli and pseudomonads in Jeevamrit secrete catecholate and hydroxamate siderophores that sequester trace iron ($Fe^{3+}$), depriving pathogenic fungi of iron."
+          }
+        ]
+      },
+      {
+        "id": "sec-agr217-2-5",
+        "heading": "5. Saptadhanyankur Ark and Specialized Bio-Enhancers",
+        "content": "In addition to base cow-dung cultures, Natural Farming employs specialized botanical and germinated-seed extracts to deliver targeted hormonal surges during critical reproductive phases.\n\n### Saptadhanyankur Ark (Seven Sprouted Grain Extract)\n- **The Seven Grains:** Equal proportions (approx. 100 g each) of seven diverse seeds representing distinct plant families: (1) Wheat/Barley (monocot cereal), (2) Green gram/Moong (pulse), (3) Black gram/Urd (pulse), (4) Cowpea/Lobia (pulse), (5) Sesame/Til (oilseed), (6) Chickpea/Chana (pulse), and (7) Moth bean or Fenugreek.\n- **Preparation Protocol:** Seeds are soaked in water for 12 hours, drained, and tied in a moist cotton cloth to sprout. When sprouts reach 1\u20132 cm length, the sprouted mass is ground into a fine paste, mixed with 10 liters of cow urine and 200 liters of water, and fermented for 24 hours.\n- **Phytohormonal Surge:** Seed germination is a period of intense hormonal synthesis. Sprouted embryos produce high concentrations of **gibberellic acid (GA)**, **zeatin (cytokinin)**, **auxins**, and activated amylase/protease enzymes. Foliar application of Saptadhanyankur Ark at flowering and fruit-set arrests flower drop, stimulates cell division in ovaries, and boosts fruit weight and test weight.\n\n### Other Specialized Bio-Formulations\n- **Amritpani:** Blend of fresh cow dung (10 kg), honey/jaggery (500 g), and desi ghee (250 g) in 200 L water, utilized for soil revitalization.\n- **Panchagavya:** Traditional Vedic formulation combining five cow products (dung, urine, milk, curd, ghee) enriched with sugarcane juice, tender coconut water, and ripe bananas, applied as a foliar tonic.",
+        "subsections": [
+          {
+            "subheading": "Enzyme Cascades in Germination",
+            "content": "Sprouting degrades seed storage phytates and proteins into bio-available amino acids, peptides, and myo-inositol, delivering readily absorbable organic nutrients to sprayed canopies."
+          }
+        ]
+      }
+    ],
+    "keyTakeaways": [
+      "Jeevamrit is an aerobic microbial bio-culture (dung, urine, jaggery, pulse flour, virgin soil), not a bulk NPK fertilizer.",
+      "Peak microbial proliferation in Jeevamrit occurs at 48-72 hours, reaching >10^9 CFU/ml of beneficial PGPR, diazotrophs, and PSB.",
+      "Beejamrit uses cow dung, urine, lime, and virgin soil to coat seeds, suppressing Fusarium and Rhizoctonia while buffering pH.",
+      "Ghanajeevamrit is a dehydrated, spore-stabilized solid form of Jeevamrit stored for 6-12 months and applied at 100-200 kg/acre.",
+      "Beneficial microbes in cow-dung formulations synthesize organic acids, auxins (IAA), gibberellins, and siderophores that mobilize nutrients.",
+      "Saptadhanyankur Ark utilizes seven sprouted grains to deliver an enzymatic and hormonal boost that prevents flower drop and enhances fruit filling."
+    ],
+    "commonMisunderstandings": [
+      {
+        "myth": "Jeevamrit can be stored in sealed plastic drums for months without losing potency.",
+        "reality": "Jeevamrit is an active aerobic microbial suspension that consumes its carbohydrate food within 7-10 days. Beyond 10-12 days, bacterial counts drop sharply and anaerobic putrefaction sets in; it should be applied within a week."
+      },
+      {
+        "myth": "Boiling cow dung and urine sterilizes and improves the potency of Beejamrit and Jeevamrit.",
+        "reality": "Boiling kills the beneficial living microorganisms and denatures enzymes, destroying the formulation's biological activity. All natural farming microbial formulations must be prepared at ambient temperatures under shade."
+      },
+      {
+        "myth": "Any synthetic chemical fertilizer can be mixed into Jeevamrit to boost its nitrogen content.",
+        "reality": "Adding synthetic chemical salts (urea, DAP) causes severe osmotic shock, lysing fragile bacterial cells and destroying the microbial community."
+      },
+      {
+        "myth": "Using dung from exotic crossbred HF/Jersey cows produces identical results to Desi cow dung.",
+        "reality": "Desi cattle (Bos indicus) have a distinctive rumen microbiome evolved on fibrous tropical grasses, yielding dung with 3-5 times higher counts of resilient cellulolytic PGPR and urine rich in antimicrobial phenolics."
+      }
+    ],
+    "summary": "Unit 2 provides the scientific and practical foundation for the key biological formulations of Natural Farming: Jeevamrit, Beejamrit, Ghanajeevamrit, and Saptadhanyankur Ark. It examines the standardized recipes, stoichiometric proportions, and fermentation conditions of liquid Jeevamrit (10 kg dung, 5-10 L urine, 2 kg jaggery, 2 kg pulse flour, virgin soil, 200 L water) alongside its 48-72 hour aerobic fermentation kinetics. Beejamrit seed dressing chemistry is analyzed, detailing how cow urine phenolics, lime buffering, and beneficial bacilli suppress soil-borne fungal pathogens. Solid Ghanajeevamrit preparation, spore encapsulation, and long-term storage (6-12 months) are detailed for rainfed basal application. The underlying microbial and biochemical mechanisms\u2014including PGPR, free-living diazotrophs, organic acid-mediated phosphate solubilization, and IAA hormonal synthesis\u2014are evaluated. Finally, the phytohormonal surge of sprouted-grain extracts (Saptadhanyankur Ark) is established for preventing flower abscission and optimizing reproductive sink filling."
+  },
+  "mcqs": [
+    {
+      "id": "AGR217-U2-MCQ01",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods",
+      "difficulty": "Easy",
+      "questionText": "What is the standard volume of liquid Jeevamrit recommended for application per acre in Natural Farming?",
+      "options": {
+        "A": "20 Liters",
+        "B": "200 Liters",
+        "C": "1,000 Liters",
+        "D": "5,000 Liters"
+      },
+      "correctOption": "B",
+      "explanation": "Subhash Palekar's standardized recipe prescribes preparing 200 liters of liquid Jeevamrit per acre, applied twice a month with irrigation water or as foliar spray.",
+      "tags": [
+        "Jeevamrit",
+        "Dosage",
+        "Application"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ02",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods",
+      "difficulty": "Easy",
+      "questionText": "How much fresh Desi cow dung is required to prepare a standard 200-liter batch of liquid Jeevamrit?",
+      "options": {
+        "A": "1 kg",
+        "B": "10 kg",
+        "C": "50 kg",
+        "D": "100 kg"
+      },
+      "correctOption": "B",
+      "explanation": "The standard recipe requires exactly 10 kg of fresh Desi cow dung for a 200-liter batch of Jeevamrit.",
+      "tags": [
+        "Jeevamrit",
+        "Recipe",
+        "Cow Dung"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ03",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods",
+      "difficulty": "Easy",
+      "questionText": "What is the role of unrefined jaggery (gur) in the preparation of Jeevamrit?",
+      "options": {
+        "A": "Acts as an insecticide",
+        "B": "Provides readily accessible soluble carbohydrates as a carbon and energy source for multiplying microbes",
+        "C": "Prevents the water from smelling sour",
+        "D": "Changes the color to purple"
+      },
+      "correctOption": "B",
+      "explanation": "Jaggery supplies soluble sugars (sucrose, glucose, fructose) that serve as the primary carbon and energy substrate, accelerating microbial proliferation.",
+      "tags": [
+        "Jeevamrit",
+        "Jaggery",
+        "Microbial Nutrition"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ04",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods",
+      "difficulty": "Easy",
+      "questionText": "Why must Jeevamrit be stirred in a clockwise direction twice daily during fermentation?",
+      "options": {
+        "A": "To create electricity in the water",
+        "B": "To aerate the mixture, supplying dissolved oxygen to beneficial aerobic microorganisms",
+        "C": "To grind the soil particles finer",
+        "D": "To cool the water to 0 degrees C"
+      },
+      "correctOption": "B",
+      "explanation": "Clockwise stirring incorporates atmospheric oxygen, maintaining aerobic conditions essential for the growth of beneficial bacteria and fungi while preventing foul anaerobic putrefaction.",
+      "tags": [
+        "Jeevamrit",
+        "Aeration",
+        "Stirring"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ05",
+      "syllabusTopic": "Beejamrit: ingredients, biochemical properties, and seed/propagule bio-treatment protocols",
+      "difficulty": "Easy",
+      "questionText": "Beejamrit is primarily applied in Natural Farming for which agronomic purpose?",
+      "options": {
+        "A": "Weed eradication in standing wheat",
+        "B": "Seed and seedling treatment to protect against fungal pathogens and enhance germination",
+        "C": "Chemical ripening of sugarcane",
+        "D": "Defoliation of cotton bolls"
+      },
+      "correctOption": "B",
+      "explanation": "Beejamrit is a microbial bio-formulation applied to seeds, seedlings, and vegetative cuttings prior to sowing to shield them from seed- and soil-borne diseases.",
+      "tags": [
+        "Beejamrit",
+        "Seed Treatment",
+        "Plant Protection"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ06",
+      "syllabusTopic": "Beejamrit: ingredients, biochemical properties, and seed/propagule bio-treatment protocols",
+      "difficulty": "Easy",
+      "questionText": "Which mineral ingredient is added to Beejamrit to neutralize urine acidity and supply calcium?",
+      "options": {
+        "A": "Common table salt",
+        "B": "Slaked lime (Chuna - calcium hydroxide)",
+        "C": "Urea",
+        "D": "Gypsum crystals"
+      },
+      "correctOption": "B",
+      "explanation": "Slaked lime (50 g per 20 L water) neutralizes the natural acidity of cow urine, buffers pH, and supplies calcium to strengthen seedling cell walls.",
+      "tags": [
+        "Beejamrit",
+        "Slaked Lime",
+        "Formulation"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ07",
+      "syllabusTopic": "Ghanajeevamrit (solid microbial bio-formulation): preparation, drying, storage, and basal application",
+      "difficulty": "Easy",
+      "questionText": "What is 'Ghanajeevamrit' in Natural Farming?",
+      "options": {
+        "A": "A synthetic granular chemical fertilizer",
+        "B": "A solid, dehydrated, spore-stabilized formulation of Jeevamrit used for basal soil application",
+        "C": "A poisonous weed killer",
+        "D": "Liquid cow urine boiled to steam"
+      },
+      "correctOption": "B",
+      "explanation": "Ghanajeevamrit is the solid, dehydrated counterpart of Jeevamrit, prepared by blending dung with jaggery, flour, and urine, shade-dried into granules for basal soil placement.",
+      "tags": [
+        "Ghanajeevamrit",
+        "Solid Formulation",
+        "Basal Application"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ08",
+      "syllabusTopic": "Ghanajeevamrit (solid microbial bio-formulation): preparation, drying, storage, and basal application",
+      "difficulty": "Easy",
+      "questionText": "What is the recommended basal application dose of Ghanajeevamrit per acre?",
+      "options": {
+        "A": "1-2 kg",
+        "B": "100-200 kg",
+        "C": "5,000-10,000 kg",
+        "D": "50 tonnes"
+      },
+      "correctOption": "B",
+      "explanation": "Ghanajeevamrit is applied at 100 to 200 kg per acre as a basal soil treatment placed in the seed furrow or broadcast during final land preparation.",
+      "tags": [
+        "Ghanajeevamrit",
+        "Dosage",
+        "Soil Application"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ09",
+      "syllabusTopic": "Scientific microbial and biochemical basis: bacterial consortia (PGPR, nitrogen fixers, phosphate solubilizers), enzymes, and organic acids",
+      "difficulty": "Easy",
+      "questionText": "Which group of beneficial bacteria present in Jeevamrit colonizes the rhizosphere and actively stimulates plant growth?",
+      "options": {
+        "A": "Plant Growth-Promoting Rhizobacteria (PGPR)",
+        "B": "Plant pathogenic rust fungi",
+        "C": "Coliform bacteria",
+        "D": "Thermophilic virus particles"
+      },
+      "correctOption": "A",
+      "explanation": "PGPR (including Bacillus and Pseudomonas species) colonize root surfaces, secrete growth hormones, and mobilize minerals for host plant uptake.",
+      "tags": [
+        "PGPR",
+        "Microbiology",
+        "Rhizosphere"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ10",
+      "syllabusTopic": "Saptadhanyankur Ark and customized bio-enhancers: preparation, hormone dynamics, and foliar bio-nutrition",
+      "difficulty": "Easy",
+      "questionText": "What does the term 'Saptadhanyankur Ark' literally refer to?",
+      "options": {
+        "A": "Extract of seven kinds of tree bark",
+        "B": "Extract of seven sprouted grains/seeds",
+        "C": "Extract of seven medicinal mushrooms",
+        "D": "Extract of seven chemical fertilizers"
+      },
+      "correctOption": "B",
+      "explanation": "'Sapta' means seven, 'dhanya' means grain, and 'ankur' means sprout. Saptadhanyankur Ark is a bio-enhancing extract prepared from seven diverse sprouted seeds.",
+      "tags": [
+        "Saptadhanyankur Ark",
+        "Sprouted Grains",
+        "Bio-enhancers"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ11",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods",
+      "difficulty": "Easy",
+      "questionText": "What is the optimal fermentation time for liquid Jeevamrit under warm tropical conditions (28-35\u00b0C)?",
+      "options": {
+        "A": "2 hours",
+        "B": "48 to 72 hours",
+        "C": "30 days",
+        "D": "6 months"
+      },
+      "correctOption": "B",
+      "explanation": "Under warm temperatures, microbial populations in Jeevamrit reach peak logarithmic density within 48 to 72 hours (2 to 3 days), at which point it is ready for application.",
+      "tags": [
+        "Jeevamrit Fermentation",
+        "Fermentation Time",
+        "Microbial Kinetics"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ12",
+      "syllabusTopic": "Beejamrit: ingredients, biochemical properties, and seed/propagule bio-treatment protocols",
+      "difficulty": "Easy",
+      "questionText": "Why must seeds treated with Beejamrit be dried strictly under shade before sowing?",
+      "options": {
+        "A": "Direct sunlight and UV radiation kill the beneficial living bacteria on the seed coat",
+        "B": "Shade turns the seed coat green",
+        "C": "Sunlight dissolves the seeds into water",
+        "D": "Birds only fly in the shade"
+      },
+      "correctOption": "A",
+      "explanation": "Beneficial rhizobacteria in Beejamrit lack protective shells and are susceptible to solar ultraviolet radiation and heat desiccation. Drying under shade preserves bacterial viability.",
+      "tags": [
+        "Beejamrit",
+        "Shade Drying",
+        "Seed Treatment"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ13",
+      "syllabusTopic": "Ghanajeevamrit (solid microbial bio-formulation): preparation, drying, storage, and basal application",
+      "difficulty": "Easy",
+      "questionText": "What is the typical shelf life of well-cured, shade-dried granular Ghanajeevamrit when stored in dry gunny bags?",
+      "options": {
+        "A": "2 days",
+        "B": "1 week",
+        "C": "6 to 12 months",
+        "D": "50 years"
+      },
+      "correctOption": "C",
+      "explanation": "Because beneficial bacteria form resilient endospores in the dried carrier, Ghanajeevamrit retains biological viability for 6 to 12 months in dry storage.",
+      "tags": [
+        "Ghanajeevamrit",
+        "Shelf Life",
+        "Storage"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ14",
+      "syllabusTopic": "Scientific microbial and biochemical basis: bacterial consortia (PGPR, nitrogen fixers, phosphate solubilizers), enzymes, and organic acids",
+      "difficulty": "Easy",
+      "questionText": "Which natural auxin hormone is synthesized in significant concentrations by beneficial bacteria during Jeevamrit fermentation?",
+      "options": {
+        "A": "Indole-3-Acetic Acid (IAA)",
+        "B": "2,4-D",
+        "C": "Abscisic acid (ABA)",
+        "D": "Ethylene gas"
+      },
+      "correctOption": "A",
+      "explanation": "Beneficial rhizobacteria in Jeevamrit metabolize tryptophan and amino acids from pulse flour to synthesize natural Indole-3-Acetic Acid (IAA), which stimulates root branching.",
+      "tags": [
+        "IAA",
+        "Auxins",
+        "Phytohormones"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ15",
+      "syllabusTopic": "Saptadhanyankur Ark and customized bio-enhancers: preparation, hormone dynamics, and foliar bio-nutrition",
+      "difficulty": "Easy",
+      "questionText": "At which crop phenological stage is foliar application of Saptadhanyankur Ark most beneficial in arresting abscission?",
+      "options": {
+        "A": "At seed sowing",
+        "B": "Flowering and early fruit-setting stage",
+        "C": "At post-harvest threshing",
+        "D": "During winter dormancy"
+      },
+      "correctOption": "B",
+      "explanation": "Applying Saptadhanyankur Ark at flowering delivers high surges of gibberellins, cytokinins, and enzymes, reducing flower drop and accelerating cell division in developing ovaries.",
+      "tags": [
+        "Saptadhanyankur Ark",
+        "Flowering Stage",
+        "Hormonal Surge"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ16",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods",
+      "difficulty": "Easy",
+      "questionText": "What pulse flour (Besan) quantity is added to a standard 200-liter batch of liquid Jeevamrit?",
+      "options": {
+        "A": "200 grams",
+        "B": "2 kg",
+        "C": "20 kg",
+        "D": "50 kg"
+      },
+      "correctOption": "B",
+      "explanation": "Exactly 2 kg of pulse flour (gram, cowpea, or pigeonpea flour) is blended into the 200-liter Jeevamrit batch to provide protein and nitrogen for microbial multiplication.",
+      "tags": [
+        "Jeevamrit Recipe",
+        "Pulse Flour",
+        "Formulation"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ17",
+      "syllabusTopic": "Beejamrit: ingredients, biochemical properties, and seed/propagule bio-treatment protocols",
+      "difficulty": "Easy",
+      "questionText": "Which soil-borne plant pathogenic fungi are effectively suppressed by Beejamrit seed coating?",
+      "options": {
+        "A": "Fusarium and Rhizoctonia species",
+        "B": "Beneficial mycorrhizae",
+        "C": "Edible oyster mushrooms",
+        "D": "Nitrosomonas bacteria"
+      },
+      "correctOption": "A",
+      "explanation": "Beejamrit produces antifungal metabolites, chitinases, and siderophores that suppress damping-off, wilt, and collar rot pathogens such as Fusarium, Rhizoctonia, and Sclerotium.",
+      "tags": [
+        "Fusarium",
+        "Pathogen Suppression",
+        "Beejamrit"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ18",
+      "syllabusTopic": "Ghanajeevamrit (solid microbial bio-formulation): preparation, drying, storage, and basal application",
+      "difficulty": "Easy",
+      "questionText": "Why is Ghanajeevamrit especially advantageous for rainfed dryland farming compared to liquid Jeevamrit?",
+      "options": {
+        "A": "It requires zero rain to grow crops",
+        "B": "It can be applied as a dry granular basal powder at sowing without needing irrigation water to carry it into the soil",
+        "C": "It turns clay into sand",
+        "D": "It dissolves in air within 1 second"
+      },
+      "correctOption": "B",
+      "explanation": "In rainfed tracts lacking irrigation canals or tubewells, farmers cannot apply liquid Jeevamrit. Granular Ghanajeevamrit is drilled directly into dry seed furrows, activating upon monsoon rains.",
+      "tags": [
+        "Rainfed Farming",
+        "Dryland Agriculture",
+        "Ghanajeevamrit"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ19",
+      "syllabusTopic": "Scientific microbial and biochemical basis: bacterial consortia (PGPR, nitrogen fixers, phosphate solubilizers), enzymes, and organic acids",
+      "difficulty": "Easy",
+      "questionText": "What organic acids secreted by phosphate-solubilizing bacteria in Jeevamrit dissolve insoluble soil phosphorus?",
+      "options": {
+        "A": "Sulfuric acid and nitric acid",
+        "B": "Citric, gluconic, and malic acids",
+        "C": "Hydrochloric acid",
+        "D": "Hydrofluoric acid"
+      },
+      "correctOption": "B",
+      "explanation": "Phosphate-solubilizing bacteria produce low-molecular-weight organic acids (gluconic, citric, malic, 2-ketogluconic) that chelate mineral cations, liberating soluble orthophosphates.",
+      "tags": [
+        "Phosphate Solubilization",
+        "Organic Acids",
+        "Biochemistry"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ20",
+      "syllabusTopic": "Saptadhanyankur Ark and customized bio-enhancers: preparation, hormone dynamics, and foliar bio-nutrition",
+      "difficulty": "Easy",
+      "questionText": "Which traditional Vedic bio-formulation combines the five direct products of the cow (dung, urine, milk, curd, ghee)?",
+      "options": {
+        "A": "Panchagavya",
+        "B": "Bordeaux mixture",
+        "C": "Bleaching powder",
+        "D": "DDT suspension"
+      },
+      "correctOption": "A",
+      "explanation": "Panchagavya is the classical organic formulation made by combining five bovine products: dung, urine, milk, curd, and ghee, often enriched with bananas and coconut water.",
+      "tags": [
+        "Panchagavya",
+        "Cow Products",
+        "Traditional Formulations"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ21",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods",
+      "difficulty": "Medium",
+      "questionText": "Why does liquid Jeevamrit lose its agronomic efficacy and turn foul if stored in an airtight drum beyond 10-12 days?",
+      "options": {
+        "A": "Microbes run out of water completely",
+        "B": "Available carbohydrate and protein energy substrates are exhausted, and anaerobic conditions trigger microbial death and putrefaction by sulfate-reducing bacteria",
+        "C": "The mixture turns into pure nitrogen gas",
+        "D": "Solar radiation penetrates through the plastic"
+      },
+      "correctOption": "B",
+      "explanation": "Jeevamrit is an active aerobic microbial suspension. Once jaggery and flour sugars are consumed (by Day 7-10), bacterial counts drop sharply, and un-aerated conditions allow anaerobic putrefaction.",
+      "tags": [
+        "Jeevamrit Shelf Life",
+        "Microbial Senescence",
+        "Putrefaction"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ22",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods",
+      "difficulty": "Medium",
+      "questionText": "How does applying filtered 10% Jeevamrit as a foliar spray benefit crop canopy photosynthesis?",
+      "options": {
+        "A": "It permanently removes all stomata from leaves",
+        "B": "Epiphytic bacteria colonize the phyllosphere, and absorbed microbial cytokinins and amino acids delay leaf senescence, prolonging active green canopy duration",
+        "C": "It bleaches chlorophyll into carotenoids",
+        "D": "It coats the leaf in pure sugar crystals"
+      },
+      "correctOption": "B",
+      "explanation": "Phyllosphere colonization by beneficial bacilli provides plant-absorbable cytokinins, amino acids, and micronutrients, delaying leaf senescence and maintaining high photosystem efficiency.",
+      "tags": [
+        "Foliar Jeevamrit",
+        "Phyllosphere",
+        "Canopy Photosynthesis"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ23",
+      "syllabusTopic": "Beejamrit: ingredients, biochemical properties, and seed/propagule bio-treatment protocols",
+      "difficulty": "Medium",
+      "questionText": "What biochemical component of Desi cow urine is primarily responsible for its natural broad-spectrum antifungal properties in Beejamrit?",
+      "options": {
+        "A": "Synthetic pyrethroids",
+        "B": "Hippuric acid, benzoic acid derivatives, and phenolic compounds",
+        "C": "Heavy concentrations of sulfuric acid",
+        "D": "Chlorinated hydrocarbons"
+      },
+      "correctOption": "B",
+      "explanation": "Cow urine naturally contains hippuric acid, volatile fatty acids, creatinine, and diverse phenolic antioxidants that disrupt fungal cell membrane permeability, inhibiting mycelial growth.",
+      "tags": [
+        "Cow Urine Chemistry",
+        "Hippuric Acid",
+        "Antifungal Mechanism"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ24",
+      "syllabusTopic": "Beejamrit: ingredients, biochemical properties, and seed/propagule bio-treatment protocols",
+      "difficulty": "Medium",
+      "questionText": "Why is the addition of virgin forest/bund soil essential in preparing Beejamrit and Jeevamrit?",
+      "options": {
+        "A": "To add weight and color to the mixture",
+        "B": "It acts as a primary microbial inoculant providing diverse, uncultivated, native soil microorganisms, including actinomycetes and mycorrhizal spores",
+        "C": "To acidify the water to pH 3.0",
+        "D": "To introduce earthworm eggs into the drum"
+      },
+      "correctOption": "B",
+      "explanation": "Undisturbed virgin soil harbors diverse, native indigenous microorganisms (IMO) that have evolved in local climatic conditions, acting as a broad-spectrum microbial starter inoculant.",
+      "tags": [
+        "Virgin Soil",
+        "Indigenous Microorganisms",
+        "Inoculum Source"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ25",
+      "syllabusTopic": "Ghanajeevamrit (solid microbial bio-formulation): preparation, drying, storage, and basal application",
+      "difficulty": "Medium",
+      "questionText": "What biological process occurs during the initial 48-hour heaping of Ghanajeevamrit under moist gunny bags?",
+      "options": {
+        "A": "Total sterilization of all bacteria",
+        "B": "Controlled solid-state fermentation where microbial metabolism generates internal heat (45-55\u00b0C), stimulating aerobic spore-formers and breaking down dung fibers",
+        "C": "Direct conversion of dung into alcohol",
+        "D": "Complete dissolution into liquid"
+      },
+      "correctOption": "B",
+      "explanation": "Covering the enriched dung heap creates a moist, micro-aerophilic solid-state fermentation bed. Microbial activity generates gentle metabolic heat, breaking down fibers and multiplying beneficial bacilli.",
+      "tags": [
+        "Ghanajeevamrit Fermentation",
+        "Solid-State Fermentation",
+        "Spore Induction"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ26",
+      "syllabusTopic": "Ghanajeevamrit (solid microbial bio-formulation): preparation, drying, storage, and basal application",
+      "difficulty": "Medium",
+      "questionText": "Why must Ghanajeevamrit cakes be dried strictly in the shade rather than exposed to direct solar heat on concrete floors?",
+      "options": {
+        "A": "Direct sun causes the cakes to catch fire",
+        "B": "Rapid solar drying and high temperatures (>50\u00b0C) kill vegetative bacterial cells before they can form protective endospores, reducing viable colony counts",
+        "C": "Shade drying keeps the dung smelling sweet",
+        "D": "Concrete floors absorb all nitrogen atoms"
+      },
+      "correctOption": "B",
+      "explanation": "Slow, gradual drying in the shade allows bacteria to sense decreasing moisture and trigger endospore formation. Fast sun exposure causes heat shock, killing non-spore-forming beneficial microbes.",
+      "tags": [
+        "Shade Drying",
+        "Endospore Formation",
+        "Ghanajeevamrit Quality"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ27",
+      "syllabusTopic": "Scientific microbial and biochemical basis: bacterial consortia (PGPR, nitrogen fixers, phosphate solubilizers), enzymes, and organic acids",
+      "difficulty": "Medium",
+      "questionText": "How do phosphate-solubilizing bacteria (PSB) present in Jeevamrit release phosphorus in calcareous, alkaline soils (pH >8.0)?",
+      "options": {
+        "A": "By secreting sodium hydroxide to raise pH",
+        "B": "By secreting low-molecular-weight organic acids that lower localized rhizosphere micro-pH and chelate calcium cations, solubilizing insoluble tricalcium phosphate",
+        "C": "By converting phosphorus into nitrogen gas",
+        "D": "By absorbing soil minerals into bacterial vacuoles"
+      },
+      "correctOption": "B",
+      "explanation": "In alkaline soils, phosphorus is bound to calcium as insoluble tricalcium phosphate. Bacterial organic acids (gluconic, citric) donate protons to lower micro-pH while chelating Ca2+, freeing H2PO4- ions.",
+      "tags": [
+        "Phosphate Solubilization",
+        "Calcareous Soils",
+        "Chelation"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ28",
+      "syllabusTopic": "Scientific microbial and biochemical basis: bacterial consortia (PGPR, nitrogen fixers, phosphate solubilizers), enzymes, and organic acids",
+      "difficulty": "Medium",
+      "questionText": "What is the biological mechanism of iron competition mediated by siderophores secreted by Pseudomonas fluorescens in Jeevamrit?",
+      "options": {
+        "A": "Siderophores dissolve iron into toxic gas",
+        "B": "Siderophores bind ferric iron (Fe3+) with extremely high affinity, making it available to the host plant while starving soil-borne fungal pathogens of iron required for mycelial growth",
+        "C": "Siderophores precipitate iron as rust",
+        "D": "Siderophores convert iron into calcium"
+      },
+      "correctOption": "B",
+      "explanation": "Siderophores are high-affinity ferric iron chelators. They sequester trace iron from the soil solution, delivering it to host plant roots while depriving pathogenic fungi (like Fusarium) of essential iron.",
+      "tags": [
+        "Siderophores",
+        "Iron Chelation",
+        "Biocontrol"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ29",
+      "syllabusTopic": "Saptadhanyankur Ark and customized bio-enhancers: preparation, hormone dynamics, and foliar bio-nutrition",
+      "difficulty": "Medium",
+      "questionText": "Why are the seeds in Saptadhanyankur Ark sprouted for 24-48 hours until radicles reach 1-2 cm rather than using unsprouted seeds?",
+      "options": {
+        "A": "Sprouted seeds weigh less and are easier to carry",
+        "B": "Sprouting triggers an endogenous hormonal surge, activating alpha-amylase and synthesizing high concentrations of gibberellins, cytokinins, and bio-available amino acids",
+        "C": "Unsprouted seeds are completely poisonous to all plants",
+        "D": "Sprouting converts seeds into pure alcohol"
+      },
+      "correctOption": "B",
+      "explanation": "During germination, embryonic tissues synthesize peak levels of gibberellic acid and cytokinins to fuel rapid cell division, while hydrolyzing storage proteins into bio-active peptides and amino acids.",
+      "tags": [
+        "Seed Germination",
+        "Sprouting Physiology",
+        "Phytohormones"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ30",
+      "syllabusTopic": "Saptadhanyankur Ark and customized bio-enhancers: preparation, hormone dynamics, and foliar bio-nutrition",
+      "difficulty": "Medium",
+      "questionText": "Which combination of seed groups is traditionally selected to prepare Saptadhanyankur Ark to ensure a broad spectrum of enzymes and hormones?",
+      "options": {
+        "A": "Only weed seeds collected from roadsides",
+        "B": "A diverse blend of cereals, pulses (monocot and dicot), and oilseeds (e.g., wheat, moong, urd, cowpea, sesame, chickpea)",
+        "C": "Exclusively imported genetically modified soybean seeds",
+        "D": "Only dried grass clippings"
+      },
+      "correctOption": "B",
+      "explanation": "Saptadhanyankur Ark blends monocot cereals (wheat/barley), dicot pulses (moong, urd, cowpea, chana), and oilseeds (sesame), providing diverse enzymes, fatty acids, and hormonal profiles.",
+      "tags": [
+        "Seven Grains",
+        "Saptadhanyankur Ark",
+        "Biodiversity"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ31",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods",
+      "difficulty": "Medium",
+      "questionText": "What happens if chlorinated tap water or municipal water is used directly to prepare Jeevamrit without declorination?",
+      "options": {
+        "A": "The water boils spontaneously",
+        "B": "Residual free chlorine acts as a strong biocide, lysing bacterial cell membranes and drastically reducing viable beneficial microflora",
+        "C": "Chlorine turns jaggery into synthetic fertilizer",
+        "D": "Bacterial counts increase by 10,000%"
+      },
+      "correctOption": "B",
+      "explanation": "Chlorine is added to municipal water specifically to kill bacteria. Using chlorinated water kills the inoculant microflora; water should be aerated in an open tank for 24 hours to dissipate chlorine.",
+      "tags": [
+        "Chlorinated Water",
+        "Microbial Care",
+        "Jeevamrit Protocol"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ32",
+      "syllabusTopic": "Beejamrit: ingredients, biochemical properties, and seed/propagule bio-treatment protocols",
+      "difficulty": "Medium",
+      "questionText": "How does Beejamrit seed treatment enhance early seedling vigor and germination percentage in field crops?",
+      "options": {
+        "A": "By heating the seed to 60 degrees C",
+        "B": "Beneficial rhizobacteria secrete indole-3-acetic acid (IAA) and gibberellins that promote radicle emergence, while biocontrol agents suppress damping-off pathogens",
+        "C": "By dissolving the cotyledons completely",
+        "D": "By adding synthetic growth retardants"
+      },
+      "correctOption": "B",
+      "explanation": "Seed coating with Beejamrit places auxins, gibberellins, and living PGPR directly on the seed coat, stimulating early germination and vigorous primary taproot elongation.",
+      "tags": [
+        "Seedling Vigor",
+        "Germination",
+        "Beejamrit"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ33",
+      "syllabusTopic": "Ghanajeevamrit (solid microbial bio-formulation): preparation, drying, storage, and basal application",
+      "difficulty": "Medium",
+      "questionText": "What microbiological mechanism allows Ghanajeevamrit to remain biologically active even after drying down to 10-12% moisture?",
+      "options": {
+        "A": "Bacteria freeze into ice crystals",
+        "B": "Spore-forming bacteria (such as Bacillus species and Actinobacteria) transition into dormant, heat- and desiccation-resistant endospores that germinate upon soil rehydration",
+        "C": "All bacteria are replaced by synthetic chemicals",
+        "D": "The dry dung attracts wild bacteria from the wind"
+      },
+      "correctOption": "B",
+      "explanation": "Gram-positive bacilli and actinomycetes form tough endospores with dipicolinic acid-calcium complexes that resist desiccation, re-emerging as vegetative cells when rain moistens the soil.",
+      "tags": [
+        "Endospores",
+        "Bacillus",
+        "Desiccation Resistance"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ34",
+      "syllabusTopic": "Scientific microbial and biochemical basis: bacterial consortia (PGPR, nitrogen fixers, phosphate solubilizers), enzymes, and organic acids",
+      "difficulty": "Medium",
+      "questionText": "What enzyme assay is standardly used by soil microbiologists to quantify the overall respiratory and metabolic activity of soil microflora following Jeevamrit application?",
+      "options": {
+        "A": "Amylase test",
+        "B": "Soil Dehydrogenase Activity (DHA) assay",
+        "C": "Starch iodine test",
+        "D": "Protein electrophoresis"
+      },
+      "correctOption": "B",
+      "explanation": "Dehydrogenase activity (DHA) reflects total oxidative and respiratory metabolism of living soil microbes, and surges significantly following Jeevamrit application.",
+      "tags": [
+        "Dehydrogenase Assay",
+        "Soil Enzymology",
+        "DHA"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ35",
+      "syllabusTopic": "Saptadhanyankur Ark and customized bio-enhancers: preparation, hormone dynamics, and foliar bio-nutrition",
+      "difficulty": "Medium",
+      "questionText": "Why is cow urine included as an ingredient in the fermentation of Saptadhanyankur Ark?",
+      "options": {
+        "A": "To make the mixture poisonous to all insects",
+        "B": "Provides mineral nitrogen, enzymes, and natural preservatives, extracting water-soluble and lipid-soluble active phytohormones while suppressing putrefaction",
+        "C": "To dye the leaves dark brown",
+        "D": "To eliminate the need for water"
+      },
+      "correctOption": "B",
+      "explanation": "Cow urine acts as an alkaline bio-solvent that extracts enzymes, auxins, and phenolics from sprouted seed paste, while its natural antimicrobial properties prevent putrefaction.",
+      "tags": [
+        "Saptadhanyankur Ark",
+        "Cow Urine Role",
+        "Bio-Solvent"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ36",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods",
+      "difficulty": "Medium",
+      "questionText": "In the fermentation of Jeevamrit, why is pulse flour (besan) preferred over cereal flour (like wheat or rice flour)?",
+      "options": {
+        "A": "Cereal flour is poisonous to bacteria",
+        "B": "Pulse flour contains much higher protein (20-25%) and diverse amino acids, providing a concentrated nitrogen and sulfur source necessary for bacterial enzyme and protein synthesis",
+        "C": "Pulse flour turns the mixture yellow",
+        "D": "Pulse flour does not dissolve in water"
+      },
+      "correctOption": "B",
+      "explanation": "Grain legume flour is rich in proteins, amino acids (asparagine, glutamine), and micronutrients, establishing an optimal balance with jaggery's carbon to fuel microbial reproduction.",
+      "tags": [
+        "Pulse Flour",
+        "Amino Acids",
+        "Bacterial Nutrition"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ37",
+      "syllabusTopic": "Beejamrit: ingredients, biochemical properties, and seed/propagule bio-treatment protocols",
+      "difficulty": "Medium",
+      "questionText": "How does soaking vegetable seedling roots in Beejamrit for 10 minutes prior to transplanting mitigate 'transplant shock'?",
+      "options": {
+        "A": "It kills all root hairs immediately",
+        "B": "The root dip rehydrates cells, supplies calcium, and coats broken root tips with beneficial bacteria that prevent damping-off infection while secreting auxins that trigger rapid adventitious rooting",
+        "C": "It freezes the roots in place",
+        "D": "It dissolves the root epidermis"
+      },
+      "correctOption": "B",
+      "explanation": "Uprooting damages fine root hairs. Beejamrit coats broken surfaces with protective bacilli, while auxins (IAA) and calcium stimulate rapid lateral and adventitious root regeneration in the field.",
+      "tags": [
+        "Transplant Shock",
+        "Root Dipping",
+        "Beejamrit"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ38",
+      "syllabusTopic": "Ghanajeevamrit (solid microbial bio-formulation): preparation, drying, storage, and basal application",
+      "difficulty": "Medium",
+      "questionText": "What indicator confirms that Ghanajeevamrit is properly dried and ready for safe long-term bag storage?",
+      "options": {
+        "A": "It turns completely liquid",
+        "B": "Moisture content drops below 10-12%, the granules crumble easily between fingers without sticking, and it emits an earthy, non-foul forest aroma",
+        "C": "It turns black and catches fire",
+        "D": "It smells intensely of ammonia and rotten eggs"
+      },
+      "correctOption": "B",
+      "explanation": "Properly cured Ghanajeevamrit has 10-12% moisture, crumbles into coarse granules, and emits an earthy smell. Residual dampness would cause mold growth and anaerobic rotting in bags.",
+      "tags": [
+        "Ghanajeevamrit Curing",
+        "Moisture Content",
+        "Quality Assessment"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ39",
+      "syllabusTopic": "Scientific microbial and biochemical basis: bacterial consortia (PGPR, nitrogen fixers, phosphate solubilizers), enzymes, and organic acids",
+      "difficulty": "Medium",
+      "questionText": "What is the biological role of free-living diazotrophic bacteria (Azotobacter, Beijerinckia) introduced into the soil via Jeevamrit?",
+      "options": {
+        "A": "They consume all soil nitrates and release nitrogen gas into the air",
+        "B": "They fix atmospheric dinitrogen (N2) into plant-absorbable ammonium (NH4+) in non-rhizospheric and rhizospheric soil without requiring root nodule formation",
+        "C": "They parasitize earthworms",
+        "D": "They oxidize sulfur into sulfuric acid"
+      },
+      "correctOption": "B",
+      "explanation": "Free-living diazotrophs (like Azotobacter and Azospirillum) fix atmospheric N2 independently in the soil, converting it into ammonia and amino acids that enrich the soil solution.",
+      "tags": [
+        "Diazotrophs",
+        "Azotobacter",
+        "Biological Nitrogen Fixation"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ40",
+      "syllabusTopic": "Saptadhanyankur Ark and customized bio-enhancers: preparation, hormone dynamics, and foliar bio-nutrition",
+      "difficulty": "Medium",
+      "questionText": "What dilution ratio is standardly recommended when spraying filtered Saptadhanyankur Ark onto crop canopies?",
+      "options": {
+        "A": "100% pure concentrate without water",
+        "B": "6 to 10 liters of extract diluted in 200 liters of water per acre",
+        "C": "1 ml in 10,000 liters water",
+        "D": "Equal volume with synthetic insecticide"
+      },
+      "correctOption": "B",
+      "explanation": "Filtered Saptadhanyankur Ark is diluted at 6 to 10 liters per 200 liters of water per acre (approx. 3-5% concentration) to deliver an effective foliar hormonal and nutrient spray.",
+      "tags": [
+        "Saptadhanyankur Dilution",
+        "Foliar Spray",
+        "Dosage"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ41",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods",
+      "difficulty": "Medium",
+      "questionText": "Why is applying liquid Jeevamrit through drip irrigation systems recommended only after thorough straining through double-layered muslin cloth?",
+      "options": {
+        "A": "To remove all bacteria from the liquid",
+        "B": "To filter out coarse fibrous dung particles, sand grains, and un-dissolved flour that would clog drip emitters and microtubes",
+        "C": "To change the electrical conductivity of water",
+        "D": "To prevent water from flowing through pipes"
+      },
+      "correctOption": "B",
+      "explanation": "Dung and flour contain coarse insoluble fibers that quickly clog micro-emitters. Straining through fine cloth allows microscopic bacteria and dissolved nutrients to pass while removing debris.",
+      "tags": [
+        "Drip Fertigation",
+        "Muslin Cloth Straining",
+        "Emitter Clogging"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ42",
+      "syllabusTopic": "Beejamrit: ingredients, biochemical properties, and seed/propagule bio-treatment protocols",
+      "difficulty": "Medium",
+      "questionText": "For treating vegetative propagules like sugarcane setts or ginger rhizomes, what is the recommended immersion time in Beejamrit?",
+      "options": {
+        "A": "1 second",
+        "B": "10 to 15 minutes",
+        "C": "48 hours",
+        "D": "1 month"
+      },
+      "correctOption": "B",
+      "explanation": "Sugarcane setts, ginger rhizomes, or potato seed tubers are soaked in Beejamrit for 10 to 15 minutes to allow biological coating of cut ends and nodal buds without causing tissue waterlogging.",
+      "tags": [
+        "Sett Treatment",
+        "Soaking Duration",
+        "Beejamrit"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ43",
+      "syllabusTopic": "Ghanajeevamrit (solid microbial bio-formulation): preparation, drying, storage, and basal application",
+      "difficulty": "Medium",
+      "questionText": "How does applying Ghanajeevamrit directly in the seed furrow benefit the emerging seedling radicle?",
+      "options": {
+        "A": "It heats the seed furrow to 80 degrees C",
+        "B": "It places a concentrated rhizosphere microbial inoculant directly adjacent to the emerging root, promoting immediate bacterial colonization and phosphate solubilization",
+        "C": "It prevents the seed from taking up any water",
+        "D": "It acts as a chemical herbicide"
+      },
+      "correctOption": "B",
+      "explanation": "Placing Ghanajeevamrit in the seed furrow concentrates beneficial bacilli and mycorrhizae right where the emerging radicle develops, ensuring immediate root colonization and nutrient uptake.",
+      "tags": [
+        "Furrow Placement",
+        "Root Colonization",
+        "Ghanajeevamrit"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ44",
+      "syllabusTopic": "Scientific microbial and biochemical basis: bacterial consortia (PGPR, nitrogen fixers, phosphate solubilizers), enzymes, and organic acids",
+      "difficulty": "Medium",
+      "questionText": "What group of filamentous microorganisms present in Jeevamrit and virgin soil produces natural antibiotic compounds (e.g., streptomycin) that suppress bacterial blight and wilts?",
+      "options": {
+        "A": "Actinomycetes (Actinobacteria)",
+        "B": "Cyanobacteria",
+        "C": "Protozoa",
+        "D": "Green algae"
+      },
+      "correctOption": "A",
+      "explanation": "Actinomycetes (predominantly Streptomyces spp.) are filamentous bacteria abundant in cow dung and virgin soil that synthesize natural antibiotics and chitinases, suppressing fungal and bacterial pathogens.",
+      "tags": [
+        "Actinomycetes",
+        "Antibiotics",
+        "Biocontrol"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ45",
+      "syllabusTopic": "Saptadhanyankur Ark and customized bio-enhancers: preparation, hormone dynamics, and foliar bio-nutrition",
+      "difficulty": "Medium",
+      "questionText": "What is the biochemical reason why Saptadhanyankur Ark is specifically effective in preventing premature flower and fruit drop?",
+      "options": {
+        "A": "It freezes the flower stems in place",
+        "B": "High concentrations of endogenous gibberellins and auxins from sprouted embryos counteract abscisic acid (ABA) and ethylene in the pedicel abscission zone",
+        "C": "It removes all water from flower petals",
+        "D": "It acts as a synthetic fungicide"
+      },
+      "correctOption": "B",
+      "explanation": "Flower abscission is triggered by ethylene and ABA accumulation at the pedicel. Sprouted seed extracts supply auxins and gibberellins that suppress abscission layer formation, retaining flowers.",
+      "tags": [
+        "Flower Drop Prevention",
+        "Hormonal Balance",
+        "Abscission"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ46",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods",
+      "difficulty": "Hard",
+      "questionText": "What mathematical and microbiological pattern governs the population kinetics of Plant Growth-Promoting Rhizobacteria (PGPR) during the 72-hour fermentation of liquid Jeevamrit?",
+      "options": {
+        "A": "Linear decline from hour 1 to hour 72",
+        "B": "Lag phase (0-12 h), exponential logarithmic growth phase (12-48 h) where bacterial counts surge from 10^5 to >10^9 CFU/ml, followed by stationary phase (48-72 h) and death phase after 120-168 h as substrates deplete",
+        "C": "Constant flat population with zero cell division",
+        "D": "Bacterial counts surge only after 30 days"
+      },
+      "correctOption": "B",
+      "explanation": "Jeevamrit exhibits a classical batch-culture microbial growth curve: lag phase (0-12h), logarithmic surge (12-48h) peaking at $10^9\\text{--}10^{10} \\text{ CFU/ml}$, stationary peak (48-72h), and death phase as sugars deplete.",
+      "tags": [
+        "Microbial Kinetics",
+        "Growth Curve",
+        "Jeevamrit Science"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ47",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods",
+      "difficulty": "Hard",
+      "questionText": "How does the clockwise manual stirring of Jeevamrit influence the Dissolved Oxygen (DO) concentration and redox potential (Eh) of the fermentation broth?",
+      "options": {
+        "A": "It drives out all oxygen, lowering DO to zero",
+        "B": "It elevates DO levels (>2-4 mg/L) and maintains a positive redox potential (Eh > +100 mV), selectively favoring aerobic and facultative aerobic PGPR while suppressing strict obligate anaerobes that produce foul putrefactive sulfides",
+        "C": "It converts DO into pure hydrogen gas",
+        "D": "It freezes the liquid into a gel"
+      },
+      "correctOption": "B",
+      "explanation": "Twice-daily stirring re-aerates the broth, keeping DO above critical thresholds and maintaining an oxidative redox state. This favors beneficial aerobic bacilli and pseudomonads while preventing foul anaerobic sulfide generation.",
+      "tags": [
+        "Redox Potential",
+        "Dissolved Oxygen",
+        "Fermentation Chemistry"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ48",
+      "syllabusTopic": "Beejamrit: ingredients, biochemical properties, and seed/propagule bio-treatment protocols",
+      "difficulty": "Hard",
+      "questionText": "What molecular mechanism explains the inhibition of fungal spore germination by the secondary metabolites present in Beejamrit?",
+      "options": {
+        "A": "Metabolites destroy fungal DNA by radiation",
+        "B": "Bacterial lipopeptides (surfactin, iturin, fengycin) from Bacillus subtilis and cow urine phenolics permeabilize fungal cell membranes, causing electrolyte leakage and bursting germ tubes",
+        "C": "Metabolites freeze fungal spores in ice",
+        "D": "Metabolites turn fungal cell walls into pure sugar"
+      },
+      "correctOption": "B",
+      "explanation": "Cow dung bacilli secrete cyclic lipopeptides (iturin, surfactin, fengycin) that integrate into fungal ergosterol membranes, creating lytic transmembrane pores that burst germinating spores.",
+      "tags": [
+        "Lipopeptides",
+        "Iturin",
+        "Antifungal Mechanisms"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ49",
+      "syllabusTopic": "Beejamrit: ingredients, biochemical properties, and seed/propagule bio-treatment protocols",
+      "difficulty": "Hard",
+      "questionText": "In Beejamrit chemistry, why does slaked lime (calcium hydroxide) specifically inhibit acid-preferring fungal pathogens like Fusarium oxysporum?",
+      "options": {
+        "A": "Lime dissolves all organic matter",
+        "B": "It elevates and buffers the micro-rhizosphere pH to 7.2-7.8, a range that down-regulates Fusarium virulence genes and stimulates host cell wall pectin calcification",
+        "C": "Lime acts as an explosive compound",
+        "D": "Lime absorbs all soil moisture"
+      },
+      "correctOption": "B",
+      "explanation": "Fusarium oxysporum is an acidophilic pathogen that thrives in acidic soils (pH <6.0). Buffering the seed zone to neutral/slightly alkaline pH suppress fungal hyphal branching and strengthens cell wall pectins.",
+      "tags": [
+        "pH Buffering",
+        "Lime Antifungal Action",
+        "Fusarium"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ50",
+      "syllabusTopic": "Ghanajeevamrit (solid microbial bio-formulation): preparation, drying, storage, and basal application",
+      "difficulty": "Hard",
+      "questionText": "What biochemical trigger initiates sporulation in Bacillus subtilis and Actinobacteria during the gradual shade-drying of Ghanajeevamrit?",
+      "options": {
+        "A": "Excess application of synthetic nitrogen",
+        "B": "Activation of the master transcriptional regulator Spo0A in response to nutrient starvation and desiccation, initiating asymmetric septation and synthesis of dipicolinic acid-calcium complexes in the core",
+        "C": "Exposure to pitch darkness",
+        "D": "Complete dissolution of cell walls"
+      },
+      "correctOption": "B",
+      "explanation": "As moisture drops gradually in shade, bacilli sense nutrient/water stress, phosphorylating Spo0A. This initiates endospore development, depositing dipicolinic acid to protect DNA from environmental extremes.",
+      "tags": [
+        "Sporulation",
+        "Spo0A Pathway",
+        "Endospore Biology"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ51",
+      "syllabusTopic": "Ghanajeevamrit (solid microbial bio-formulation): preparation, drying, storage, and basal application",
+      "difficulty": "Hard",
+      "questionText": "How does the fibrous lignocellulosic matrix of cow dung in Ghanajeevamrit act as a protective carrier for microbial inoculants in high-temperature field soils?",
+      "options": {
+        "A": "It reflects 100% of cosmic rays",
+        "B": "The porous, high-surface-area fibrous matrix cushions micro-environmental fluctuations, retains capillary micro-moisture, and shields immobilized microbial cells from thermal denaturation",
+        "C": "It converts heat into liquid water",
+        "D": "It dissolves the soil particles"
+      },
+      "correctOption": "B",
+      "explanation": "Lignocellulosic fibers provide a protective carbonaceous carrier matrix. The micro-porous structure insulates spores against thermal stress, providing an immediate carbon substrate upon soil wetting.",
+      "tags": [
+        "Carrier Matrix",
+        "Lignocellulose",
+        "Thermal Protection"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ52",
+      "syllabusTopic": "Scientific microbial and biochemical basis: bacterial consortia (PGPR, nitrogen fixers, phosphate solubilizers), enzymes, and organic acids",
+      "difficulty": "Hard",
+      "questionText": "In the enzymatic dynamics of Jeevamrit-treated soils, what specific substrate is cleaved by alkaline and acid phosphatases to release inorganic orthophosphate?",
+      "options": {
+        "A": "Cellulose polymers",
+        "B": "Phosphomonoesters and phosphodiesters (such as phytates, nucleic acids, and phospholipids) present in organic matter",
+        "C": "Pure silica rock",
+        "D": "Atmospheric nitrogen gas"
+      },
+      "correctOption": "B",
+      "explanation": "Phosphatase enzymes cleave ester-phosphate bonds in organic residues (inositol hexaphosphate / phytate, nucleic acids, phospholipids), releasing free H2PO4- for root uptake.",
+      "tags": [
+        "Phosphatases",
+        "Enzyme Dynamics",
+        "Phytate Hydrolysis"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ53",
+      "syllabusTopic": "Scientific microbial and biochemical basis: bacterial consortia (PGPR, nitrogen fixers, phosphate solubilizers), enzymes, and organic acids",
+      "difficulty": "Hard",
+      "questionText": "What molecular mechanism is responsible for 1-aminocyclopropane-1-carboxylate (ACC) deaminase activity produced by PGPR in Jeevamrit?",
+      "options": {
+        "A": "Direct synthesis of toxic ethylene gas",
+        "B": "Hydrolysis of ACC (the immediate precursor of ethylene) into ammonia and alpha-ketobutyrate, lowering stress-induced ethylene levels in crop roots and preventing root growth inhibition under drought or salinity",
+        "C": "Hydrolysis of plant DNA",
+        "D": "Inhibition of auxin synthesis"
+      },
+      "correctOption": "B",
+      "explanation": "Under drought or salinity, plants synthesize stress ethylene via ACC. Bacterial ACC deaminase cleaves ACC, preventing stress ethylene spikes and maintaining uninterrupted root elongation.",
+      "tags": [
+        "ACC Deaminase",
+        "Ethylene Regulation",
+        "Stress Tolerance"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ54",
+      "syllabusTopic": "Saptadhanyankur Ark and customized bio-enhancers: preparation, hormone dynamics, and foliar bio-nutrition",
+      "difficulty": "Hard",
+      "questionText": "During seed germination in Saptadhanyankur Ark, what hormonal cascade triggers the de novo synthesis of alpha-amylase in the aleurone layer of germinating cereal seeds?",
+      "options": {
+        "A": "Abscisic acid surge",
+        "B": "Embryo-derived Gibberellins (GA1 and GA3) diffuse to the aleurone layer, binding GID1 receptors and degrading DELLA repressor proteins to activate GAMYB transcription factor",
+        "C": "Direct light absorption",
+        "D": "Rapid cooling to freezing point"
+      },
+      "correctOption": "B",
+      "explanation": "Germinating embryos synthesize gibberellins that bind GID1, degrading DELLA repressors. This frees GAMYB to transcribe alpha-amylase, yielding an enzyme- and hormone-rich sprouted extract.",
+      "tags": [
+        "Gibberellin Signaling",
+        "DELLA Proteins",
+        "Sprouting Biochemistry"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ55",
+      "syllabusTopic": "Saptadhanyankur Ark and customized bio-enhancers: preparation, hormone dynamics, and foliar bio-nutrition",
+      "difficulty": "Hard",
+      "questionText": "What is the biochemical role of myo-inositol hexakisphosphate (phytic acid) hydrolysis during sprouting of seeds used in Saptadhanyankur Ark?",
+      "options": {
+        "A": "Phytic acid converts into plastic",
+        "B": "Phytase enzymes hydrolyze phytic acid, de-chelating bound divalent cations (Zn2+, Fe2+, Mg2+, Ca2+) and releasing bio-available minerals and free myo-inositol for foliar absorption",
+        "C": "It produces toxic cyanide gas",
+        "D": "It stops all metabolic processes"
+      },
+      "correctOption": "B",
+      "explanation": "Raw seeds store phosphorus as phytic acid, which chelates minerals. Sprouting activates endogenous phytases, breaking phytate into free myo-inositol and soluble Zn, Fe, Mg, and Ca ions.",
+      "tags": [
+        "Phytase Activation",
+        "Mineral Bio-availability",
+        "Seed Sprouting"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ56",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods",
+      "difficulty": "Hard",
+      "questionText": "How does the volatile fatty acid (VFA) profile in liquid Jeevamrit shift during 72-hour aerobic fermentation?",
+      "options": {
+        "A": "VFAs disappear completely within 1 hour",
+        "B": "Initial acetate and propionate levels rise rapidly as simple carbohydrates are fermented, followed by the generation of branched-chain fatty acids (isobutyrate, isovalerate) that act as bio-pesticidal agents against pathogenic nematodes",
+        "C": "VFAs turn into pure alcohol",
+        "D": "VFAs solidify into plastic polymers"
+      },
+      "correctOption": "B",
+      "explanation": "Microbial fermentation produces volatile fatty acids (acetic, propionic, butyric, valeric). These VFAs lower pH, serve as carbon substrates, and exert natural nematicidal properties against plant-parasitic nematodes.",
+      "tags": [
+        "Volatile Fatty Acids",
+        "Fermentation Chemistry",
+        "Nematicidal Activity"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ57",
+      "syllabusTopic": "Beejamrit: ingredients, biochemical properties, and seed/propagule bio-treatment protocols",
+      "difficulty": "Hard",
+      "questionText": "What is the histological impact on the seed coat (testa) when pulse seeds are treated with Beejamrit?",
+      "options": {
+        "A": "The seed coat dissolves completely within 1 minute",
+        "B": "Beneficial bacterial mucilage and biofilms adhere to the micropyle and hilar groove without eroding the palisade sclerified cell layer, creating a bio-barrier against fungal hyphae",
+        "C": "The seed coat turns into pure cellulose",
+        "D": "The embryo is ejected out of the seed"
+      },
+      "correctOption": "B",
+      "explanation": "Beejamrit creates a protective biological biofilm over natural seed openings (hilar groove, micropyle). The bacterial extracellular polymeric substances (EPS) block entry of pathogenic fungal hyphae.",
+      "tags": [
+        "Biofilm Protection",
+        "Micropyle",
+        "Seed Histology"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ58",
+      "syllabusTopic": "Scientific microbial and biochemical basis: bacterial consortia (PGPR, nitrogen fixers, phosphate solubilizers), enzymes, and organic acids",
+      "difficulty": "Hard",
+      "questionText": "Why does the application of Jeevamrit significantly increase Fluorescein Diacetate (FDA) hydrolytic activity in soil?",
+      "options": {
+        "A": "FDA is a synthetic fertilizer that feeds microbes",
+        "B": "FDA is cleaved by non-specific extracellular enzymes (proteases, lipases, esterases) secreted by active microbial biomass; increased FDA hydrolysis reflects an overall surge in total living heterotrophic microflora",
+        "C": "FDA dissolves earthworm skins",
+        "D": "FDA activity measures chemical salt concentration only"
+      },
+      "correctOption": "B",
+      "explanation": "Fluorescein diacetate hydrolysis measures total active microbial biomass, as it is cleaved by esterases, proteases, and lipases. Higher FDA activity confirms active biological proliferation post-Jeevamrit.",
+      "tags": [
+        "FDA Hydrolysis",
+        "Enzymology",
+        "Soil Microbial Activity"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ59",
+      "syllabusTopic": "Ghanajeevamrit (solid microbial bio-formulation): preparation, drying, storage, and basal application",
+      "difficulty": "Hard",
+      "questionText": "What chemical interaction prevents ammonia volatilization during the shaded curing of Ghanajeevamrit heaps?",
+      "options": {
+        "A": "Adding synthetic sulfuric acid",
+        "B": "Organic acids from dung and microbial fermentation lower localized micro-pH, converting volatile free ammonia (NH3) into stable, non-volatile ammonium ions (NH4+) bound to organic exchange complexes",
+        "C": "Covering with plastic sheets to burn the ammonia",
+        "D": "Adding pure calcium carbide"
+      },
+      "correctOption": "B",
+      "explanation": "Fermentation produces organic acids that lower pH, protonating volatile free ammonia ($NH_3$) into stable ammonium ($NH_4^+$), which binds tightly to negatively charged humic colloids.",
+      "tags": [
+        "Ammonia Retention",
+        "Ammonium Binding",
+        "Ghanajeevamrit Chemistry"
+      ]
+    },
+    {
+      "id": "AGR217-U2-MCQ60",
+      "syllabusTopic": "Scientific microbial and biochemical basis: bacterial consortia (PGPR, nitrogen fixers, phosphate solubilizers), enzymes, and organic acids",
+      "difficulty": "Hard",
+      "questionText": "How does the co-presence of lactic acid bacteria (Lactobacillus spp.) in Jeevamrit suppress soil-borne fungal pathogens without harming beneficial rhizobacteria?",
+      "options": {
+        "A": "Lactobacillus secretes synthetic fungicides",
+        "B": "Lactobacillus produces lactic acid, hydrogen peroxide, and bacteriocins that lower micro-pH and create an antagonistic oxidative micro-niche lethal to fungal zoospores and hyphae",
+        "C": "Lactobacillus digests plant roots",
+        "D": "Lactobacillus eats all soil minerals"
+      },
+      "correctOption": "B",
+      "explanation": "Lactic acid bacteria generate lactic acid, bacteriocins, and micro-quantities of $H_2O_2$, creating a mildly acidic, antagonistic environment that suppresses fungal pathogens like Pythium and Phytophthora.",
+      "tags": [
+        "Lactobacillus",
+        "Bacteriocins",
+        "Biocontrol Antagonism"
+      ]
+    }
+  ],
+  "subjectiveQuestions": [
+    {
+      "id": "AGR217-U2-SUB01",
+      "questionType": "SHORT_ANSWER",
+      "maxMarks": 5,
+      "difficulty": "Easy",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods",
+      "questionText": "Detail the standardized recipe and preparation procedure for a 200-liter batch of liquid Jeevamrit.",
+      "modelAnswer": "Liquid Jeevamrit is the core microbial bio-culture of Natural Farming, formulated to activate and multiply indigenous soil microorganisms. The standardized recipe for a 200-liter batch (sufficient for one acre) comprises:\n\n### Ingredients\n1. **Fresh Desi Cow Dung (*Bos indicus*):** 10 kg\n2. **Desi Cow Urine (Gomutra):** 5 to 10 liters\n3. **Unrefined Organic Jaggery (Gur):** 2 kg\n4. **Pulse Flour (Besan - gram/cowpea/pigeonpea):** 2 kg\n5. **Virgin Forest or Bund Soil:** A handful (~100\u2013200 g)\n6. **Chlorine-Free Water:** 200 liters\n\n### Step-by-Step Preparation Protocol\n1. Take a 200-liter plastic or wooden barrel and place it under a shady tree or thatched roof (never in direct sunlight).\n2. Add 200 liters of clean, unchlorinated water into the drum.\n3. Add 10 kg of fresh cow dung and 5\u201310 liters of cow urine; stir vigorously with a wooden pole to dissolve.\n4. Dissolve 2 kg of jaggery and 2 kg of pulse flour in a separate bucket with a small amount of water to eliminate lumps, then pour the slurry into the barrel.\n5. Add a handful of virgin bund soil as the microbial starter culture.\n6. Stir the mixture with a wooden pole in a **clockwise direction** for 5 minutes.\n7. Cover the barrel with a porous cotton cloth or gunny bag to prevent insect entry while permitting gas exchange.\n8. Stir clockwise for 5 minutes twice daily (morning and evening) for **48 to 72 hours**. The formulation is ready when it emits a pleasant fermented sweet-sour aroma.",
+      "outlinePoints": [
+        "Standard ingredient quantities: 10 kg dung, 5-10 L urine, 2 kg jaggery, 2 kg pulse flour, virgin soil, 200 L water",
+        "Placement under strict shade to protect microflora from solar UV radiation",
+        "Separate pre-mixing of jaggery and flour slurry to prevent lump formation",
+        "Twice-daily clockwise stirring for 5 minutes to maintain aerobic conditions",
+        "Fermentation duration: 48-72 hours to achieve peak microbial density"
+      ]
+    },
+    {
+      "id": "AGR217-U2-SUB02",
+      "questionType": "SHORT_ANSWER",
+      "maxMarks": 5,
+      "difficulty": "Easy",
+      "syllabusTopic": "Beejamrit: ingredients, biochemical properties, and seed/propagule bio-treatment protocols",
+      "questionText": "Describe the composition, preparation, and seed treatment protocol for Beejamrit.",
+      "modelAnswer": "Beejamrit is a specialized bio-protective microbial formulation used in Natural Farming for coating seeds, tubers, and seedling roots prior to planting.\n\n### Standard Composition (For 100 kg Seed)\n- **Fresh Desi Cow Dung:** 5 kg\n- **Desi Cow Urine:** 5 liters\n- **Slaked Lime ($Ca(OH)_2$ - Chuna):** 50 grams\n- **Virgin Bund Soil:** A handful (~50\u2013100 g)\n- **Water:** 20 liters\n\n### Preparation Protocol\n1. Dissolve 50 g of slaked lime in 1 liter of water and leave it overnight to settle.\n2. Tie 5 kg of fresh cow dung in a cloth bag and suspend it in 20 liters of water for 12 hours. Squeeze the bundle repeatedly to extract soluble microbial fractions and humic compounds.\n3. Add 5 liters of cow urine, the decanted clear lime water, and the handful of virgin soil into the dung extract. Stir thoroughly and allow the suspension to stand for 12 to 24 hours.\n\n### Application Procedure\n- **Field Crop Seeds:** Spread 100 kg of certified/desire seed on a clean polyethylene tarp under shade. Sprinkle the Beejamrit suspension evenly over the seeds. Mix gently with gloved hands to ensure complete, uniform coating without damaging delicate seed coats. Allow seeds to air-dry under shade for 30\u201345 minutes and sow within 4\u20136 hours.\n- **Seedling Roots:** Submerge bare root systems of vegetable or rice seedlings in Beejamrit for 5\u201310 minutes before transplanting.",
+      "outlinePoints": [
+        "Standard composition: 5 kg dung, 5 L urine, 50 g lime, virgin soil, 20 L water",
+        "Preparation method: dung extraction, overnight lime settling, and blending",
+        "Biochemical roles: cow urine phenolics (antifungal), lime (pH buffer/calcium), dung (microbial inoculant)",
+        "Application protocol: gentle seed dressing under shade and 30-minute air-drying",
+        "Propagule application: root and sett dipping for 5-10 minutes"
+      ]
+    },
+    {
+      "id": "AGR217-U2-SUB03",
+      "questionType": "SHORT_ANSWER",
+      "maxMarks": 5,
+      "difficulty": "Medium",
+      "syllabusTopic": "Ghanajeevamrit (solid microbial bio-formulation): preparation, drying, storage, and basal application",
+      "questionText": "Explain the preparation protocol and agronomic utility of Ghanajeevamrit.",
+      "modelAnswer": "Ghanajeevamrit is the solid, dehydrated counterpart of liquid Jeevamrit, formulated to store beneficial cow dung-urine microflora in a stable carrier matrix for long-term use and easy field application.\n\n### Preparation Protocol\n1. **Base Substrate:** Spread 100 kg of fresh Desi cow dung evenly in a layer under a shaded shed.\n2. **Enrichment Slurry:** In a bucket, thoroughly dissolve 2 kg of unrefined jaggery, 2 kg of pulse flour (besan), and a handful of virgin soil into 5 liters of cow urine.\n3. **Mixing & Heaping:** Pour the enrichment slurry over the 100 kg of cow dung. Mix thoroughly using shovels to produce a uniform, damp composite. Gather the mixture into a conical heap and cover with moist jute gunny bags for 48 hours to initiate warm solid-state fermentation.\n4. **Shade Drying:** After 48 hours, spread the fermented mass thinly under shade and allow it to air-dry over 4 to 6 days until moisture drops below 10\u201312%.\n5. **Crushing:** Break dry cakes into coarse granules using wooden mallets, sift through a wire mesh, and pack into dry, breathable gunny bags.\n\n### Agronomic Utility\n- **Long Shelf Life:** Retains viable bacterial and actinomycete endospores for 6 to 12 months in dry storage.\n- **Dryland / Rainfed Adaptation:** Applied at **100 to 200 kg per acre** as a basal soil dressing in sowing furrows, providing microbial inoculation in rainfed tracts where liquid Jeevamrit cannot be applied through irrigation.",
+      "outlinePoints": [
+        "Ingredients: 100 kg dung, 5 L urine, 2 kg jaggery, 2 kg pulse flour, virgin soil",
+        "Solid-state fermentation: 48-hour moist heaping initiating metabolic heat and spore formation",
+        "Shade drying: gradual moisture reduction to 10-12% without UV thermal kill",
+        "Granulation and storage: 6-12 month shelf life in breathable gunny bags",
+        "Agronomic application: 100-200 kg/acre basal furrow placement in dryland crops"
+      ]
+    },
+    {
+      "id": "AGR217-U2-SUB04",
+      "questionType": "SHORT_ANSWER",
+      "maxMarks": 5,
+      "difficulty": "Medium",
+      "syllabusTopic": "Scientific microbial and biochemical basis: bacterial consortia (PGPR, nitrogen fixers, phosphate solubilizers), enzymes, and organic acids",
+      "questionText": "What microbial groups dominate Jeevamrit and what are their specific ecological functions in soil fertility?",
+      "modelAnswer": "Microbiological analysis reveals that Jeevamrit is a multi-species consortium comprising billions of beneficial microorganisms belonging to four major functional groups:\n\n1. **Plant Growth-Promoting Rhizobacteria (PGPR):**\n   - *Genera:* Predominantly *Bacillus* (*B. subtilis*, *B. amyloliquefaciens*) and *Pseudomonas fluorescens*.\n   - *Functions:* Synthesize natural phytohormones\u2014specifically **Indole-3-Acetic Acid (IAA)**, gibberellins, and cytokinins\u2014that stimulate taproot elongation and lateral root branching. They also produce cyclic lipopeptides and siderophores that suppress pathogenic soil fungi.\n2. **Free-Living and Associative Diazotrophs (Nitrogen Fixers):**\n   - *Genera:* *Azotobacter chroococcum*, *Azospirillum brasilense*, and *Beijerinckia*.\n   - *Functions:* Fix atmospheric dinitrogen ($N_2$) into bio-available ammonium ($NH_4^+$) in the rhizosphere without requiring nodule symbiosis, providing 20\u201340 kg N/ha equivalent.\n3. **Phosphate and Potassium Solubilizers:**\n   - *Genera:* *Bacillus megaterium*, *Pseudomonas putida*, and *Lactobacillus*.\n   - *Functions:* Secrete low-molecular-weight organic acids (gluconic, citric, malic acids) that lower localized micro-pH and chelate calcium, iron, and aluminum ions, liberating locked-up insoluble orthophosphates.\n4. **Actinomycetes and Decomposing Fungi:**\n   - *Genera:* *Streptomyces* and saprophytic fungi.\n   - *Functions:* Synthesize cellulases, chitinases, and glucanases that accelerate the decomposition of surface mulch and crop residues into stable soil humus.",
+      "outlinePoints": [
+        "PGPR (Bacillus, Pseudomonas): phytohormone synthesis (IAA) and antifungal lipopeptides",
+        "Diazotrophs (Azotobacter, Azospirillum): free-living biological nitrogen fixation",
+        "Phosphate solubilizers (B. megaterium, Pseudomonas): organic acid chelation liberating bound P",
+        "Actinomycetes (Streptomyces): cellulolytic residue decomposition and soil humification",
+        "Synergistic rhizosphere activation mobilizing native soil mineral reserves"
+      ]
+    },
+    {
+      "id": "AGR217-U2-SUB05",
+      "questionType": "SHORT_ANSWER",
+      "maxMarks": 5,
+      "difficulty": "Medium",
+      "syllabusTopic": "Saptadhanyankur Ark and customized bio-enhancers: preparation, hormone dynamics, and foliar bio-nutrition",
+      "questionText": "Describe the preparation protocol and physiological benefits of Saptadhanyankur Ark.",
+      "modelAnswer": "Saptadhanyankur Ark (Seven Sprouted Grain Extract) is a specialized bio-enhancer utilized in Natural Farming to deliver targeted surges of endogenous plant hormones and enzymes during critical reproductive stages.\n\n### Composition (For One Acre)\nEqual quantities (approx. 100 grams each) of seven diverse seeds:\n1. Wheat or Barley (monocot cereal)\n2. Green gram / Moong (pulse)\n3. Black gram / Urd (pulse)\n4. Cowpea / Lobia (pulse)\n5. Sesame / Til (oilseed)\n6. Chickpea / Chana (pulse)\n7. Fenugreek / Methi or Moth bean\n- **Solvent & Carrier:** 10 liters of Desi cow urine and 200 liters of water.\n\n### Preparation Procedure\n1. Soak all seven seeds in water for 12 hours.\n2. Drain and tie the moistened seeds in a clean cotton cloth to germinate for 24\u201348 hours until radicles reach 1\u20132 cm length.\n3. Grind the sprouted seeds into a fine paste using a traditional stone mortar.\n4. Mix the paste into 10 liters of cow urine and 200 liters of water in a drum; allow it to ferment in shade for 24 hours.\n5. Strain through a muslin cloth.\n\n### Physiological Benefits\nGerminating seeds synthesize peak concentrations of **gibberellic acid (GA)**, **cytokinins (zeatin)**, **auxins**, and activated amylase/protease enzymes. Foliar spraying at flowering and fruit-setting stages suppresses ethylene and abscisic acid accumulation in the pedicel, **arresting premature flower and fruit drop**, while promoting rapid cell division in developing ovaries.",
+      "outlinePoints": [
+        "Seven seed components: monocots, pulses, and oilseeds (100 g each)",
+        "Sprouting protocol: 12-hour soak followed by 24-48-hour incubation to 1-2 cm sprout length",
+        "Extraction and fermentation: grinding paste and fermenting in 10 L cow urine and 200 L water",
+        "Hormonal profile: endogenous surges of gibberellins, cytokinins, and auxins",
+        "Foliar benefits: suppression of pedicel abscission, preventing flower drop and boosting fruit set"
+      ]
+    },
+    {
+      "id": "AGR217-U2-SUB06",
+      "questionType": "SHORT_ANSWER",
+      "maxMarks": 5,
+      "difficulty": "Medium",
+      "syllabusTopic": "Scientific microbial and biochemical basis: bacterial consortia (PGPR, nitrogen fixers, phosphate solubilizers), enzymes, and organic acids",
+      "questionText": "Explain the biochemical mechanisms by which bacteria in Jeevamrit mobilize fixed soil phosphorus.",
+      "modelAnswer": "Phosphorus ($P$) is abundant in most agricultural soils, but up to 95\u201399% exists in insoluble, un-absorbable forms: precipitated with calcium as insoluble calcium phosphates in alkaline soils, or complexed with iron and aluminum in acidic soils. Beneficial bacteria introduced via Jeevamrit solubilize this locked-up phosphorus through two biochemical mechanisms:\n\n### 1. Organic Acid Secretion and Cation Chelation\nPhosphate-Solubilizing Bacteria (predominantly *Bacillus megaterium*, *B. subtilis*, and *Pseudomonas putida*) utilize jaggery and root exudates to synthesize low-molecular-weight organic acids\u2014principally **gluconic acid**, **2-ketogluconic acid**, **citric acid**, and **malic acid**.\n- *Proton Dissociation:* These acids dissociate, releasing protons ($H^+$) into the immediate rhizosphere, lowering micro-pH by 1.0 to 1.5 units and directly dissolving acid-labile calcium phosphates.\n- *Cation Chelation:* The carboxyl and hydroxyl groups of organic acids chelate $Ca^{2+}$, $Fe^{3+}$, and $Al^{3+}$ cations, displacing the bound phosphate and liberating soluble monohydrogen phosphate ($HPO_4^{2-}$) and dihydrogen phosphate ($H_2PO_4^-$) into the soil solution for root absorption.\n\n### 2. Enzymatic Mineralization of Organic Phosphorus\nA substantial fraction of soil phosphorus is bound in organic forms (such as phytates and phospholipids). Bacilli in Jeevamrit secrete extracellular **phosphatases** and **phytases** that cleave ester-phosphate bonds, mineralizing organic phosphorus into bio-available orthophosphate.",
+      "outlinePoints": [
+        "Problem context: 95-99% of total soil phosphorus locked in insoluble Ca, Fe, Al complexes",
+        "Organic acid synthesis: secretion of gluconic, 2-ketogluconic, citric, and malic acids",
+        "Proton release lowering localized micro-pH to dissolve calcium phosphates",
+        "Cation chelation: carboxyl groups sequestering Ca2+, Fe3+, and Al3+ to release H2PO4-",
+        "Enzymatic mineralization: extracellular phosphatases and phytases hydrolyzing organic phytates"
+      ]
+    },
+    {
+      "id": "AGR217-U2-SUB07",
+      "questionType": "SHORT_ANSWER",
+      "maxMarks": 5,
+      "difficulty": "Medium",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods",
+      "questionText": "Why is Jeevamrit considered a biological catalyst rather than a chemical fertilizer? Compare its NPK content with its microbial population.",
+      "modelAnswer": "A common scientific misunderstanding is evaluating Jeevamrit as if it were a conventional chemical fertilizer designed to directly supply kilograms of nitrogen, phosphorus, and potassium. In reality, Jeevamrit functions strictly as a **biological catalyst and microbial inoculant**.\n\n### Chemical Nutrient Analysis vs. Microbial Density\n- **Chemical NPK Analysis:** Laboratory assays confirm that liquid Jeevamrit contains very low concentrations of direct macro-nutrients: Nitrogen ($N$) ranges from **0.05% to 0.15%**, Phosphorus ($P_2O_5$) is **0.02% to 0.05%**, and Potassium ($K_2O$) is **0.08% to 0.18%**. Applying 200 liters of Jeevamrit per acre supplies less than 200\u2013300 grams of total elemental nitrogen\u2014an amount physiologically incapable of directly feeding a high-yielding crop.\n- **Microbial Density:** In stark contrast to its low chemical NPK, a 200-liter batch of fermented Jeevamrit contains over **$10^9$ to $10^{10}$ Colony Forming Units (CFU) per milliliter** of living, active bacteria, actinomycetes, and fungi.\n\n### The Catalytic Principle\nJeevamrit acts like a biological starter culture (analogous to adding a spoonful of curd culture to convert a bowl of milk). The billions of introduced microorganisms multiply in the rhizosphere, secrete enzymes and organic acids, and unlock the 500 to 1,000 kg/ha of native, un-available phosphorus and potassium already present in soil minerals, driving biological nutrient cycling without synthetic inputs.",
+      "outlinePoints": [
+        "Clarification of function: biological catalyst/inoculant vs bulk nutrient fertilizer",
+        "Chemical NPK profile: low direct nutrient concentration (<0.2% N, <0.05% P, <0.2% K)",
+        "Microbial density profile: >10^9 to 10^10 CFU/ml of viable beneficial microorganisms",
+        "The 'curd culture' analogy: small biological inoculum catalyzing large-scale transformations",
+        "Catalytic outcome: unlocking existing native soil mineral reserves via microbial enzymes"
+      ]
+    },
+    {
+      "id": "AGR217-U2-SUB08",
+      "questionType": "SHORT_ANSWER",
+      "maxMarks": 5,
+      "difficulty": "Easy",
+      "syllabusTopic": "Beejamrit: ingredients, biochemical properties, and seed/propagule bio-treatment protocols",
+      "questionText": "What precautions must be observed during the preparation and application of Beejamrit?",
+      "modelAnswer": "To ensure maximum microbial survival and seedling protection, the following five precautions must be observed when preparing and applying Beejamrit:\n\n1. **Use Fresh Indigenous Cow Dung and Urine:** The dung and urine must be sourced exclusively from native Indian hump-backed cows (*Bos indicus*). Dung must be fresh (collected within 24 hours) to ensure high populations of viable anaerobic and micro-aerophilic rumen microbes.\n2. **Avoid Boiling or Heating:** Ingredients must never be heated or boiled. Thermal treatment denatures enzymes and kills the beneficial living microflora.\n3. **Strict Shade Drying:** Once treated, seeds must be dried strictly under shade on a clean cloth or tarpaulin. Exposure to direct solar radiation or hot concrete floors exposes bacteria to lethal ultraviolet rays and thermal desiccation.\n4. **Timely Sowing Window:** Treated seeds should be sown within **4 to 6 hours** of drying into a moist seedbed. Leaving treated seeds stored for days results in steady mortality of the applied bacterial inoculants.\n5. **Gentle Mixing:** Mix the slurry over seeds gently by hand to prevent scratching or cracking the delicate seed testa, which could ruin germination vigor.",
+      "outlinePoints": [
+        "Precaution 1: sourcing fresh dung/urine exclusively from indigenous Bos indicus cows",
+        "Precaution 2: strictly avoiding thermal heating or boiling of ingredients",
+        "Precaution 3: complete shade drying to prevent UV and thermal microbial kill",
+        "Precaution 4: prompt sowing into moist soil within 4-6 hours of treatment",
+        "Precaution 5: gentle manual coating to avoid mechanical damage to seed coats"
+      ]
+    },
+    {
+      "id": "AGR217-U2-SUB09",
+      "questionType": "LONG_ANSWER",
+      "maxMarks": 10,
+      "difficulty": "Medium",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods",
+      "questionText": "Provide an extensive analysis of liquid Jeevamrit, detailing the scientific rationale behind each ingredient, the biochemical fermentation kinetics, and field application methods.",
+      "modelAnswer": "Liquid Jeevamrit is the foundational bio-stimulant of Natural Farming, designed to re-establish biological fertility in depleted agricultural soils.\n\n### 1. Scientific Rationale of Ingredients (200-Liter Formulation)\nEvery ingredient in the standardized 200-liter recipe serves a precise biological or biochemical function:\n- **Fresh Desi Cow Dung (*Bos indicus*) (10 kg):** The bovine rumen is an anaerobic fermentation chamber that houses a dense, cellulolytic microbiome. A single gram of fresh dung contains over $3\\text{--}5 \\times 10^9$ beneficial microorganisms, including *Bacillus*, *Lactobacillus*, and *Pseudomonas*. Dung also contributes undigested organic matter that serves as a protective carbonaceous carrier.\n- **Desi Cow Urine (Gomutra) (5\u201310 L):** Supplies mineral nitrogen in the form of urea, uric acid, and creatinine. It is rich in enzymes, natural hormones, and phenolic metabolites (hippuric acid) that exert antifungal and antibacterial activity, selectively suppressing plant pathogens.\n- **Unrefined Organic Jaggery (2 kg):** Supplies simple carbohydrates (sucrose, glucose, fructose) and trace minerals (Fe, Mg). It acts as an immediate, high-energy carbon substrate, shortening the microbial lag phase and driving logarithmic cell division.\n- **Pulse Flour (Besan) (2 kg):** Legume flour contains 20\u201325% protein and essential amino acids (glutamine, asparagine, methionine). It establishes an optimal Carbon-to-Nitrogen ratio ($C:N \\approx 25\\text{--}30:1$) with jaggery, fueling bacterial protein synthesis and enzyme production.\n- **Virgin Bund/Forest Soil (Handful ~100\u2013200 g):** Acts as the primary microbial starter culture, introducing diverse, uncultivated, native soil microorganisms that have evolved in local soils.\n- **Unchlorinated Water (200 L):** The medium for biochemical reactions and microbial suspension.\n\n### 2. Fermentation Kinetics and Biochemical Dynamics\nFermentation is conducted in the shade over 48 to 72 hours with twice-daily clockwise stirring (5 minutes):\n- **Phase 1: Lag Phase (0\u201312 Hours):** Microorganisms adapt to the liquid medium. Soluble sugars in jaggery dissolve, and bacteria hydrate and synthesize metabolic enzymes.\n- **Phase 2: Logarithmic Growth Phase (12\u201348 Hours):** Bacteria undergo rapid exponential binary fission. Total viable bacterial counts surge from an initial $10^5\\text{--}10^6 \\text{ CFU/ml}$ to over **$10^9\\text{--}10^{10} \\text{ CFU/ml}$**. Aerobic stirring maintains dissolved oxygen ($DO > 2 \\text{ mg/L}$), favoring plant-growth-promoting bacilli and pseudomonads. Organic acid synthesis (gluconic, citric) drops pH from 7.8 to 5.8\u20136.2, while auxin (IAA) concentrations peak at 15\u201325 $\\mu\\text{g/ml}$.\n- **Phase 3: Stationary Phase (48\u201372 Hours):** Peak microbial density is maintained. The broth emits a characteristic fermented sweet-sour aroma. Jeevamrit is now at maximum biological potency.\n- **Phase 4: Senescence / Decline Phase (>7\u201310 Days):** Depletion of carbon and nitrogen substrates triggers bacterial starvation, endospore formation, and cell lysis. If left un-aerated, anaerobic putrefaction produces foul odors, making prompt application within a week essential.\n\n### 3. Field Application Protocols\n- **Fertigation via Flood/Canal Furrows:** 200 liters/acre mixed into incoming irrigation water, allowing the microbial suspension to distribute across the field twice a month.\n- **Drip Fertigation:** Strained thoroughly through a double layer of fine muslin cloth (or 100-mesh sand/disc filter) to remove fibrous dung debris, and injected via venturi injectors.\n- **Foliar Canopy Spray:** Filtered 5% to 10% solution (10\u201320 L Jeevamrit diluted in 100 L water) sprayed during vegetative, flowering, and fruit-development stages.",
+      "outlinePoints": [
+        "Ingredient science: dung (microbial inoculant), urine (nitrogen/phenolics), jaggery (carbon), pulse flour (protein/N), virgin soil (IMO seed culture)",
+        "Kinetic phase 1: lag phase (0-12 h) enzyme activation",
+        "Kinetic phase 2: exponential log phase (12-48 h) with bacterial surge to >10^9 CFU/ml and auxin peak",
+        "Kinetic phase 3 & 4: stationary peak (48-72 h) and substrate depletion decline (>7 days)",
+        "Twice-daily clockwise stirring maintaining positive redox potential and dissolved oxygen",
+        "Application modes: 200 L/acre furrow fertigation, strained drip injection, and 10% foliar spray"
+      ]
+    },
+    {
+      "id": "AGR217-U2-SUB10",
+      "questionType": "LONG_ANSWER",
+      "maxMarks": 10,
+      "difficulty": "Medium",
+      "syllabusTopic": "Beejamrit: ingredients, biochemical properties, and seed/propagule bio-treatment protocols",
+      "questionText": "Analyze the biochemical composition and plant protection mechanisms of Beejamrit, detailing its seed coating protocols across field crops, vegetable seedlings, and vegetative propagules.",
+      "modelAnswer": "Beejamrit is an organic bio-protective formulation engineered to shield seeds and planting material from fungal and bacterial pathobiomes while establishing an active microbial community on emerging radicles.\n\n### 1. Composition and Biochemical Role of Components\nThe standard formulation for treating 100 kg of seed requires:\n- **Fresh Desi Cow Dung (5 kg):** Supplies beneficial microbial populations (*Bacillus subtilis*, *Pseudomonas*, *Trichoderma*) that form a protective biological coat over the seed testa.\n- **Desi Cow Urine (5 L):** Supplies natural biochemical antimicrobial compounds: **hippuric acid**, **benzoic acid derivatives**, and volatile phenols that disrupt fungal spore cell membrane permeability. Cow urine also supplies trace urea and nitrogenous enzymes.\n- **Slaked Lime ($Ca(OH)_2$ - Chuna) (50 g):** Dissolved separately in 1 liter of water. It serves a crucial buffering function: it neutralizes the natural acidity of cow urine, elevating the formulation pH to **7.2\u20137.6**, creating an environment that inhibits acidophilic pathogens (such as *Fusarium*). Furthermore, soluble calcium ($Ca^{2+}$) is absorbed into the seed coat, binding with pectates in middle lamellae to reinforce emerging cell walls against fungal penetration.\n- **Virgin Forest/Bund Soil (Handful ~50\u2013100 g):** Introduces uncultivated, native actinomycetes and mycorrhizal spores.\n- **Water (20 L):** Suspension medium.\n\n### 2. Pathogen Suppression Mechanisms\nBeejamrit protects emerging seedlings through four synergistic mechanisms:\n1. **Competitive Exclusion:** Beneficial *Bacillus* and *Pseudomonas* bacteria rapidly colonize natural openings in the seed coat (micropyle, hilum), consuming seed exudates (sugars, amino acids) and starving fungal spores of the germination signals they need to attack.\n2. **Synthesis of Antifungal Lipopeptides:** *Bacillus subtilis* strains synthesize cyclic lipopeptides\u2014principally **iturin A**, **surfactin**, and **fengycin**\u2014that bind to fungal ergosterol membranes, creating lytic transmembrane pores that burst germinating pathogen hyphae.\n3. **Iron Deprivation via Siderophores:** Beneficial bacteria secrete pyoverdine and enterobactin siderophores that chelate trace ferric iron ($Fe^{3+}$), depriving pathogenic fungi of iron required for cellular respiration.\n4. **Induction of Systemic Resistance (ISR):** Microbial-associated molecular patterns (MAMPs, such as flagellin) trigger early defense gene expression in the embryo, elevating chitinase and peroxidase levels.\n\n### 3. Application Protocols Across Crop Categories\n- **Field Crops (Paddy, Wheat, Maize, Cotton, Pulses):** Spread 100 kg seed on a clean tarp under shade. Sprinkle Beejamrit slurry and mix gently by hand without scratching the seed testa. Air-dry under shade for 30\u201345 minutes; sow within 4\u20136 hours into a moist seedbed.\n- **Vegetable Seedlings (Chili, Tomato, Brinjal, Onion):** Uproot seedlings gently from nursery beds. Submerge bare root systems in Beejamrit for 5\u201310 minutes before field transplanting to coat damaged root hairs and prevent damping-off.\n- **Vegetative Setts and Tubers (Sugarcane, Potato, Ginger, Turmeric):** Soak 2-budded cane setts or seed rhizomes in Beejamrit for 10\u201315 minutes prior to planting to seal cut ends against soil-borne pathogens.",
+      "outlinePoints": [
+        "Stoichiometric recipe: 5 kg dung, 5 L urine, 50 g lime, virgin soil, 20 L water",
+        "Biochemical roles: urine phenolics, lime pH buffering and cell wall calcification, dung microbial biofilm",
+        "Mechanism 1: competitive exclusion at micropyle and hilum openings",
+        "Mechanism 2: cyclic lipopeptide synthesis (iturin, surfactin) lysing fungal membranes",
+        "Mechanism 3 & 4: siderophore iron starvation and MAMP-induced systemic resistance (ISR)",
+        "Crop-specific protocols: field seed dressing, vegetable root dipping, and sugarcane sett immersion"
+      ]
+    },
+    {
+      "id": "AGR217-U2-SUB11",
+      "questionType": "LONG_ANSWER",
+      "maxMarks": 10,
+      "difficulty": "Hard",
+      "syllabusTopic": "Ghanajeevamrit (solid microbial bio-formulation): preparation, drying, storage, and basal application",
+      "questionText": "Examine the solid-state fermentation, spore stabilization, and soil application mechanics of Ghanajeevamrit, detailing why it serves as an indispensable technology for rainfed farming systems.",
+      "modelAnswer": "While liquid Jeevamrit is highly effective under irrigated management, its high volume and perishing nature present practical challenges in rainfed, dryland agricultural tracts. **Ghanajeevamrit** resolves these logistical hurdles by stabilizing beneficial microflora inside a solid, dehydrated carrier matrix.\n\n### 1. Solid-State Fermentation (SSF) Mechanics\nPreparation begins with 100 kg of fresh Desi cow dung blended with an enrichment slurry (2 kg jaggery, 2 kg pulse flour, 5 L cow urine, virgin soil). Once thoroughly blended, the composite is gathered into a conical heap and covered with moist gunny bags for 48 hours:\n- **Thermal & Biological Dynamics:** The heap functions as a micro-aerophilic solid-state fermentation bed. Microbial respiration generates metabolic heat, raising core temperatures to **45\u201355\u00b0C** within 24 hours. This heat pasteurizes potential pathogenic enterobacteria while selecting for thermotolerant, spore-forming bacilli and actinomycetes.\n- **Fiber Breakdown:** Cellulolytic enzymes hydrolyze complex dung polysaccharides into simple sugars, enriching the matrix with available carbon.\n\n### 2. Spore Stabilization and Drying Physics\nAfter 48 hours of fermentation, the mass is spread thinly under shade to air-dry over 4 to 6 days until moisture drops below 10\u201312%:\n- **Spore Induction:** As moisture evaporates gradually in the shade, bacilli and actinomycetes sense nutrient and water stress. This activates the master transcriptional regulator **Spo0A**, initiating endospore formation. The bacteria synthesize **dipicolinic acid (DPA)**, complexing it with calcium ions in the spore core to protect DNA from heat and desiccation.\n- **Shelf-Life Stability:** In this spore state, Ghanajeevamrit remains stable for **6 to 12 months** when stored in dry, breathable gunny bags away from direct sunlight.\n\n### 3. Agronomic Mechanics and Rainfed Suitability\n- **Basal Placement in Seed Furrows:** Applied at **100 to 200 kg per acre** during sowing. Ghanajeevamrit can be mixed with seed or drilled directly into sowing furrows alongside seeds.\n- **Dryland Activation:** In rainfed tracts where no pre-sowing irrigation is possible, Ghanajeevamrit lies dormant in dry soil alongside seeds. When monsoon rains arrive, the moisture triggers immediate endospore germination, surrounding the emerging seedling radicle with an active microbial workforce right at the root zone.\n- **Carbon Carrier Benefit:** The fibrous dung carrier provides localized organic matter and cation exchange capacity in nutrient-poor red sandy soils (Alfisols), buffering early root growth.",
+      "outlinePoints": [
+        "Preparation chemistry: 100 kg dung enriched with jaggery, pulse flour, urine, and soil",
+        "SSF thermodynamics: 48-hour moist heaping generating 45-55\u00b0C metabolic heat",
+        "Spore stabilization physics: gradual shade drying triggering Spo0A-mediated dipicolinic acid synthesis",
+        "Storage longevity: 6-12 month stability in breathable gunny bags",
+        "Rainfed agronomic utility: dry furrow placement activating synchronously with monsoon rains",
+        "Localized carbon carrier benefits in fragile dryland soils"
+      ]
+    },
+    {
+      "id": "AGR217-U2-SUB12",
+      "questionType": "LONG_ANSWER",
+      "maxMarks": 10,
+      "difficulty": "Hard",
+      "syllabusTopic": "Scientific microbial and biochemical basis: bacterial consortia (PGPR, nitrogen fixers, phosphate solubilizers), enzymes, and organic acids",
+      "questionText": "Detail the scientific microbial and biochemical mechanisms by which Jeevamrit activates native soil fertility, focusing on PGPR consortia, organic acid chelation, and soil enzyme stimulation.",
+      "modelAnswer": "Modern soil science validates the efficacy of Natural Farming formulations by demonstrating that Jeevamrit operates as an integrated biological catalyst that stimulates dormant soil microbial networks and enzymatic pathways.\n\n### 1. Metagenomic and Taxonomic Profiling of the Consortium\nCulture-dependent plating and 16S rRNA gene sequencing reveal that fermented Jeevamrit harbors an active microbial consortium exceeding **$10^9\\text{--}10^{10} \\text{ CFU/ml}$**, dominated by:\n- **Phylum Firmicutes:** *Bacillus subtilis*, *Bacillus amyloliquefaciens*, *Bacillus megaterium*, *Lactobacillus acidophilus*.\n- **Phylum Proteobacteria:** *Pseudomonas fluorescens*, *Azotobacter chroococcum*, *Azospirillum brasilense*, *Rhizobium* species.\n- **Phylum Actinobacteria:** *Streptomyces* species producing broad-spectrum antibiotics and chitinases.\n- **Fungi & Yeasts:** *Saccharomyces cerevisiae*, *Trichoderma harzianum*, and arbuscular mycorrhizal spores.\n\n### 2. Biochemical Mechanisms of Nutrient Mobilization\n- **Phosphate Solubilization via Organic Acids:** The consortia metabolize simple carbohydrates from jaggery to secrete low-molecular-weight organic acids\u2014predominantly **gluconic acid**, **2-ketogluconic acid**, **citric acid**, **malic acid**, and **lactic acid**. These organic acids perform a dual function:\n  1. *Proton Dissociation:* The release of $H^+$ ions acidifies the immediate rhizosphere, dissolving acid-labile tricalcium phosphate ($Ca_3(PO_4)_2$) in alkaline soils.\n  2. *Cation Chelation:* Carboxyl groups bind with high stability constants to $Ca^{2+}$, $Fe^{3+}$, and $Al^{3+}$, releasing orthophosphate ions ($H_2PO_4^-$ and $HPO_4^{2-}$) into the soil solution.\n- **Biological Nitrogen Fixation (BNF):** Free-living diazotrophs (*Azotobacter*, *Beijerinckia*) express the **nitrogenase** enzyme complex, reducing atmospheric dinitrogen ($N_2$) into ammonia ($NH_3$) in the rhizosphere without requiring root nodule formation.\n- **Potassium Solubilization:** Silicate-solubilizing bacteria (*Bacillus mucilaginosus*) produce tartaric and oxalic acids that weather mica and feldspar minerals, releasing soluble potassium ($K^+$).\n\n### 3. Phytohormone Secretion and Root Architecture Remodeling\nDuring fermentation, bacterial metabolism synthesizes bioactive plant growth regulators:\n- **Indole-3-Acetic Acid (IAA):** Bacteria synthesize auxins from tryptophan, accumulating 15\u201330 $\\mu\\text{g/ml}$ of IAA in the liquid broth. When applied to soil, absorbed auxins stimulate root pericycle cells, triggering lateral root branching and expanding total root absorptive surface area.\n- **ACC Deaminase Activity:** Many bacilli in Jeevamrit express 1-aminocyclopropane-1-carboxylate (ACC) deaminase, an enzyme that hydrolyzes the plant stress precursor ACC into ammonia. This lowers stress-induced ethylene spikes in roots, preventing root growth inhibition under drought or salinity stress.\n\n### 4. Soil Enzymatic Activation\nField studies confirm that applying Jeevamrit stimulates native soil enzyme activities within 7 to 14 days:\n- **Dehydrogenase Activity (DHA):** Reflects total microbial oxidative metabolism, surging by 40\u201380%.\n- **Alkaline and Acid Phosphatases:** Mineralize organic phytates into inorganic orthophosphates.\n- **Fluorescein Diacetate (FDA) Hydrolysis:** Confers widespread esterase and protease activity, accelerating nutrient turnover.",
+      "outlinePoints": [
+        "Taxonomic profiling: Firmicutes (Bacillus, Lactobacillus), Proteobacteria (Pseudomonas, Azotobacter), Actinobacteria (Streptomyces)",
+        "Phosphate solubilization: gluconic, citric, malic acids lowering micro-pH and chelating Ca/Fe/Al cations",
+        "Biological nitrogen fixation via free-living diazotrophic nitrogenase systems",
+        "Phytohormonal stimulation: bacterial IAA synthesis remodeling root architecture",
+        "ACC deaminase activity lowering stress ethylene spikes under drought",
+        "Soil enzymatic surges: Dehydrogenase (DHA), Phosphatases, and FDA hydrolytic activity"
+      ]
+    },
+    {
+      "id": "AGR217-U2-SUB13",
+      "questionType": "LONG_ANSWER",
+      "maxMarks": 10,
+      "difficulty": "Medium",
+      "syllabusTopic": "Saptadhanyankur Ark and customized bio-enhancers: preparation, hormone dynamics, and foliar bio-nutrition",
+      "questionText": "Evaluate the science and preparation of Saptadhanyankur Ark, explaining how seed sprouting cascades trigger hormonal surges (auxins, gibberellins, cytokinins) that optimize crop reproductive development.",
+      "modelAnswer": "While Jeevamrit acts primarily as a soil-applied microbial inoculant, **Saptadhanyankur Ark** (Seven Sprouted Grain Extract) is a specialized foliar bio-enhancer engineered to supply concentrated phytohormones and bio-available nutrients during critical reproductive phases.\n\n### 1. Selection of the Seven Grains and Biodiversity Rationale\nSaptadhanyankur Ark blends seven diverse seeds representing distinct botanical families (approx. 100 g each for one acre):\n1. **Wheat or Barley (*Poaceae*):** Monocot cereal containing abundant starch reserves and high embryonic gibberellin synthesis.\n2. **Green gram / Moong (*Vigna radiata*):** Early-germinating pulse rich in lysine and protein.\n3. **Black gram / Urd (*Vigna mungo*):** Pulse containing high arabinogalactans, sulfur amino acids, and auxins.\n4. **Cowpea / Lobia (*Vigna unguiculata*):** Hardy legume supplying peptides and mineral zinc.\n5. **Chickpea / Chana (*Cicer arietinum*):** Pulse rich in malic acid, phosphorus, and B-vitamins.\n6. **Sesame / Til (*Sesamum indicum*):** High-oil seed supplying methionine, calcium, and natural lignan antioxidants (sesamol).\n7. **Fenugreek / Methi or Moth bean:** Spices/pulses containing bioactive saponins, trigonelline, and growth stimulants.\n\n### 2. Sprouting Physiology and Enzymatic Cascades\nSeeds are soaked in water for 12 hours and tied in a damp cloth to sprout for 24\u201348 hours until radicles reach 1\u20132 cm length. Germination triggers a profound physiological and hormonal cascade:\n- **Gibberellic Acid ($GA_3$) Activation:** The germinating embryo synthesizes active gibberellins that diffuse to the aleurone layer, binding to GID1 receptors and triggering the degradation of DELLA repressor proteins. This activates the *GAMYB* transcription factor, transcribing **alpha-amylase**, **proteases**, and **ribonucleases**.\n- **Degradation of Phytic Acid:** Raw seeds store phosphorus as phytic acid (myo-inositol hexakisphosphate), which binds zinc, iron, and calcium into insoluble salts. Germination activates endogenous **phytase** enzymes, hydrolyzing phytic acid and releasing bio-available minerals ($Zn^{2+}, Fe^{2+}, Mg^{2+}, Ca^{2+}$) and free myo-inositol.\n- **Surge in Cytokinins and Auxins:** Actively dividing root and shoot apical meristems produce high concentrations of **zeatin** (cytokinins) and **indole-3-acetic acid** (auxins), mobilizing nutrient reserves to fuel cell division.\n\n### 3. Preparation and Foliar Extraction\nThe sprouted grains are ground into a fine paste, blended into **10 liters of Desi cow urine** and **200 liters of water**, and fermented in the shade for 24 hours before fine straining. Cow urine acts as a natural bio-solvent, extracting water- and lipid-soluble hormones, while its antimicrobial phenolics prevent spoilage.\n\n### 4. Reproductive Impact on Crop Canopies\nFoliar application at early flowering and fruit-set delivers direct physiological benefits:\n- **Arrests Flower and Pod Abscission:** Elevated auxins and gibberellins counteract abscisic acid (ABA) and ethylene in the pedicel, strengthening vascular connections and preventing flower drop.\n- **Stimulates Ovary Cell Division:** High cytokinin flux accelerates periclinal cell division in pollinated ovaries, increasing fruit size, pod length, and 1,000-grain test weight.",
+      "outlinePoints": [
+        "Biodiversity rationale: blending cereals, pulses, and oilseeds for comprehensive nutrient/hormone profiles",
+        "Germination physiology: GA activation, GID1-DELLA signaling, and alpha-amylase synthesis",
+        "Phytase activation: breaking phytic acid to release bio-available Zn, Fe, Ca, and myo-inositol",
+        "Meristematic hormone synthesis: surges in zeatin (cytokinin) and IAA (auxin)",
+        "Formulation extraction: cow urine bio-solvent extraction and 24-hour fermentation",
+        "Reproductive benefits: suppressing pedicel ethylene/ABA abscission and boosting fruit/grain filling"
+      ]
+    },
+    {
+      "id": "AGR217-U2-SUB14",
+      "questionType": "LONG_ANSWER",
+      "maxMarks": 10,
+      "difficulty": "Hard",
+      "syllabusTopic": "Scientific microbial and biochemical basis: bacterial consortia (PGPR, nitrogen fixers, phosphate solubilizers), enzymes, and organic acids",
+      "questionText": "Critically analyze the role of native bovine gastrointestinal microbiology in Natural Farming, evaluating how Desi cow dung and urine differ from synthetic chemical fertilizers and exotic cattle manures.",
+      "modelAnswer": "In Natural Farming, the indigenous Indian Desi cow (*Bos indicus*) is central to fertility management. Contemporary veterinary and soil microbiology confirm that the gastrointestinal ecosystem of Zebu cattle possesses distinct biological characteristics that distinguish it from synthetic chemicals and exotic livestock manures.\n\n### 1. Comparative Analysis: Bos indicus vs. Bos taurus Gastrointestinal Ecology\n- **Evolutionary Foraging Adaptation:** Indigenous Indian cattle have evolved over millennia in tropical and sub-tropical environments, feeding on highly lignified, high-fiber, low-protein native grasses and crop residues. In contrast, European taurine cattle (*Bos taurus*\u2014Holstein Friesian, Jersey) were bred for temperate, high-grain, lush-ryegrass pastures.\n- **Rumen Microbial Diversity:** The rumen of *Bos indicus* possesses an alkaline-adapted, cellulolytic microflora. Rumen fluid contains significantly higher densities of cellulolytic bacteria (*Ruminococcus albus*, *Fibrobacter succinogenes*), anaerobic fungi (*Neocallimastix*), and methanotrophic symbionts that hydrolyze complex cellulose and hemicellulose.\n- **Bacterial Density in Fresh Dung:** Metagenomic assays reveal that fresh *Bos indicus* dung harbors **$3\\text{--}5 \\times 10^9$ viable bacteria per gram**\u2014roughly 3 to 4 times higher than the bacterial density in exotic taurine dung. Furthermore, desi cow dung contains higher populations of spore-forming *Bacillus subtilis* and actinomycetes capable of surviving tropical soil heat.\n\n### 2. Biochemical Profile of Desi Cow Urine (Gomutra)\nDesi cow urine is a complex bio-chemical fluid containing over 24 distinct active compounds:\n- **Nitrogenous Metabolites:** High concentrations of urea, uric acid, creatinine, and amino acids provide readily accessible nitrogen for soil microbes without causing the osmotic shock associated with synthetic urea.\n- **Natural Antimicrobial Compounds:** Enriched with **hippuric acid**, **benzoic acid**, volatile phenols, and aromatic esters that act as natural fungicides, bactericides, and insect repellents.\n- **Mineral Nutrients & Enzymes:** Contains aurum salts (trace gold complexes in indigenous breeds), calcium, potassium, phosphorus, and active peroxidase/dehydrogenase enzymes.\n\n### 3. Contrasting Cow Formulations with Synthetic Fertilizers\n- **Osmotic and Ecological Impact:** Synthetic high-analysis fertilizers (Urea, DAP, MOP) dissolve rapidly into high concentrations of free ions ($NH_4^+, NO_3^-, K^+, Cl^-$), raising soil electrical conductivity (EC) and causing osmotic shock that desiccates delicate soil microflora and earthworms. In contrast, Jeevamrit supplies minimal direct salt ions, acting instead as an inoculant that mobilizes native soil minerals through organic acids.\n- **Soil Food Web Preservation:** While synthetic nitrogen suppresses root exudation and shuts down biological nitrogen fixation, cow-dung inoculants stimulate the soil food web, fostering arbuscular mycorrhizal symbioses and soil organic carbon sequestration.",
+      "outlinePoints": [
+        "Evolutionary divergence: tropical fibrous foraging adaptation (Bos indicus) vs temperate grain feeding (Bos taurus)",
+        "Rumen microbiology: superior cellulolytic bacteria and fungal densities in Zebu cattle",
+        "Microbial density: 3-5 x 10^9 CFU/g in desi dung vs lower counts in exotic cattle dung",
+        "Gomutra biochemistry: uric acid, enzymes, phenolics, and hippuric acid conferring antimicrobial activity",
+        "Osmotic comparison: synthetic fertilizer salt shock vs biological catalytic mobilization",
+        "Soil food web outcomes: mycorrhizal stimulation and carbon preservation vs chemical degradation"
+      ]
+    },
+    {
+      "id": "AGR217-U2-SUB15",
+      "questionType": "COMPARISON",
+      "maxMarks": 5,
+      "difficulty": "Medium",
+      "syllabusTopic": "Ghanajeevamrit (solid microbial bio-formulation): preparation, drying, storage, and basal application",
+      "questionText": "Compare liquid Jeevamrit with solid Ghanajeevamrit across preparation, application method, shelf life, and agro-climatic suitability.",
+      "modelAnswer": "Liquid Jeevamrit and solid Ghanajeevamrit are complementary formulations sharing identical biological foundations, but designed for different agronomic applications:\n\n1. **Preparation and State of Matter:**\n   - *Liquid Jeevamrit:* A liquid bio-culture prepared by blending dung, urine, jaggery, pulse flour, and virgin soil in 200 liters of water, fermented aerobically for 48\u201372 hours.\n   - *Solid Ghanajeevamrit:* A granular composite prepared by blending 100 kg cow dung with a concentrated urine-jaggery-flour slurry, subjected to 48 hours of moist solid-state fermentation, followed by 4\u20136 days of shade drying down to 10\u201312% moisture.\n2. **Application Method and Dosage:**\n   - *Liquid Jeevamrit:* Applied at **200 liters/acre** with irrigation water (fertigation) or sprayed onto foliage at a 10% dilution.\n   - *Solid Ghanajeevamrit:* Applied at **100 to 200 kg/acre** as a dry basal soil placement drilled into seed furrows or broadcast during final land preparation.\n3. **Shelf Life and Storage Stability:**\n   - *Liquid Jeevamrit:* Highly perishable active liquid culture; must be applied within **7 to 10 days** of preparation before substrate depletion causes bacterial die-off.\n   - *Solid Ghanajeevamrit:* Stable spore-formulation; retains viable endospores for **6 to 12 months** when stored in dry, breathable gunny bags.\n4. **Agro-Climatic Suitability:**\n   - *Liquid Jeevamrit:* Ideal for irrigated agro-ecosystems (canal, borewell, or drip irrigation) and in-season top-dressing.\n   - *Solid Ghanajeevamrit:* Essential for rainfed dryland farming where irrigation water is unavailable at sowing.",
+      "outlinePoints": [
+        "Form and preparation: 200 L liquid aerobic fermentation vs 100 kg solid-state fermented shade-dried granules",
+        "Application mode: 200 L/acre irrigation fertigation vs 100-200 kg/acre dry basal furrow placement",
+        "Shelf life: 7-10 days perishable liquid vs 6-12 months stable spore-carrier granules",
+        "Agro-climatic suitability: irrigated ecosystems vs rainfed dryland crop establishment"
+      ]
+    },
+    {
+      "id": "AGR217-U2-SUB16",
+      "questionType": "COMPARISON",
+      "maxMarks": 5,
+      "difficulty": "Medium",
+      "syllabusTopic": "Beejamrit: ingredients, biochemical properties, and seed/propagule bio-treatment protocols",
+      "questionText": "Compare Beejamrit with conventional chemical seed treatments (e.g., Thiram / Carbendazim) across active ingredients, mode of protection, cost, and soil biological impacts.",
+      "modelAnswer": "Beejamrit and synthetic chemical fungicides represent contrasting approaches to seedling protection:\n\n1. **Active Ingredients:**\n   - *Chemical Seed Treatment:* Synthetic single-molecule chemical fungicides, such as Thiram (dithiocarbamate) or Carbendazim (benzimidazole), often paired with neonicotinoids.\n   - *Beejamrit:* A complex biological consortium of fresh Desi cow dung, cow urine, slaked lime, and virgin forest soil, providing living plant-growth-promoting rhizobacteria (*Bacillus*, *Pseudomonas*) alongside natural phenolics and enzymes.\n2. **Mode of Protection:**\n   - *Chemical Fungicides:* Act as direct chemical toxins that poison fungal cellular respiration or inhibit beta-tubulin assembly during mitosis, eradicating target pathogens chemically.\n   - *Beejamrit:* Protects through multi-layered biological antagonism: competitive exclusion for seed exudates, synthesis of cyclic lipopeptides (iturin, surfactin), iron deprivation via siderophores, and priming systemic acquired resistance (SAR).\n3. **Cost and Sourcing:**\n   - *Chemical Fungicides:* Must be purchased from commercial input retailers at recurring cash cost, contributing to farmer expenditure.\n   - *Beejamrit:* Prepared entirely on-farm at near-zero cash cost using farm-derived biological materials.\n4. **Impact on Beneficial Soil Biology:**\n   - *Chemical Fungicides:* Indiscriminately kill beneficial native mycorrhizal fungi and beneficial soil microflora in the seedling rhizosphere, leaving emerging roots dependent on ongoing chemical protection.\n   - *Beejamrit:* Inoculates the rhizosphere with beneficial PGPR, stimulates early taproot branching via natural auxins, and encourages mycorrhizal colonization.",
+      "outlinePoints": [
+        "Active chemistry: single-molecule synthetic fungicides vs multi-species living microbial consortia",
+        "Protection mechanism: direct cellular chemical toxicity vs competitive exclusion, lipopeptides, and ISR",
+        "Economics: recurring commercial cash expenditure vs on-farm zero-cost preparation",
+        "Biological impact: suppression of beneficial mycorrhizae vs active rhizosphere colonization and auxin stimulation"
+      ]
+    },
+    {
+      "id": "AGR217-U2-SUB17",
+      "questionType": "COMPARISON",
+      "maxMarks": 5,
+      "difficulty": "Hard",
+      "syllabusTopic": "Saptadhanyankur Ark and customized bio-enhancers: preparation, hormone dynamics, and foliar bio-nutrition",
+      "questionText": "Compare Jeevamrit with Saptadhanyankur Ark across primary application target, hormonal/enzymatic profile, and timing in the crop lifecycle.",
+      "modelAnswer": "Jeevamrit and Saptadhanyankur Ark serve complementary, distinct physiological roles in Natural Farming:\n\n1. **Primary Application Target and Route:**\n   - *Jeevamrit:* Primarily a **soil-applied bio-inoculant** delivered through irrigation water, fertigation, or soil drenching (although a 10% foliar spray is also used). Its primary target is the soil food web and root rhizosphere.\n   - *Saptadhanyankur Ark:* Exclusively a **foliar canopy spray** targeted at leaves, floral buds, and developing fruits to supply active hormones and bio-available nutrients through leaf stomata.\n2. **Hormonal and Biochemical Profile:**\n   - *Jeevamrit:* Characterized by high microbial biomass (>10^9 CFU/ml), diverse plant-growth-promoting bacteria, organic acids (gluconic, citric), and bacterial auxins (IAA). Its biochemical focus is mineral solubilization and organic decomposition.\n   - *Saptadhanyankur Ark:* Characterized by a high concentration of **germination-derived plant hormones**\u2014principally **gibberellic acid ($GA_3$)**, **cytokinins (zeatin)**, and mobilized free amino acids and de-chelated trace minerals (Zn, Fe, Ca) produced during seed sprouting.\n3. **Timing in the Crop Lifecycle:**\n   - *Jeevamrit:* Applied continuously throughout the entire lifecycle at regular 15-day intervals, beginning from pre-sowing soil drenching through vegetative and reproductive growth.\n   - *Saptadhanyankur Ark:* Applied strategically during narrow, high-demand reproductive windows: **early flowering**, **peak bloom**, and **early fruit-set** to arrest floral abscission and enhance fruit filling.\n4. **Base Raw Materials:**\n   - *Jeevamrit:* Dung, urine, jaggery, pulse flour, virgin soil.\n   - *Saptadhanyankur Ark:* Seven diverse sprouted grains (cereals, pulses, oilseeds) fermented in cow urine.",
+      "outlinePoints": [
+        "Target site: soil food web/rhizosphere inoculant (Jeevamrit) vs foliar reproductive canopy spray (Saptadhanyankur)",
+        "Biochemical profile: microbial cells, organic acids, and bacterial auxins vs sprouted-seed gibberellins, cytokinins, and de-chelated minerals",
+        "Timing: continuous 15-day lifecycle scheduling vs targeted flowering/fruit-setting interventions",
+        "Core ingredients: cow dung and jaggery base vs seven sprouted grains in cow urine"
+      ]
+    },
+    {
+      "id": "AGR217-U2-SUB18",
+      "questionType": "APPLICATION",
+      "maxMarks": 10,
+      "difficulty": "Hard",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods",
+      "questionText": "A natural farmer cultivating 3 acres of drip-irrigated pomegranate observes that his drip emitters clog frequently when injecting Jeevamrit. Design a multi-stage on-farm filtration and injection protocol, and calculate a monthly Jeevamrit preparation schedule.",
+      "modelAnswer": "### 1. Diagnosis of Drip Emitter Clogging\nDrip emitter clogging during Jeevamrit injection is a mechanical problem caused by suspended organic fibers in fresh cow dung, un-dissolved pulse flour particles, and fine mineral grains from virgin soil. Standard drip emitters have narrow orifice diameters (0.5\u20131.2 mm). Injecting unfiltered or poorly strained slurry deposits particulate matter inside emitter labyrinths, causing emitter blockages.\n\n### 2. Multi-Stage Filtration Protocol\nTo ensure problem-free drip injection, implement a three-tier filtration protocol:\n\n#### A. Primary Gravity Filtration (At the Drum)\n- Secure a clean, double-layered **fine cotton muslin cloth** over the mouth of an empty 200-liter collection barrel.\n- Pour the fermented Jeevamrit slowly through the cloth. Stir the settling residue gently on top of the cloth to facilitate drainage without forcing fibrous dung particles through the weave.\n- Discard the retained fiber residue onto the compost heap or use it as solid mulch around tree basins.\n\n#### B. Secondary Fine Mesh Straining\n- Pass the primary-strained liquid through a commercial **100-mesh (150-micron) nylon sieve bag** into the final fertigation stock tank.\n\n#### C. In-Line System Filtration (Drip Head Unit)\n- Install a standard **120-mesh (130-micron) disc filter** or screen filter at the discharge end of the drip irrigation manifold.\n- The disc filter provides depth filtration, capturing any microscopic particles that passed through the nylon bags.\n- Flush the disc filter elements manually after each injection cycle.\n\n### 3. Drip Injection Procedure (Venturi / Fertilizer Tank)\n- **Pre-Flushing:** Run the drip system with clear water for 15\u201320 minutes to pressurize the network and check for leaks.\n- **Injection Window:** Inject the strained Jeevamrit via a venturi injector over a 30\u201345 minute window. Maintain a dilution ratio of at least 1:5 to 1:10 with the carrier irrigation water.\n- **Post-Flushing (Mandatory):** Run clear water through the system for 15\u201320 minutes following injection. This thoroughly flushes residual organic suspension out of lateral lines and emitter orifices, preventing bacterial biofilm accumulation in emitters.\n\n### 4. Monthly Preparation Schedule for 3 Acres of Pomegranate\n- **Target Dose:** 200 liters per acre applied twice monthly = 600 liters per application $\\times$ 2 applications = **1,200 liters per month**.\n- **Infrastructure Required:** Set up six 200-liter plastic barrels under a shaded shed.\n- **Operational Timeline:**\n  - *Batch 1 (For 1st of the month application):* Set up three barrels on the 26th of the previous month. Ferment for 72 hours with twice-daily stirring. Filter and inject on the 1st of the month.\n  - *Batch 2 (For 15th of the month application):* Set up three barrels on the 11th of the month. Ferment for 72 hours. Filter and inject on the 15th of the month.",
+      "outlinePoints": [
+        "Etiology of clogging: fibrous dung particles and flour residue blocking narrow emitter orifices",
+        "Tier 1: primary gravity straining through double-layered cotton muslin cloth",
+        "Tier 2: secondary filtration through 100-mesh nylon sieve bags",
+        "Tier 3: in-line 120-mesh disc filter depth filtration at the pump manifold",
+        "Three-phase injection cycle: 15-min pre-flush, 45-min venturi injection, and 20-min post-flush",
+        "Monthly schedule: six 200 L barrels producing 1,200 L monthly in dual split batches"
+      ]
+    },
+    {
+      "id": "AGR217-U2-SUB19",
+      "questionType": "APPLICATION",
+      "maxMarks": 10,
+      "difficulty": "Medium",
+      "syllabusTopic": "Saptadhanyankur Ark and customized bio-enhancers: preparation, hormone dynamics, and foliar bio-nutrition",
+      "questionText": "A natural mango and citrus grower reports severe flower and fruitlet drop (up to 70% abscission) during peak bloom, drastically threatening marketable yield. Prescribe a detailed botanical and bio-enhancer foliar spray protocol using Saptadhanyankur Ark and Sour Buttermilk to arrest drop and protect against powdery mildew.",
+      "modelAnswer": "### 1. Diagnosis of the Reproductive Abscission Problem\nSevere flower and young fruitlet drop in mango and citrus during bloom is driven by two interrelated factors:\n- **Hormonal Abscission:** During bloom, low auxin and gibberellin synthesis in pollinated flowers\u2014often exacerbated by temperature swings or moisture stress\u2014triggers a surge in **ethylene and abscisic acid (ABA)** in the pedicel abscission zone. This dissolves the middle lamella, causing flowers to drop.\n- **Pathological Pressure (Powdery Mildew):** Warm, humid weather encourages *Oidium mangiferae* (powdery mildew in mango) and fungal blights, coating floral panicles with white powdery mycelium and causing blossom blight.\n\n### 2. Formulated Foliar Intervention Protocol\n\n#### A. Bio-Enhancer 1: Saptadhanyankur Ark (Hormone & Nutrient Surge)\n- **Preparation:** Sprout 100 g each of seven seeds (Wheat, Moong, Urd, Cowpea, Sesame, Chickpea, Fenugreek) for 24\u201348 hours until radicles reach 1\u20132 cm. Grind into a fine paste and ferment in 10 L Desi cow urine and 200 L water for 24 hours. Strain through muslin cloth.\n- **Physiological Action:** Delivers high concentrations of endogenous **gibberellic acid ($GA_3$)**, **zeatin (cytokinins)**, and **auxins**. These hormones counteract ethylene and ABA in the pedicel, strengthening the flower attachment stalk and preventing blossom drop, while accelerating cell division in developing fruitlets.\n\n#### B. Bio-Protective Fungicide: Fermented Sour Buttermilk (Chhachh / Majjiga)\n- **Preparation:** Take 5 liters of fresh desi cow buttermilk. Place a clean copper coin or copper wire in the container, cover with a lid, and allow it to ferment in shade for 5 to 7 days until it turns greenish-blue and emits an intensely sour aroma.\n- **Biochemical Action:** Fermentation produces high concentrations of **lactic acid** and natural copper salts (copper lactate). Lactic acid bacteria (*Lactobacillus*) and dissolved copper ions disrupt fungal spore germination and lyse powdery mildew mycelia without harming pollinators.\n\n### 3. Integrated Spraying Schedule\n- **Spray 1 (At 50% Panicle Emergence / Flower Bud Opening):**\n  - Tank mix: **6 liters Saptadhanyankur Ark + 5 liters Sour Buttermilk in 200 liters of water per acre**.\n  - Apply early in the morning using a hollow-cone nozzle to ensure thorough misting of emerging panicles.\n- **Spray 2 (At Peak Fruit Set - Pea Size Stage):**\n  - Repeat the spray with **8 liters Saptadhanyankur Ark + 5 liters Sour Buttermilk in 200 liters of water per acre**.\n\n### 4. Projected Outcome\nReduces blossom drop by 45\u201360%, eliminates powdery mildew without synthetic chemicals, and boosts final fruit retention and fruit size by 20\u201330%.",
+      "outlinePoints": [
+        "Diagnostic etiology: pedicel ethylene/ABA hormonal abscission paired with powdery mildew infection",
+        "Saptadhanyankur Ark preparation: seven sprouted grains providing endogenous GA, cytokinin, and auxin surges",
+        "Sour buttermilk preparation: 5-7 day copper-fermented buttermilk yielding lactic acid and copper lactate",
+        "Tank-mix formulation: 6-8 L Saptadhanyankur + 5 L sour buttermilk per 200 L water per acre",
+        "Two-stage application window: at 50% panicle emergence and pea-sized fruitlet set",
+        "Target outcomes: 50% reduction in floral drop, mildew suppression, and improved fruit retention"
+      ]
+    },
+    {
+      "id": "AGR217-U2-SUB20",
+      "questionType": "CASE_STUDY",
+      "maxMarks": 10,
+      "difficulty": "Hard",
+      "syllabusTopic": "Scientific microbial and biochemical basis: bacterial consortia (PGPR, nitrogen fixers, phosphate solubilizers), enzymes, and organic acids",
+      "questionText": "CASE STUDY: An agricultural university research station in Northern Karnataka conducted a controlled 3-year trial comparing two plots of rainfed pigeonpea: Plot A received recommended chemical fertilizers (25:50:0 kg NPK/ha + Carbendazim seed treatment); Plot B received Natural Farming inputs (Beejamrit seed treatment + Ghanajeevamrit 150 kg/ha basal + liquid Jeevamrit 200 L/acre monthly). Laboratory soil analysis after Year 3 revealed: (a) In Plot B, available Olsen-P increased by 38% despite zero chemical phosphorus applied; (b) Soil dehydrogenase activity in Plot B was 2.8 times higher; (c) Fusarium wilt incidence was 2.5% in Plot B vs 18.5% in Plot A. Deconstruct the microbiological and biochemical mechanisms explaining these results.",
+      "modelAnswer": "### 1. Mechanism of the 38% Surge in Available Phosphorus (Plot B)\nThe 38% increase in available Olsen-P in Plot B\u2014despite receiving zero external chemical phosphorus\u2014confirms the **microbial mobilization hypothesis** of Natural Farming:\n- **The Total vs. Available Phosphorus Paradox:** Agricultural soils typically contain large reserves of total phosphorus (500\u20131,200 kg/ha), but over 95% is fixed as insoluble calcium phosphates in alkaline Vertisols or iron/aluminum complexes. Chemical farming focuses solely on adding soluble chemical phosphorus, which rapidly becomes immobilized.\n- **Organic Acid Solubilization:** The monthly Jeevamrit applications introduced dense consortia of phosphate-solubilizing bacteria (PSB), predominantly *Bacillus megaterium* and *Pseudomonas putida*. These bacteria fermented jaggery and root carbon exudates, secreting **gluconic acid**, **citric acid**, and **2-ketogluconic acid** into the rhizosphere. These organic acids lowered micro-rhizosphere pH and chelated $Ca^{2+}$ ions, liberating insoluble tricalcium phosphate into bio-available orthophosphate ($H_2PO_4^-$).\n- **Mycorrhizal and Phosphatase Activity:** Undisturbed soil biology and absence of chemical phosphorus encouraged arbuscular mycorrhizal fungal (AMF) symbiosis. Root cortical colonization and bacterial secretion of alkaline and acid phosphatases mineralized organic phytates into inorganic orthophosphate, driving the 38% surge in Olsen-P.\n\n### 2. Explanation of 2.8-Fold Higher Soil Dehydrogenase Activity (DHA)\n- **DHA as a Living Biomass Proxy:** Dehydrogenase enzymes exist exclusively inside living microbial cells, catalyzing the oxidative dehydrogenation of organic substrates during cellular respiration. Dehydrogenase activity cannot exist as an extracellular enzyme in soil solution; hence, DHA serves as a direct proxy for active, viable microbial biomass.\n- **Microbial Flourishing in Plot B:** Regular additions of Jeevamrit (providing microbial cells and readily metabolizable carbon from jaggery and flour) expanded viable heterotrophic bacterial and actinomycete populations, increasing soil respiration and driving a 2.8-fold surge in DHA.\n- **Chemical Suppression in Plot A:** In Plot A, synthetic fertilizer salts and Carbendazim seed treatments raised osmotic tension and exerted biocidal toxicity, depressing microbial respiration and lowering DHA.\n\n### 3. Deconstruction of Fusarium Wilt Suppression (2.5% vs 18.5%)\nThe dramatic suppression of vascular wilt (*Fusarium udum*) in Plot B (2.5% incidence vs 18.5% in Plot A) resulted from multi-layered biological antagonism:\n1. **Pre-colonization via Beejamrit:** Beejamrit coated the pigeonpea seed coat with beneficial *Bacillus subtilis* and *Pseudomonas fluorescens* strains that colonized the emerging radicle, blocking *Fusarium* infection sites through competitive exclusion.\n2. **Antifungal Lipopeptides:** *Bacillus* strains in Jeevamrit secrete cyclic lipopeptides\u2014**iturin A** and **surfactin**\u2014that form lytic transmembrane pores in *Fusarium udum* hyphae, inhibiting mycelial penetration.\n3. **Siderophore Iron Deprivation:** Fluorescent pseudomonads produced pyoverdine siderophores that chelated trace ferric iron ($Fe^{3+}$), starving *Fusarium* of the iron required for germination.\n4. **Chemical Fungicide Failure in Plot A:** Carbendazim eliminated both pathogenic and beneficial fungi in the seed zone. As the chemical degraded after 20\u201330 days, recolonizing soil-borne *Fusarium* chlamydospores attacked unprotected roots, resulting in high mortality.",
+      "outlinePoints": [
+        "Phosphorus surge deconstruction: unlocking vast total soil P reserves via PSB organic acid chelation (gluconic, citric)",
+        "Mycorrhizal and phosphatase mineralization of organic phytates driving the 38% Olsen-P increase",
+        "DHA analysis: dehydrogenase as an intracellular respiratory enzyme confirming a 2.8x surge in living microbial biomass",
+        "Chemical suppression: fertilizer salt shock and fungicide depression of DHA in Plot A",
+        "Fusarium wilt suppression: Beejamrit competitive exclusion, iturin lipopeptide lysis, and siderophore iron starvation",
+        "Failure analysis of Plot A: temporary chemical barrier followed by aggressive recolonization by soil-borne chlamydospores"
+      ]
+    }
+  ],
+  "flashcards": [
+    {
+      "id": "AGR217-U2-FC01",
+      "front": "What is the standard volume of liquid Jeevamrit per acre?",
+      "back": "200 liters per acre, applied twice monthly through irrigation water or as a foliar spray.",
+      "hint": "200 liters per acre",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods"
+    },
+    {
+      "id": "AGR217-U2-FC02",
+      "front": "What are the ingredients of standard 200 L Jeevamrit?",
+      "back": "10 kg fresh Desi cow dung, 5-10 L cow urine, 2 kg jaggery, 2 kg pulse flour, a handful of virgin soil, and 200 L water.",
+      "hint": "10 kg dung, 5-10 L urine, 2 kg jaggery, 2 kg besan, soil, water",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods"
+    },
+    {
+      "id": "AGR217-U2-FC03",
+      "front": "What role does jaggery play in Jeevamrit?",
+      "back": "Supplies soluble carbohydrates (sucrose, glucose) as a carbon and energy source for microbial multiplication.",
+      "hint": "Carbon and energy substrate",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods"
+    },
+    {
+      "id": "AGR217-U2-FC04",
+      "front": "What role does pulse flour (besan) play in Jeevamrit?",
+      "back": "Supplies proteins and amino acids (nitrogen source) required for bacterial enzyme and protein synthesis.",
+      "hint": "Nitrogen and amino acid source",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods"
+    },
+    {
+      "id": "AGR217-U2-FC05",
+      "front": "Why is Jeevamrit stirred clockwise twice daily?",
+      "back": "To aerate the suspension, supplying dissolved oxygen for beneficial aerobic bacilli and pseudomonads.",
+      "hint": "Maintains aerobic dissolved oxygen",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods"
+    },
+    {
+      "id": "AGR217-U2-FC06",
+      "front": "What is the optimal fermentation time for Jeevamrit?",
+      "back": "48 to 72 hours under warm conditions, reaching peak bacterial density of >10^9 to 10^10 CFU/ml.",
+      "hint": "48 to 72 hours",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods"
+    },
+    {
+      "id": "AGR217-U2-FC07",
+      "front": "What is the shelf life of liquid Jeevamrit?",
+      "back": "7 to 10 days; beyond 10-12 days, substrate depletion causes bacterial starvation and putrefaction.",
+      "hint": "7 to 10 days",
+      "syllabusTopic": "Jeevamrit formulation, preparation protocols, fermentation kinetics, and field application methods"
+    },
+    {
+      "id": "AGR217-U2-FC08",
+      "front": "What is Beejamrit used for?",
+      "back": "Seed and seedling root treatment (dung, urine, lime, virgin soil) to suppress fungal diseases and boost germination.",
+      "hint": "Bio-protective seed treatment",
+      "syllabusTopic": "Beejamrit: ingredients, biochemical properties, and seed/propagule bio-treatment protocols"
+    },
+    {
+      "id": "AGR217-U2-FC09",
+      "front": "Why is slaked lime (Chuna) added to Beejamrit?",
+      "back": "Buffers formulation pH to 7.2-7.6, neutralizes urine acidity, and supplies calcium to strengthen seedling cell walls.",
+      "hint": "Buffers pH and supplies calcium",
+      "syllabusTopic": "Beejamrit: ingredients, biochemical properties, and seed/propagule bio-treatment protocols"
+    },
+    {
+      "id": "AGR217-U2-FC10",
+      "front": "What compound in cow urine gives Beejamrit antifungal properties?",
+      "back": "Hippuric acid, volatile fatty acids, and natural phenolic derivatives that disrupt fungal spore membranes.",
+      "hint": "Hippuric acid and phenolics",
+      "syllabusTopic": "Beejamrit: ingredients, biochemical properties, and seed/propagule bio-treatment protocols"
+    },
+    {
+      "id": "AGR217-U2-FC11",
+      "front": "What is Ghanajeevamrit?",
+      "back": "A dehydrated, spore-stabilized solid formulation of Jeevamrit (100 kg dung base) for basal soil application.",
+      "hint": "Solid, dehydrated Jeevamrit formulation",
+      "syllabusTopic": "Ghanajeevamrit (solid microbial bio-formulation): preparation, drying, storage, and basal application"
+    },
+    {
+      "id": "AGR217-U2-FC12",
+      "front": "What is the recommended application dose of Ghanajeevamrit?",
+      "back": "100 to 200 kg per acre applied as a basal dressing in seed furrows at sowing.",
+      "hint": "100 to 200 kg per acre",
+      "syllabusTopic": "Ghanajeevamrit (solid microbial bio-formulation): preparation, drying, storage, and basal application"
+    },
+    {
+      "id": "AGR217-U2-FC13",
+      "front": "What is the shelf life of well-cured Ghanajeevamrit?",
+      "back": "6 to 12 months in dry, breathable gunny bags, protected by resilient bacterial endospores.",
+      "hint": "6 to 12 months",
+      "syllabusTopic": "Ghanajeevamrit (solid microbial bio-formulation): preparation, drying, storage, and basal application"
+    },
+    {
+      "id": "AGR217-U2-FC14",
+      "front": "Why must Ghanajeevamrit be shade-dried?",
+      "back": "Slow shade drying allows bacteria to form heat-resistant endospores; direct sun heat kills vegetative cells.",
+      "hint": "Induces protective endospore formation",
+      "syllabusTopic": "Ghanajeevamrit (solid microbial bio-formulation): preparation, drying, storage, and basal application"
+    },
+    {
+      "id": "AGR217-U2-FC15",
+      "front": "How do bacteria in Jeevamrit solubilize soil phosphorus?",
+      "back": "They secrete organic acids (gluconic, citric, malic) that lower micro-pH and chelate Ca2+, Fe3+, and Al3+ cations.",
+      "hint": "Organic acid secretion and cation chelation",
+      "syllabusTopic": "Scientific microbial and biochemical basis: bacterial consortia (PGPR, nitrogen fixers, phosphate solubilizers), enzymes, and organic acids"
+    },
+    {
+      "id": "AGR217-U2-FC16",
+      "front": "What natural auxin is synthesized in Jeevamrit?",
+      "back": "Indole-3-Acetic Acid (IAA), reaching 15-30 ug/ml, which stimulates lateral root branching and taproot extension.",
+      "hint": "Indole-3-Acetic Acid (IAA)",
+      "syllabusTopic": "Scientific microbial and biochemical basis: bacterial consortia (PGPR, nitrogen fixers, phosphate solubilizers), enzymes, and organic acids"
+    },
+    {
+      "id": "AGR217-U2-FC17",
+      "front": "What are siderophores and what is their role in Jeevamrit?",
+      "back": "High-affinity ferric iron chelators secreted by PGPR that supply iron to crops while starving fungal pathogens.",
+      "hint": "Iron chelators depriving pathogens",
+      "syllabusTopic": "Scientific microbial and biochemical basis: bacterial consortia (PGPR, nitrogen fixers, phosphate solubilizers), enzymes, and organic acids"
+    },
+    {
+      "id": "AGR217-U2-FC18",
+      "front": "What is Saptadhanyankur Ark?",
+      "back": "A foliar extract of seven sprouted grains fermented in cow urine and water, rich in growth hormones and enzymes.",
+      "hint": "Extract of seven sprouted grains",
+      "syllabusTopic": "Saptadhanyankur Ark and customized bio-enhancers: preparation, hormone dynamics, and foliar bio-nutrition"
+    },
+    {
+      "id": "AGR217-U2-FC19",
+      "front": "Why are sprouted seeds used in Saptadhanyankur Ark?",
+      "back": "Sprouting triggers an endogenous hormonal surge of gibberellic acid, cytokinins, auxins, and activated amylases.",
+      "hint": "Hormonal surge of GA, cytokinins, auxins",
+      "syllabusTopic": "Saptadhanyankur Ark and customized bio-enhancers: preparation, hormone dynamics, and foliar bio-nutrition"
+    },
+    {
+      "id": "AGR217-U2-FC20",
+      "front": "When is Saptadhanyankur Ark sprayed on crops?",
+      "back": "At early flowering and fruit-setting stages to suppress pedicel ethylene/ABA and prevent blossom drop.",
+      "hint": "At flowering and fruit-set to stop drop",
+      "syllabusTopic": "Saptadhanyankur Ark and customized bio-enhancers: preparation, hormone dynamics, and foliar bio-nutrition"
+    }
+  ]
+};
