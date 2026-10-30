@@ -107,6 +107,7 @@ export interface SubjectMetadata {
   overview: string;
   courseOutcomes: CourseOutcome[];
   gradingStructure: GradingComponent[];
+  gradingDisclosure?: string;
   textbooks: {
     title: string;
     author: string;
