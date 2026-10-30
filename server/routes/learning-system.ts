@@ -13,7 +13,7 @@ import {
   bookmarks,
   studentActivityEvents
 } from "../../shared/schema";
-import { eq, and, sql, desc } from "drizzle-orm";
+import { eq, and, sql, desc, inArray } from "drizzle-orm";
 import aee103CompleteSubject from "../data/aee103";
 
 const router = Router();
@@ -767,7 +767,7 @@ router.get(["/api/academic/subjects/:code/progress", "/academic/subjects/:code/p
           and(
             eq(studentActivityEvents.userId, req.user.id),
             eq(studentActivityEvents.courseId, subj.id),
-            eq(studentActivityEvents.eventType, "RESOURCE_OPENED")
+            inArray(studentActivityEvents.eventType, ["RESOURCE_OPENED", "UNIT_COMPLETED"])
           )
         );
 
@@ -871,7 +871,7 @@ router.get(["/api/academic/subjects/:code/progress", "/academic/subjects/:code/p
 
 /**
  * POST /api/academic/subjects/:code/units/:unitNumber/mark-read
- * Record that student read the unit notes.
+ * Record that the student explicitly marked the unit complete.
  */
 router.post(["/api/academic/subjects/:code/units/:unitNumber/mark-read", "/academic/subjects/:code/units/:unitNumber/mark-read"], async (req: Request, res: Response) => {
   if (!isUserAuthenticated(req) || !req.user) {
@@ -888,13 +888,38 @@ router.post(["/api/academic/subjects/:code/units/:unitNumber/mark-read", "/acade
       .where(sql`UPPER(${subjects.code}) = ${code}`);
 
     if (subj) {
-      await db.insert(studentActivityEvents).values({
-        userId: req.user.id,
-        eventType: "RESOURCE_OPENED",
-        courseId: subj.id,
-        referenceId: `AEE103-U${unitNum}-NOTES`,
-        metadata: { unitNumber: unitNum, subjectCode: code }
-      });
+      const [unitRow] = await db
+        .select({ id: units.id })
+        .from(units)
+        .where(and(eq(units.subjectId, subj.id), eq(units.unitNumber, unitNum)))
+        .limit(1);
+
+      if (!unitRow) {
+        return res.status(404).json({ message: "Syllabus unit not found for this subject." });
+      }
+
+      const referenceId = `${code}-U${unitNum}-NOTES`;
+      const [existingCompletion] = await db
+        .select({ id: studentActivityEvents.id })
+        .from(studentActivityEvents)
+        .where(and(
+          eq(studentActivityEvents.userId, req.user.id),
+          eq(studentActivityEvents.courseId, subj.id),
+          eq(studentActivityEvents.unitId, unitRow.id),
+          eq(studentActivityEvents.eventType, "UNIT_COMPLETED")
+        ))
+        .limit(1);
+
+      if (!existingCompletion) {
+        await db.insert(studentActivityEvents).values({
+          userId: req.user.id,
+          eventType: "UNIT_COMPLETED",
+          courseId: subj.id,
+          unitId: unitRow.id,
+          referenceId,
+          metadata: { unitNumber: unitNum, subjectCode: code, completionSource: "student_confirmed" }
+        });
+      }
     }
 
     res.json({ success: true });
