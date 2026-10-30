@@ -40,7 +40,8 @@ import {
 } from "../services/academic-ecosystem";
 import { db } from "../db";
 import { storage } from "../storage";
-import { flashcardDecks, flashcards, subjectiveQuestions, noteSubmissions } from "../../shared/schema";
+import { subjects, units, topics, questions, resources, flashcardDecks, flashcards, subjectiveQuestions, noteSubmissions } from "../../shared/schema";
+import { inspectAcademicQuality } from "../services/academic-quality";
 import { eq, sql } from "drizzle-orm";
 import { ecosystemPostLimiter, aiTutorLimiter } from "../middleware/action-limiters";
 
@@ -65,6 +66,84 @@ function requireAdmin(req: Request, res: Response, next: () => void) {
   }
   next();
 }
+
+// ============================================================================
+// ACADEMIC CONTENT QUALITY AUDIT — READ ONLY, ADMIN ONLY
+// ============================================================================
+router.get("/admin/academic-quality", requireAdmin, async (_req: Request, res: Response) => {
+  try {
+    const scanLimit = 3000;
+    const [
+      subjectRows,
+      unitRows,
+      topicRows,
+      questionRows,
+      subjectiveRows,
+      deckRows,
+      cardRows,
+      resourceRows
+    ] = await Promise.all([
+      db.select({ id: subjects.id, code: subjects.code, name: subjects.name }).from(subjects).limit(scanLimit),
+      db.select({ id: units.id, subjectId: units.subjectId, unitNumber: units.unitNumber, unitName: units.unitName }).from(units).limit(scanLimit),
+      db.select({ id: topics.id, unitId: topics.unitId, topicName: topics.topicName }).from(topics).limit(scanLimit),
+      db.select({
+        id: questions.id,
+        subjectId: questions.subjectId,
+        unitId: questions.unitId,
+        subject: questions.subject,
+        unit: questions.unit,
+        questionType: questions.questionType,
+        questionText: questions.questionText,
+        optionA: questions.optionA,
+        optionB: questions.optionB,
+        optionC: questions.optionC,
+        optionD: questions.optionD,
+        correctOption: questions.correctOption,
+        explanation: questions.explanation
+      }).from(questions).limit(scanLimit),
+      db.select({
+        id: subjectiveQuestions.id,
+        subjectId: subjectiveQuestions.subjectId,
+        unitId: subjectiveQuestions.unitId,
+        questionText: subjectiveQuestions.questionText,
+        modelAnswer: subjectiveQuestions.modelAnswer,
+        outlinePoints: subjectiveQuestions.outlinePoints,
+        maxMarks: subjectiveQuestions.maxMarks
+      }).from(subjectiveQuestions).limit(scanLimit),
+      db.select({ id: flashcardDecks.id, subjectId: flashcardDecks.subjectId, unitId: flashcardDecks.unitId }).from(flashcardDecks).limit(scanLimit),
+      db.select({ id: flashcards.id, deckId: flashcards.deckId, front: flashcards.front, back: flashcards.back }).from(flashcards).limit(scanLimit),
+      db.select({
+        id: resources.id,
+        subject: resources.subject,
+        title: resources.title,
+        type: resources.type,
+        url: resources.url,
+        filename: resources.filename,
+        fileSize: resources.fileSize
+      }).from(resources).limit(scanLimit)
+    ]);
+
+    const report = inspectAcademicQuality({
+      subjects: subjectRows,
+      units: unitRows,
+      topics: topicRows,
+      questions: questionRows,
+      subjectiveQuestions: subjectiveRows,
+      flashcardDecks: deckRows,
+      flashcards: cardRows,
+      resources: resourceRows
+    });
+    const scanLimited = [
+      subjectRows, unitRows, topicRows, questionRows, subjectiveRows,
+      deckRows, cardRows, resourceRows
+    ].some((rows) => rows.length === scanLimit);
+
+    res.json({ ...report, scanLimit, scanLimited });
+  } catch (error: any) {
+    console.error("[Ecosystem] Academic quality audit failed:", error);
+    res.status(500).json({ message: "Could not run the academic quality audit." });
+  }
+});
 
 // ============================================================================
 // 1. FLASHCARDS & SM-2 SPACED REPETITION
