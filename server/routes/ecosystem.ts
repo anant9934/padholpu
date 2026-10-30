@@ -1018,20 +1018,25 @@ router.delete("/admin/questions/:id", requireAdmin, async (req: Request, res: Re
  */
 router.post("/ai/explain", aiTutorLimiter, async (req: Request, res: Response) => {
   try {
-    const { concept, subjectCode } = req.body;
+    const { concept, subjectCode, subjectId } = req.body;
     if (!concept || typeof concept !== "string" || !concept.trim()) {
       return res.status(400).json({ message: "Concept query is required." });
+    }
+    const parsedSubjectId = subjectId === undefined || subjectId === null ? undefined : Number(subjectId);
+    if (parsedSubjectId !== undefined && (!Number.isInteger(parsedSubjectId) || parsedSubjectId <= 0)) {
+      return res.status(400).json({ message: "Invalid subject context." });
     }
 
     const explanation = await getConceptExplanation(
       concept.trim(),
-      subjectCode || undefined
+      typeof subjectCode === "string" ? subjectCode : undefined,
+      parsedSubjectId
     );
 
     res.json(explanation);
   } catch (error: any) {
-    console.error("[Ecosystem] Error in AI concept explanation:", error);
-    res.status(500).json({ message: "Failed to generate concept explanation." });
+    console.error("[Ecosystem] Error in rule-based academic retrieval:", error);
+    res.status(500).json({ message: "Failed to retrieve academic material." });
   }
 });
 
