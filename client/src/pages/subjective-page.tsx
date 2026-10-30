@@ -461,7 +461,7 @@ export default function SubjectivePage() {
           <DialogHeader>
             <div className="flex items-center gap-2 mb-1">
               <Badge variant="outline" className="text-orange-600 border-orange-500/30 text-[10px]">
-                {aiResult?.isAIGenerated ? "Google Gemini Powered" : "Curated Syllabus Fallback"}
+                {aiResult?.isAIGenerated ? "External AI · Opt-in" : "Source Check · No Model Call"}
               </Badge>
             </div>
             <DialogTitle className="text-lg font-bold">Concept Explanation & Exam Focus</DialogTitle>
