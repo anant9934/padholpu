@@ -15,7 +15,7 @@
     "start": "NODE_ENV=production node dist/index.cjs",
     "check": "tsc",
     "test": "npx tsx tests/seo-brand-audit.ts && npx tsx tests/adversarial-suite.ts && npx tsx tests/audit-remediation.ts && npx tsx tests/redis-cache-suite.ts && npx tsx tests/academic-ecosystem-suite.ts && npx tsx tests/ecosystem-integration-audit.ts && npx tsx tests/multidisciplinary-academic-suite.ts && npx tsx --env-file=.env tests/academic-coverage-import-suite.ts && npx tsx --env-file=.env tests/academic-accuracy-acceptance-suite.ts && npx tsx --env-file=.env tests/agriculture-sem3-curriculum-suite.ts && npx tsx --env-file=.env tests/aee103-learning-system-suite.ts && if [ -n \"$DATABASE_URL\" ]; then npx tsx tests/dynamic-product-integration.ts && npx tsx tests/testimonial-flow.ts; else echo 'Notice: DATABASE_URL not set; skipping live DB integration tests.'; fi",
-    "test:unit": "npx tsx tests/seo-brand-audit.ts && npx tsx tests/adversarial-suite.ts && npx tsx tests/audit-remediation.ts && npx tsx tests/redis-cache-suite.ts && npx tsx tests/academic-ecosystem-suite.ts && npx tsx tests/ecosystem-integration-audit.ts && npx tsx tests/multidisciplinary-academic-suite.ts && npx tsx --env-file=.env tests/academic-coverage-import-suite.ts && npx tsx --env-file=.env tests/academic-accuracy-acceptance-suite.ts && npx tsx --env-file=.env tests/agriculture-sem3-curriculum-suite.ts && npx tsx --env-file=.env tests/aee103-learning-system-suite.ts",
+    "test:unit": "npx tsx tests/seo-brand-audit.ts && npx tsx tests/adversarial-suite.ts && npx tsx tests/audit-remediation.ts && npx tsx tests/redis-cache-suite.ts && npx tsx tests/academic-ecosystem-suite.ts && npx tsx tests/ecosystem-integration-audit.ts && npx tsx tests/multidisciplinary-academic-suite.ts && npx tsx tests/academic-coverage-import-suite.ts",
     "test:aee103": "npx tsx --env-file=.env tests/aee103-learning-system-suite.ts",
     "test:redis": "npx tsx tests/redis-cache-suite.ts",
     "test:db": "npx tsx tests/dynamic-product-integration.ts && npx tsx tests/testimonial-flow.ts",
@@ -23,7 +23,8 @@
     "db:migrate:academic": "npx tsx --env-file=.env scripts/migrate-academic.ts",
     "db:seed:academic": "npx tsx --env-file=.env scripts/seed-verified-academic-content.ts",
     "db:seed": "tsx --env-file=.env.local server/scripts/seed-questions.ts",
-    "db:cleanup": "tsx --env-file=.env.local server/scripts/cleanup-data.ts"
+    "db:cleanup": "tsx --env-file=.env.local server/scripts/cleanup-data.ts",
+    "test:integration": "npx tsx --env-file=.env tests/academic-accuracy-acceptance-suite.ts && npx tsx --env-file=.env tests/agriculture-sem3-curriculum-suite.ts && npx tsx --env-file=.env tests/aee103-learning-system-suite.ts && npx tsx --env-file=.env tests/dynamic-product-integration.ts && npx tsx --env-file=.env tests/testimonial-flow.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

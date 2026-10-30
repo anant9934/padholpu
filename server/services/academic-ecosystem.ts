@@ -454,6 +454,33 @@ export async function moderateNoteSubmission(
 // 4. STUDY PLANNER & EXAM PREPARATION ENGINE
 // ============================================================================
 
+export function validateStudyPlanCurriculum(
+  selectedCodes: string[],
+  subjectRows: Array<{ id: number; code: string }>,
+  unitRows: Array<{ subjectId: number; unitNumber: number; unitName: string }>
+): void {
+  const foundCodes = new Set(subjectRows.map((subject) => subject.code.toUpperCase()));
+  const unknownCodes = selectedCodes.filter((code) => !foundCodes.has(code.toUpperCase()));
+  if (unknownCodes.length > 0) {
+    throw new Error(`Unknown subject code(s): ${unknownCodes.join(", ")}. Select subjects from the academic catalogue.`);
+  }
+
+  const subjectsWithUnits = new Set(unitRows.map((unit) => unit.subjectId));
+  const subjectsWithoutUnits = subjectRows
+    .filter((subject) => !subjectsWithUnits.has(subject.id))
+    .map((subject) => subject.code);
+
+  if (subjectsWithoutUnits.length > 0) {
+    throw new Error(
+      `No syllabus units are mapped for: ${subjectsWithoutUnits.join(", ")}. Map the real syllabus before generating a study plan.`
+    );
+  }
+
+  if (unitRows.length === 0) {
+    throw new Error("No syllabus units are available for the selected subjects.");
+  }
+}
+
 export async function generateStudyPlan(
   userId: number,
   title: string,
@@ -462,85 +489,82 @@ export async function generateStudyPlan(
   dailyStudyHours: number = 2.0,
   examType: string = "END_TERM"
 ) {
-  // 1. Validate Target Exam Date
   const now = new Date();
   if (isNaN(targetExamDate.getTime())) {
     throw new Error("Invalid target exam date.");
   }
-  // Exam date must be in the future (at least end of today)
   if (targetExamDate.getTime() < now.getTime() - 24 * 60 * 60 * 1000) {
     throw new Error("Exam date must be scheduled in the future.");
   }
 
-  // Normalize subject codes
-  const normalizedCodes = selectedSubjectCodes.map(c => c.trim().toUpperCase()).filter(Boolean);
+  const normalizedCodes = Array.from(new Set(
+    selectedSubjectCodes.map((code) => code.trim().toUpperCase()).filter(Boolean)
+  ));
   if (normalizedCodes.length === 0) {
     throw new Error("Please specify at least one subject code.");
   }
 
-  // 2. Create main plan
-  const [plan] = await db.insert(studyPlans).values({
-    userId,
-    title,
-    targetExamDate,
-    selectedSubjectCodes: normalizedCodes,
-    dailyStudyHours: Math.max(0.5, Math.min(16, dailyStudyHours)),
-    examType,
-    isActive: true,
-  }).returning();
-
-  // 3. Fetch all units for the selected subject codes
-  const subRows = await db.select().from(subjects).where(inArray(subjects.code, normalizedCodes));
-  const subIds = subRows.map((s: any) => s.id);
-  const unitsList = subIds.length
-    ? await db.select().from(units).where(inArray(units.subjectId, subIds)).orderBy(units.unitNumber)
+  // Never create synthetic five-unit plans. Every task must map to a real catalogue unit.
+  const subjectRows = await db.select().from(subjects).where(inArray(subjects.code, normalizedCodes));
+  const subjectIds = subjectRows.map((subject: any) => subject.id);
+  const unitsList = subjectIds.length
+    ? await db.select().from(units).where(inArray(units.subjectId, subjectIds)).orderBy(asc(units.subjectId), asc(units.unitNumber))
     : [];
 
-  const diffDays = Math.max(1, Math.ceil((targetExamDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
-  const tasksToInsert = [];
-  let dayOffset = 0;
+  validateStudyPlanCurriculum(normalizedCodes, subjectRows, unitsList);
 
-  if (unitsList.length > 0) {
-    for (const u of unitsList) {
-      const targetDate = new Date(now.getTime() + (dayOffset % diffDays) * 24 * 60 * 60 * 1000);
-      const dateStr = targetDate.toISOString().split("T")[0];
-      const sub = subRows.find((s: any) => s.id === u.subjectId);
-
-      tasksToInsert.push({
-        planId: plan.id,
-        subjectCode: sub?.code || "COURSE",
-        unitNumber: u.unitNumber,
-        title: `Master Unit ${u.unitNumber}: ${u.unitName} (${sub?.code})`,
-        scheduledDate: dateStr,
-        isCompleted: false,
-      });
-      dayOffset++;
+  const subjectById = new Map<number, any>(
+    subjectRows.map((subject: any) => [Number(subject.id), subject] as [number, any])
+  );
+  const dayMs = 24 * 60 * 60 * 1000;
+  const diffDays = Math.max(1, Math.ceil((targetExamDate.getTime() - now.getTime()) / dayMs));
+  const tasksToInsert: Array<{
+    subjectCode: string;
+    unitNumber: number;
+    title: string;
+    scheduledDate: string;
+    isCompleted: boolean;
+  }> = unitsList.map((unit: any, index: number) => {
+    const dayOffset = Math.min(diffDays - 1, Math.floor(index * diffDays / unitsList.length));
+    const targetDate = new Date(now.getTime() + dayOffset * dayMs);
+    const subject = subjectById.get(unit.subjectId);
+    if (!subject) {
+      throw new Error(`A syllabus unit references an unselected subject (unit ID: ${unit.id}).`);
     }
-  } else {
-    // If subjects don't have units populated in DB, generate standard syllabus units 1-5
-    for (const code of normalizedCodes) {
-      for (let unitNum = 1; unitNum <= 5; unitNum++) {
-        const targetDate = new Date(now.getTime() + (dayOffset % diffDays) * 24 * 60 * 60 * 1000);
-        const dateStr = targetDate.toISOString().split("T")[0];
 
-        tasksToInsert.push({
-          planId: plan.id,
-          subjectCode: code,
-          unitNumber: unitNum,
-          title: `Master Unit ${unitNum}: Core Syllabus Concepts (${code})`,
-          scheduledDate: dateStr,
-          isCompleted: false,
-        });
-        dayOffset++;
-      }
-    }
-  }
+    return {
+      subjectCode: subject.code,
+      unitNumber: unit.unitNumber,
+      title: `Master Unit ${unit.unitNumber}: ${unit.unitName} (${subject.code})`,
+      scheduledDate: targetDate.toISOString().split("T")[0],
+      isCompleted: false,
+    };
+  });
 
-  if (tasksToInsert.length > 0) {
-    await db.insert(studyPlanTasks).values(tasksToInsert);
-  }
+  // Create the plan and its syllabus-backed tasks atomically.
+  return db.transaction(async (tx: any) => {
+    const [plan] = await tx.insert(studyPlans).values({
+      userId,
+      title,
+      targetExamDate,
+      selectedSubjectCodes: normalizedCodes,
+      dailyStudyHours: Math.max(0.5, Math.min(16, dailyStudyHours)),
+      examType,
+      isActive: true,
+    }).returning();
 
-  return plan;
+    await tx.insert(studyPlanTasks).values(
+      tasksToInsert.map((task: {
+        subjectCode: string;
+        unitNumber: number;
+        title: string;
+        scheduledDate: string;
+        isCompleted: boolean;
+      }) => ({ ...task, planId: plan.id }))
+    );
+
+    return plan;
+  });
 }
 
 export async function getUserStudyPlans(userId: number) {
@@ -986,12 +1010,16 @@ export interface AIExplanationResult {
  */
 export async function getConceptExplanation(topic: string, subjectCode?: string): Promise<AIExplanationResult> {
   const cleanTopic = topic.trim().slice(0, 500);
-  const cleanSubject = (subjectCode || "computer science & engineering").trim().slice(0, 100);
+  const cleanSubject = (subjectCode || "").trim().slice(0, 100);
 
-  const hasAIKey = Boolean(process.env.GEMINI_API_KEY || process.env.OPENAI_API_KEY);
+  // External inference is disabled unless the operator deliberately opts in.
+  // A configured API key alone must never trigger an unexpected model call.
+  const externalInferenceEnabled =
+    process.env.ENABLE_GEMINI_TUTOR === "true" &&
+    process.env.ALLOW_EXTERNAL_TUTOR_INFERENCE === "true" &&
+    Boolean(process.env.GEMINI_API_KEY);
 
-  // If real AI provider is configured in production, call it securely with strict timeout:
-  if (hasAIKey && process.env.GEMINI_API_KEY) {
+  if (externalInferenceEnabled) {
     try {
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
@@ -1001,7 +1029,7 @@ export async function getConceptExplanation(topic: string, subjectCode?: string)
           body: JSON.stringify({
             contents: [{
               parts: [{
-                text: `You are an academic tutor at Lovely Professional University for ${cleanSubject}. Explain the following concept clearly with key examination points, practical code/example, and common exam mistakes: "${cleanTopic}". Keep response formatted in clean markdown.`
+                text: `You are an academic tutor. The requested subject is ${cleanSubject || "not specified"}. Explain the following concept without inventing syllabus or institutional claims: "${cleanTopic}". State uncertainty and distinguish general knowledge from source-backed content. Keep response formatted in clean markdown.`
               }]
             }]
           }),
@@ -1026,23 +1054,19 @@ export async function getConceptExplanation(topic: string, subjectCode?: string)
     }
   }
 
-  // Authoritative Academic Knowledge Fallback (Guaranteed to work 100% offline & without third-party API keys)
+  // Evidence-safe fallback: do not fabricate subject-specific explanations.
+  const subjectContext = cleanSubject ? ` in **${cleanSubject}**` : "";
   return {
     isAIGenerated: false,
-    explanation: `### Academic Concept Overview: ${cleanTopic}\n\n` +
-      `This core syllabus topic is critical for both Continuous Assessment (CA) and End-Term Examinations in ${cleanSubject}.\n\n` +
-      `#### Core Theoretical Fundamentals\n` +
-      `1. **Definition & Purpose:** Establishes the foundational logic and design patterns required for academic coursework.\n` +
-      `2. **Key Mechanisms:** Involves modular decomposition, optimal resource management, and adherence to standard algorithmic complexity limits.\n` +
-      `3. **Exam Tips:** In subjective questions, always draw the conceptual diagram and write clean, commented code snippets or formulas.\n\n` +
-      `#### Recommended Study Path\n` +
-      `• Review Unit Notes and faculty presentations under the **Learn** tab.\n` +
-      `• Test your knowledge by taking a unit-wise quiz under **Practice**.\n` +
-      `• Solve previous year question papers (PYQs) to understand question phrasing.`,
+    explanation:
+      `### No source-backed explanation is available yet\n\n` +
+      `I could not find enough approved, subject-specific material for **${cleanTopic}**${subjectContext}. ` +
+      `I will not invent an explanation or claim that it is verified. Open the relevant subject notes or choose a syllabus topic that already has published material.`,
     keyPoints: [
-      "Curated syllabus-linked reference guide.",
-      "Matches LPU examination marking criteria."
+      "No external model was called; this is the deterministic fallback.",
+      "A matching approved academic source is required before a grounded explanation can be shown.",
     ],
-    disclaimer: "Curated academic reference. Verified by university curriculum standards."
+    disclaimer:
+      "No academic answer was generated because a matching source was not available. This is not a verified explanation or an official university answer.",
   };
 }
