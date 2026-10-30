@@ -1,4 +1,5 @@
-import { calculateSM2, getConceptExplanation } from "../server/services/academic-ecosystem";
+import { calculateSM2, getConceptExplanation, validateStudyPlanCurriculum } from "../server/services/academic-ecosystem";
+import { generateNextBestAction } from "../server/services/academic-os";
 
 function assert(condition: boolean, msg: string) {
   if (!condition) {
@@ -41,11 +42,60 @@ async function runAcademicSuite() {
   const floor = calculateSM2(0, 1.35, 1, 0);
   assert(floor.easeFactor === 1.3, "Ease factor cannot drop below hard minimum floor of 1.3");
 
-  // 6. AI-Assisted Learning Boundary Offline Fallback
+  // 6. Deterministic recommendation must never assume a CSE course.
+  const noCourseAction = generateNextBestAction({
+    unitsMastery: [],
+    overallCoverage: 0,
+    totalAttempts: 0,
+  });
+  assert(noCourseAction.type === "EXPLORE_COURSES" && noCourseAction.destination === "/programmes",
+    "Students without a selected course are sent to the multidisciplinary programme catalogue");
+
+  const agricultureAction = generateNextBestAction({
+    unitsMastery: [],
+    overallCoverage: 0,
+    primaryCourseCode: "AEE103",
+    totalAttempts: 0,
+  });
+  assert(agricultureAction.course === "AEE103" && agricultureAction.destination.includes("AEE103"),
+    "A selected Agriculture subject is preserved in the diagnostic recommendation");
+
+  // 7. Study plans must use real syllabus mappings and reject synthetic units.
+  let rejectedUnknownSubject = false;
+  try {
+    validateStudyPlanCurriculum(["LAW101"], [], []);
+  } catch (error) {
+    rejectedUnknownSubject = String(error).includes("Unknown subject code");
+  }
+  assert(rejectedUnknownSubject, "Study planner rejects subject codes absent from the academic catalogue");
+
+  let rejectedMissingUnits = false;
+  try {
+    validateStudyPlanCurriculum(["BBA101"], [{ id: 1, code: "BBA101" }], []);
+  } catch (error) {
+    rejectedMissingUnits = String(error).includes("No syllabus units are mapped");
+  }
+  assert(rejectedMissingUnits, "Study planner refuses to invent generic units for an unmapped subject");
+
+  // 8. Tutor fallback must be evidence-safe and must not call an external model by default.
+  const savedEnable = process.env.ENABLE_GEMINI_TUTOR;
+  const savedAllow = process.env.ALLOW_EXTERNAL_TUTOR_INFERENCE;
+  const savedKey = process.env.GEMINI_API_KEY;
+  delete process.env.ENABLE_GEMINI_TUTOR;
+  delete process.env.ALLOW_EXTERNAL_TUTOR_INFERENCE;
+  delete process.env.GEMINI_API_KEY;
   const aiFallback = await getConceptExplanation("B-Trees in Database Systems", "CSE302");
-  assert(typeof aiFallback.explanation === "string" && aiFallback.explanation.length > 50, "Concept explanation returns formatted content");
-  assert(aiFallback.disclaimer.length > 0, "All explanations carry transparent academic disclaimer");
-  assert(Array.isArray(aiFallback.keyPoints) && aiFallback.keyPoints.length > 0, "Key syllabus examination points provided");
+  if (savedEnable !== undefined) process.env.ENABLE_GEMINI_TUTOR = savedEnable;
+  if (savedAllow !== undefined) process.env.ALLOW_EXTERNAL_TUTOR_INFERENCE = savedAllow;
+  if (savedKey !== undefined) process.env.GEMINI_API_KEY = savedKey;
+
+  assert(aiFallback.isAIGenerated === false, "Tutor uses a deterministic fallback with external inference disabled");
+  assert(typeof aiFallback.explanation === "string" && aiFallback.explanation.length > 50,
+    "Tutor returns a useful source-limited response");
+  assert(!/modular decomposition|algorithmic complexity|verified by university curriculum/i.test(aiFallback.explanation + aiFallback.disclaimer),
+    "Tutor does not invent unrelated explanations or academic verification claims");
+  assert(aiFallback.disclaimer.length > 0 && aiFallback.keyPoints.length > 0,
+    "Source-limited tutor response explains its evidence boundary");
 
   console.log("==================================================");
   console.log("ALL 6 ACADEMIC ECOSYSTEM TESTS PASSED");
