@@ -2,7 +2,7 @@ import { UnitContent } from "./types";
 
 export const unit5Content: UnitContent = {
   unitNumber: 5,
-  title: "Extension Administration & Teaching Methods",
+  title: "Extension Administration",
   shortDescription: "Principles and POSDCORB functions of extension administration, classification of extension teaching methods (individual, group, mass), ICT applications, new/social media, and media-mix strategies.",
   estimatedReadTimeMinutes: 22,
   syllabusTopics: [
