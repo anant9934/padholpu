@@ -94,7 +94,7 @@ router.get(["/api/academic/subjects/:code/syllabus", "/academic/subjects/:code/s
       const gradingComponents = metadata.gradingStructure.map((g: any) => ({
         name: g.component,
         type: g.component,
-        weightage: parseInt(g.weightage, 10) || 20,
+        weightage: Number.parseInt(g.weightage, 10),
         marks: g.marks,
         details: g.details,
         coverage: g.component.includes("Mid-Term") 
@@ -125,19 +125,19 @@ router.get(["/api/academic/subjects/:code/syllabus", "/academic/subjects/:code/s
         overview: metadata.overview,
         courseOutcomes: metadata.courseOutcomes,
         gradingStructure: metadata.gradingStructure,
-        grading: {
-          totalMarks: 100,
-          components: gradingComponents
-        },
+        grading: metadata.gradingStructure.length > 0
+          ? { totalMarks: 100, components: gradingComponents }
+          : null,
+        gradingDisclosure: metadata.gradingDisclosure,
         textbooks: metadata.textbooks,
         practicalsCount: metadata.practicals.length,
         practicalsSummary: metadata.practicals.map((p: any) => ({ id: p.id, title: p.title })),
         units: unitSummaries,
         stats: {
           totalUnits: unitSummaries.length,
-          totalMcqs: Number(mcqCountResult?.count) || 360,
-          totalSubjectiveQuestions: Number(subjCountResult?.count) || 120,
-          totalFlashcards: Number(fcCountResult?.count) || 120,
+          totalMcqs: Number(mcqCountResult?.count ?? 0),
+          totalSubjectiveQuestions: Number(subjCountResult?.count ?? 0),
+          totalFlashcards: Number(fcCountResult?.count ?? 0),
           totalPracticals: metadata.practicals.length
         }
       });
