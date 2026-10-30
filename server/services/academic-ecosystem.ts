@@ -1042,7 +1042,7 @@ const ACADEMIC_TUTOR_STOPWORDS = new Set([
 ]);
 
 function tokenizeAcademicQuery(value: string): string[] {
-  const matches = value.toLowerCase()
+  const matches: string[] = value.toLowerCase()
     .normalize("NFKD")
     .replace(/[^a-z0-9 ]/g, " ")
     .match(/[a-z0-9]{3,}/g) || [];
