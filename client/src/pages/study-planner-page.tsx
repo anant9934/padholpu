@@ -56,7 +56,7 @@ export default function StudyPlannerPage() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [planTitle, setPlanTitle] = useState("");
   const [examDate, setExamDate] = useState("");
-  const [subjectCodesInput, setSubjectCodesInput] = useState("CSE310, CSE320, INT213");
+  const [subjectCodesInput, setSubjectCodesInput] = useState("");
   const [dailyHours, setDailyHours] = useState("3");
   const [examType, setExamType] = useState("END_TERM");
 
@@ -213,7 +213,7 @@ export default function StudyPlannerPage() {
                     Subject Codes (Comma Separated) *
                   </label>
                   <Input
-                    placeholder="e.g. CSE310, CSE320, INT213"
+                    placeholder="Enter your enrolled subject codes, separated by commas"
                     value={subjectCodesInput}
                     onChange={(e) => setSubjectCodesInput(e.target.value)}
                     className="mt-1"
