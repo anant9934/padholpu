@@ -48,6 +48,11 @@ const StudyPlannerPage = lazy(() => import("@/pages/study-planner-page"));
 const WorkspacePage = lazy(() => import("@/pages/workspace-page"));
 const ContributionsPage = lazy(() => import("@/pages/contributions-page"));
 const StudyGroupsPage = lazy(() => import("@/pages/study-groups-page"));
+const SubjectOverviewPage = lazy(() => import("@/pages/subject-overview-page"));
+const UnitNotesPage = lazy(() => import("@/pages/unit-notes-page"));
+const UnitMcqPage = lazy(() => import("@/pages/unit-mcq-page"));
+const UnitSubjectivePage = lazy(() => import("@/pages/unit-subjective-page"));
+const UnitFlashcardsPage = lazy(() => import("@/pages/unit-flashcards-page"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 import { Loader2 } from "lucide-react";
 import { PageSkeleton } from "@/components/ui/LoadingSkeleton";
@@ -189,6 +194,33 @@ function Router() {
                 <ProgrammeDetailPage />
               </Layout>
             </Route>
+            {/* Syllabus-Oriented Subject Learning System (Programmes Architecture) */}
+            <Route path="/programmes/:programmeCode/semesters/:semester/:subjectCode/units/:unitNumber/notes">
+              <Layout>
+                <UnitNotesPage />
+              </Layout>
+            </Route>
+            <Route path="/programmes/:programmeCode/semesters/:semester/:subjectCode/units/:unitNumber/mcqs">
+              <Layout>
+                <UnitMcqPage />
+              </Layout>
+            </Route>
+            <Route path="/programmes/:programmeCode/semesters/:semester/:subjectCode/units/:unitNumber/subjective">
+              <Layout>
+                <UnitSubjectivePage />
+              </Layout>
+            </Route>
+            <Route path="/programmes/:programmeCode/semesters/:semester/:subjectCode/units/:unitNumber/flashcards">
+              <Layout>
+                <UnitFlashcardsPage />
+              </Layout>
+            </Route>
+            <Route path="/programmes/:programmeCode/semesters/:semester/:subjectCode">
+              <Layout>
+                <SubjectOverviewPage />
+              </Layout>
+            </Route>
+
             <Route path="/programmes/:code/semesters/:semester">
               <Layout>
                 <ProgrammeDetailPage />
@@ -209,6 +241,38 @@ function Router() {
             <Route path="/semester/:id">
               <Layout>
                 <SemesterPage />
+              </Layout>
+            </Route>
+
+            {/* Syllabus-Oriented Learning System (Direct Subject Routes) */}
+            <Route path="/subjects/:subjectCode/units/:unitNumber/notes">
+              <Layout>
+                <UnitNotesPage />
+              </Layout>
+            </Route>
+            <Route path="/subjects/:subjectCode/units/:unitNumber/mcqs">
+              <Layout>
+                <UnitMcqPage />
+              </Layout>
+            </Route>
+            <Route path="/subjects/:subjectCode/units/:unitNumber/subjective">
+              <Layout>
+                <UnitSubjectivePage />
+              </Layout>
+            </Route>
+            <Route path="/subjects/:subjectCode/units/:unitNumber/flashcards">
+              <Layout>
+                <UnitFlashcardsPage />
+              </Layout>
+            </Route>
+            <Route path="/subjects/AEE103">
+              <Layout>
+                <SubjectOverviewPage />
+              </Layout>
+            </Route>
+            <Route path="/subjects/aee103">
+              <Layout>
+                <SubjectOverviewPage />
               </Layout>
             </Route>
 

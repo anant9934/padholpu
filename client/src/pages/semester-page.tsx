@@ -517,17 +517,17 @@ export default function SemesterPage() {
                   </div>
 
                   <div className="pt-4 border-t border-[#E7E1D7] dark:border-[#26221c] flex flex-wrap items-center gap-2">
-                    <Link href={`/subjects/${sub.code.toLowerCase()}`}>
+                    <Link href={sub.code === "AEE103" ? `/programmes/BSC-AGRI/semesters/3/AEE103` : `/subjects/${sub.code.toLowerCase()}`}>
                       <span className="btn-primary text-xs h-8 px-3 inline-flex items-center gap-1.5 cursor-pointer">
                         <BookOpen className="w-3.5 h-3.5" /> Full Course Hub
                       </span>
                     </Link>
-                    <Link href={`/subjects/${sub.code.toLowerCase()}/notes`}>
+                    <Link href={sub.code === "AEE103" ? `/programmes/BSC-AGRI/semesters/3/AEE103/units/1/notes` : `/subjects/${sub.code.toLowerCase()}/notes`}>
                       <span className="text-xs font-medium px-3 py-1.5 rounded-lg border border-[#E0D6C7] dark:border-[#332b21] hover:bg-[#F4E7CA]/40 transition-colors inline-flex items-center gap-1 cursor-pointer">
                         <FileText className="w-3 h-3 text-[#c8830a]" /> Notes
                       </span>
                     </Link>
-                    <Link href={`/subjects/${sub.code.toLowerCase()}/quiz`}>
+                    <Link href={sub.code === "AEE103" ? `/programmes/BSC-AGRI/semesters/3/AEE103/units/1/mcqs` : `/subjects/${sub.code.toLowerCase()}/quiz`}>
                       <span className="text-xs font-medium px-3 py-1.5 rounded-lg border border-[#E0D6C7] dark:border-[#332b21] hover:bg-[#F4E7CA]/40 transition-colors inline-flex items-center gap-1 cursor-pointer">
                         <Sparkles className="w-3 h-3 text-[#c8830a]" /> Quizzes
                       </span>

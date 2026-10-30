@@ -217,9 +217,11 @@ export default function ProgrammeDetailPage() {
               </Badge>
             </div>
           </div>
-          <CardTitle className="text-base font-bold text-foreground leading-snug">
-            {subj.name}
-          </CardTitle>
+          <Link href={subj.code === "AEE103" ? `/programmes/${programme.code}/semesters/${activeSemester}/${subj.code}` : `/subjects/${subj.code.toLowerCase()}`}>
+            <CardTitle className="text-base font-bold text-foreground leading-snug hover:text-[#9A6205] transition-colors cursor-pointer">
+              {subj.name}
+            </CardTitle>
+          </Link>
           {subj.description && (
             <p className="text-xs text-muted-foreground line-clamp-2 mt-1 leading-relaxed">
               {subj.description}
@@ -234,22 +236,30 @@ export default function ProgrammeDetailPage() {
           </div>
 
           <div className="grid grid-cols-3 gap-2 pt-1">
-            <Link href={`/learn?subject=${encodeURIComponent(subj.code)}`}>
+            <Link href={subj.code === "AEE103" ? `/programmes/${programme.code}/semesters/${activeSemester}/${subj.code}/units/1/notes` : `/learn?subject=${encodeURIComponent(subj.code)}`}>
               <Button size="sm" variant="outline" className="w-full text-[11px] h-8 px-2">
                 <BookOpen className="w-3 h-3 mr-1 text-[#8f5200] dark:text-[#c8830a]" /> Notes
               </Button>
             </Link>
-            <Link href={`/practice?course=${encodeURIComponent(subj.code)}`}>
+            <Link href={subj.code === "AEE103" ? `/programmes/${programme.code}/semesters/${activeSemester}/${subj.code}/units/1/mcqs` : `/practice?course=${encodeURIComponent(subj.code)}`}>
               <Button size="sm" variant="outline" className="w-full text-[11px] h-8 px-2">
                 <FileText className="w-3 h-3 mr-1 text-[#8f5200] dark:text-[#c8830a]" /> MCQs
               </Button>
             </Link>
-            <Link href={`/subjective?subject=${encodeURIComponent(subj.code)}`}>
+            <Link href={subj.code === "AEE103" ? `/programmes/${programme.code}/semesters/${activeSemester}/${subj.code}/units/1/subjective` : `/subjective?subject=${encodeURIComponent(subj.code)}`}>
               <Button size="sm" className="w-full text-[11px] h-8 px-2 bg-[#9A6205] hover:bg-[#835203] text-white">
                 <Award className="w-3 h-3 mr-1" /> Written
               </Button>
             </Link>
           </div>
+
+          {subj.code === "AEE103" && (
+            <Link href={`/programmes/${programme.code}/semesters/${activeSemester}/${subj.code}`}>
+              <Button size="sm" variant="ghost" className="w-full text-[11px] h-7 text-[#9A6205] font-semibold hover:bg-amber-500/10">
+                Open Full Subject Learning Workspace →
+              </Button>
+            </Link>
+          )}
         </CardContent>
       </Card>
     );

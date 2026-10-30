@@ -28,7 +28,7 @@ export interface AgriSem3SubjectSpec {
   isCore: boolean;
   semester: 3;
   credits: number;
-  totalUnits: 5;
+  totalUnits: number;
   discipline: "AGRICULTURE";
   description: string;
 }
@@ -42,7 +42,7 @@ export const AUTHORITATIVE_AGRI_SEM3_SUBJECTS: AgriSem3SubjectSpec[] = [
     isCore: true,
     semester: 3,
     credits: 2,
-    totalUnits: 5,
+    totalUnits: 6,
     discipline: "AGRICULTURE",
     description: "Extension educational systems, teaching methods, communication models, adoption and diffusion of agricultural innovations, and rural development programs in India.",
   },
@@ -246,8 +246,9 @@ export async function enforceAgricultureSem3Curriculum() {
 
     subjectIdMap.set(spec.code, existing.id);
 
-    // Ensure 5 units exist for each subject
-    for (let u = 1; u <= 5; u++) {
+    // Ensure verified units exist for each subject (6 for AEE103 per syllabus, 5 for others)
+    const maxUnits = spec.code === "AEE103" ? 6 : 5;
+    for (let u = 1; u <= maxUnits; u++) {
       const [unitExists] = await db
         .select()
         .from(units)

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useRoute, Link } from "wouter";
+import { useRoute, Link, Redirect } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { SEO } from "@/components/seo";
 import { AdSlot } from "@/components/ads/AdSlot";
@@ -35,6 +35,7 @@ const SUBJECT_NAME_MAP: Record<string, string> = {
   MTH165: "Engineering Mathematics II",
   PHY110: "Engineering Physics",
   MEC136: "Engineering Graphics & Design",
+  AEE103: "Fundamentals of Extension Education",
 };
 
 export default function SubjectPage() {
@@ -46,6 +47,10 @@ export default function SubjectPage() {
   const code = decodeURIComponent(rawCode).trim().toUpperCase();
   const activeUnitNumber = unitParams?.unitNumber ? Number(unitParams.unitNumber) : null;
   const activeTab = tabParams?.tab?.toLowerCase();
+
+  if (code === "AEE103") {
+    return <Redirect to="/programmes/BSC-AGRI/semesters/3/AEE103" />;
+  }
 
   const [expandedUnit, setExpandedUnit] = useState<number | null>(activeUnitNumber || 1);
 

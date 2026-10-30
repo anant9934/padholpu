@@ -35,6 +35,7 @@ import sitemapsRouter from "./routes/sitemaps";
 import testimonialsRouter from "./routes/testimonials";
 import adminTestimonialsRouter from "./routes/admin/testimonials";
 import ecosystemRouter from "./routes/ecosystem";
+import learningSystemRouter from "./routes/learning-system";
 
 // Simple memory-based rate limiter for contact form
 const contactRateLimit = new Map<string, number>();
@@ -164,6 +165,7 @@ export async function registerRoutes(
   app.use("/api/exams", examsRouter);
   app.use("/api/notifications", notificationsRouter);
   app.use("/api", academicRouter); // Academic OS: courses, dashboard, progress, search, taxonomy
+  app.use(learningSystemRouter); // Padho LPU Syllabus Learning System: AEE103 notes reader, MCQs, subjective, flashcards, practicals
   app.use("/api/ecosystem", ecosystemRouter); // Padho LPU 2.0 Academic Ecosystem: flashcards, subjective bank, submissions, study planner, workspace, study groups, feedback, AI
   app.use("/", sitemapsRouter); // Dynamic XML sitemaps: /sitemap.xml, /sitemap-*.xml
 

@@ -281,16 +281,17 @@ async function runAgricultureSem3CurriculumSuite() {
   });
 
   // ── TEST 11: Syllabus Units Architecture Intact ───────────────────────────
-  await test("All 13 subjects have 5 verified academic units each", async () => {
+  await test("All 13 subjects have verified academic units per syllabus (6 for AEE103, 5 for others)", async () => {
     for (const code of ALL_EXPECTED_CODES) {
       const [subj] = await db.select().from(subjects).where(eq(subjects.code, code));
       assert(subj, `Subject ${code} must exist in database`);
       
       const subjectUnits = await db.select().from(units).where(eq(units.subjectId, subj.id));
+      const expectedUnits = code === "AEE103" ? 6 : 5;
       assert.strictEqual(
         subjectUnits.length,
-        5,
-        `Subject ${code} must have exactly 5 units (found ${subjectUnits.length})`
+        expectedUnits,
+        `Subject ${code} must have exactly ${expectedUnits} units (found ${subjectUnits.length})`
       );
     }
   });
