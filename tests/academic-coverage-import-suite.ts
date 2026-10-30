@@ -313,20 +313,32 @@ async function runCoverageAndImportSuite() {
   });
 
   // ── 4. End-to-End Live Database Content Verification ───────
-  await asyncTest("Live Database: Coverage report runs against production Neon DB and returns real data", async () => {
-    const report = await AcademicCoverageService.getCoverageReport();
-    assert(report.summary.totalProgrammes > 0, "Must report existing programmes");
-    assert(report.summary.totalMappedSubjects > 0, "Must report mapped subjects");
-    assert(report.programmes.length > 0, "Must list programme coverage");
-    
-    // BALLB should have published resources from our seed
-    const ballb = report.programmes.find(p => p.programmeCode === "BALLB");
-    assert(ballb, "BALLB programme must exist in coverage report");
-    assert(ballb.subjectsWithNotes > 0, `BALLB should have subjects with notes (actual: ${ballb.subjectsWithNotes})`);
-    assert(ballb.subjectsWithQuestions > 0, `BALLB should have subjects with questions (actual: ${ballb.subjectsWithQuestions})`);
-    assert(ballb.coveragePercentage > 0, `BALLB coverage should be > 0% (actual: ${ballb.coveragePercentage}%)`);
-    assert(["CONTENT_IN_PROGRESS", "MATERIAL_AVAILABLE", "COVERAGE_REVIEWED"].includes(ballb.status), `Status ${ballb.status} must be valid`);
-  });
+  const hasDatabaseConnection = Boolean(
+    process.env.DATABASE_URL ||
+    process.env.POSTGRES_URL ||
+    process.env.STUDYLPU_DATABASE_URL ||
+    process.env.NEON_DATABASE_URL ||
+    process.env.POSTGRES_PRISMA_URL
+  );
+
+  if (hasDatabaseConnection) {
+    await asyncTest("Live Database: Coverage report runs against production Neon DB and returns real data", async () => {
+      const report = await AcademicCoverageService.getCoverageReport();
+      assert(report.summary.totalProgrammes > 0, "Must report existing programmes");
+      assert(report.summary.totalMappedSubjects > 0, "Must report mapped subjects");
+      assert(report.programmes.length > 0, "Must list programme coverage");
+      
+      // BALLB should have published resources from our seed
+      const ballb = report.programmes.find(p => p.programmeCode === "BALLB");
+      assert(ballb, "BALLB programme must exist in coverage report");
+      assert(ballb.subjectsWithNotes > 0, `BALLB should have subjects with notes (actual: ${ballb.subjectsWithNotes})`);
+      assert(ballb.subjectsWithQuestions > 0, `BALLB should have subjects with questions (actual: ${ballb.subjectsWithQuestions})`);
+      assert(ballb.coveragePercentage > 0, `BALLB coverage should be > 0% (actual: ${ballb.coveragePercentage}%)`);
+      assert(["CONTENT_IN_PROGRESS", "MATERIAL_AVAILABLE", "COVERAGE_REVIEWED"].includes(ballb.status), `Status ${ballb.status} must be valid`);
+    });
+  } else {
+    console.log("⏭️ SKIP: Live database coverage check (DATABASE_URL is not configured).");
+  }
 
   console.log("==========================================================");
   console.log(`TOTAL PHASE 6 COVERAGE & IMPORT TESTS: ${total}`);
