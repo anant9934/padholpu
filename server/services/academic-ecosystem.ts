@@ -497,9 +497,9 @@ export async function generateStudyPlan(
     throw new Error("Exam date must be scheduled in the future.");
   }
 
-  const normalizedCodes = [...new Set(
+  const normalizedCodes = Array.from(new Set(
     selectedSubjectCodes.map((code) => code.trim().toUpperCase()).filter(Boolean)
-  )];
+  ));
   if (normalizedCodes.length === 0) {
     throw new Error("Please specify at least one subject code.");
   }
@@ -513,10 +513,18 @@ export async function generateStudyPlan(
 
   validateStudyPlanCurriculum(normalizedCodes, subjectRows, unitsList);
 
-  const subjectById = new Map(subjectRows.map((subject: any) => [subject.id, subject]));
+  const subjectById = new Map<number, any>(
+    subjectRows.map((subject: any) => [Number(subject.id), subject] as [number, any])
+  );
   const dayMs = 24 * 60 * 60 * 1000;
   const diffDays = Math.max(1, Math.ceil((targetExamDate.getTime() - now.getTime()) / dayMs));
-  const tasksToInsert = unitsList.map((unit: any, index: number) => {
+  const tasksToInsert: Array<{
+    subjectCode: string;
+    unitNumber: number;
+    title: string;
+    scheduledDate: string;
+    isCompleted: boolean;
+  }> = unitsList.map((unit: any, index: number) => {
     const dayOffset = Math.min(diffDays - 1, Math.floor(index * diffDays / unitsList.length));
     const targetDate = new Date(now.getTime() + dayOffset * dayMs);
     const subject = subjectById.get(unit.subjectId);
@@ -534,7 +542,7 @@ export async function generateStudyPlan(
   });
 
   // Create the plan and its syllabus-backed tasks atomically.
-  return db.transaction(async (tx) => {
+  return db.transaction(async (tx: any) => {
     const [plan] = await tx.insert(studyPlans).values({
       userId,
       title,
@@ -546,7 +554,13 @@ export async function generateStudyPlan(
     }).returning();
 
     await tx.insert(studyPlanTasks).values(
-      tasksToInsert.map((task) => ({ ...task, planId: plan.id }))
+      tasksToInsert.map((task: {
+        subjectCode: string;
+        unitNumber: number;
+        title: string;
+        scheduledDate: string;
+        isCompleted: boolean;
+      }) => ({ ...task, planId: plan.id }))
     );
 
     return plan;
