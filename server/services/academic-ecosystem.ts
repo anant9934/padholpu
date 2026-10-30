@@ -520,6 +520,9 @@ export async function generateStudyPlan(
     const dayOffset = Math.min(diffDays - 1, Math.floor(index * diffDays / unitsList.length));
     const targetDate = new Date(now.getTime() + dayOffset * dayMs);
     const subject = subjectById.get(unit.subjectId);
+    if (!subject) {
+      throw new Error(`A syllabus unit references an unselected subject (unit ID: ${unit.id}).`);
+    }
 
     return {
       subjectCode: subject.code,
@@ -1042,7 +1045,7 @@ export async function getConceptExplanation(topic: string, subjectCode?: string)
   return {
     isAIGenerated: false,
     explanation:
-      `### No source-backed explanation is available yet\\n\\n` +
+      `### No source-backed explanation is available yet\n\n` +
       `I could not find enough approved, subject-specific material for **${cleanTopic}**${subjectContext}. ` +
       `I will not invent an explanation or claim that it is verified. Open the relevant subject notes or choose a syllabus topic that already has published material.`,
     keyPoints: [
