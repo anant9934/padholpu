@@ -98,7 +98,7 @@ async function runAcademicSuite() {
     "Source-limited tutor response explains its evidence boundary");
 
   console.log("==================================================");
-  console.log("ALL 6 ACADEMIC ECOSYSTEM TESTS PASSED");
+  console.log("ALL ACADEMIC ECOSYSTEM TESTS PASSED");
   console.log("==================================================");
 }
 
