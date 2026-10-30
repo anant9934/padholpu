@@ -62,6 +62,17 @@ async function runAcademicSuite() {
   assert(scheduled[0].scheduledDate === "2026-10-30", "First unit is scheduled on the planning date");
   assert(scheduled[2].scheduledDate === "2026-11-01", "Final unit is scheduled before the exam date");
   assert(scheduled.every((task) => task.title.includes(task.subjectCode)), "Scheduled tasks preserve their subject code");
+  let sameDayExamRejected = false;
+  try {
+    distributeStudyPlanUnits(
+      [{ subjectCode: "AEE103", unitNumber: 1, unitName: "Education" }],
+      new Date("2026-10-30T00:00:00.000Z"),
+      new Date("2026-10-30T00:00:00.000Z")
+    );
+  } catch {
+    sameDayExamRejected = true;
+  }
+  assert(sameDayExamRejected, "Planner rejects schedules with no days before the exam");
 
   // 7. The rule-based tutor retrieves AEE103 source content and never calls a model.
   const previousGeminiKey = process.env.GEMINI_API_KEY;
