@@ -1123,7 +1123,12 @@ export async function getConceptExplanation(
       const unitContext = [unit.title, ...unit.syllabusTopics].join(" ");
       for (const section of unit.notes.sections) {
         const subContext = (section.subsections || [])
-          .map((subsection) => `${subsection.subheading} ${subsection.content} ${(subsection.keyPoints || []).join(" ")}`)
+          .map((subsection) => {
+            const tableText = subsection.table
+              ? [subsection.table.headers.join(" "), ...subsection.table.rows.map((row) => row.join(" "))].join(" ")
+              : "";
+            return `${subsection.subheading} ${subsection.content} ${(subsection.keyPoints || []).join(" ")} ${tableText}`;
+          })
           .join(" ");
         const body = [section.heading, section.content, subContext].join(" ");
         const matched = tokens.filter((token) => `${unitContext} ${body}`.toLowerCase().includes(token));
@@ -1146,9 +1151,12 @@ export async function getConceptExplanation(
 
     const explanation = selected.map((candidate) => {
       const subsectionContent = (candidate.section.subsections || [])
-        .map((subsection) =>
-          `#### ${subsection.subheading}\n${subsection.content}\n${(subsection.keyPoints || []).map((point) => `- ${point}`).join("\n")}`
-        )
+        .map((subsection) => {
+          const tableContent = subsection.table
+            ? `\n${subsection.table.headers.join(" | ")}\n${subsection.table.rows.map((row) => row.join(" | ")).join("\n")}`
+            : "";
+          return `#### ${subsection.subheading}\n${subsection.content}\n${(subsection.keyPoints || []).map((point) => `- ${point}`).join("\n")}${tableContent}`;
+        })
         .join("\n\n");
       const content = [candidate.section.content, subsectionContent].filter(Boolean).join("\n\n");
       return `### Unit ${candidate.unit.unitNumber}: ${candidate.unit.title}\n**${candidate.section.heading}**\n\n${content.slice(0, 1800)}`;
