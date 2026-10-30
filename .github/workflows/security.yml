@@ -26,7 +26,11 @@ jobs:
         run: npm ci
 
       - name: Run npm audit (SCA)
+        id: dependency_audit
         run: npm audit --audit-level=high
+        # Continue so typecheck, tests, and builds still produce useful results.
+        # A final gate below keeps high-severity findings release-blocking.
+        continue-on-error: true
 
       - name: TypeScript Type Check
         run: npm run check
@@ -52,6 +56,12 @@ jobs:
           echo "Verifying no local .env files or credentials are tracked in Git..."
           ! git ls-files | grep -E '(^\.env$|^\.env\.local$|^\.env\.production$|\.pem$|\.key$)' || (echo "Sensitive file committed!" && exit 1)
           echo "Repository integrity verified: zero sensitive files tracked."
+
+      - name: Enforce dependency audit release gate
+        if: always() && steps.dependency_audit.outcome == 'failure'
+        run: |
+          echo "High-severity dependency advisories remain. Resolve them before release."
+          exit 1
       
   codeql-analysis:
     name: CodeQL (SAST)
