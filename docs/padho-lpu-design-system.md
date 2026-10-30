@@ -133,3 +133,4 @@ Self-hosted variable fonts (`/fonts/inter-latin.woff2` and `/fonts/playfair-disp
 1. **Strict No-Slop Rule:** Components must never introduce arbitrary inline styles or one-off hex values.
 2. **Review Gate:** Every new component or page must import tokens from `@/components/ui/` primitives.
 3. **Automated Verification:** All CSS classes and Tailwind utilities must compile cleanly without linting warnings or broken responsive overrides.
+

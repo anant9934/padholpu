@@ -189,3 +189,4 @@ We implement the **Three-Tier Reduced Motion Standard**:
 ```
 
 In JavaScript, components check `useReducedMotion()` from `framer-motion` to automatically bypass spatial translation and fallback to subtle opacity transitions.
+

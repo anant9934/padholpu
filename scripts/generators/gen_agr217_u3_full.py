@@ -1,0 +1,1110 @@
+import json
+from build_agr217_u3 import u3_data
+
+mcqs = [
+    # --- EASY (20) ---
+    {
+        "id": "AGR217-U3-MCQ01",
+        "syllabusTopic": "Soil health, the Soil Food Web, indigenous microorganisms (IMO), and biological nutrient recycling",
+        "difficulty": "Easy",
+        "questionText": "What glycoprotein is secreted by arbuscular mycorrhizal fungi (AMF) to bind soil mineral particles into water-stable aggregates?",
+        "options": {"A": "Glomalin", "B": "Cellulose", "C": "Lignin", "D": "Keratin"},
+        "correctOption": "A",
+        "explanation": "Glomalin is a hydrophobic glycoprotein produced abundantly on the hyphae of arbuscular mycorrhizal fungi (AMF), acting as a biological glue for macro-aggregates.",
+        "tags": ["Glomalin", "Mycorrhizae", "Soil Aggregation"]
+    },
+    {
+        "id": "AGR217-U3-MCQ02",
+        "syllabusTopic": "Earthworms in Natural Farming: deep-burrowing native endogeic and anecic species vs exotic epigeic vermicomposting worms",
+        "difficulty": "Easy",
+        "questionText": "Which ecological category of earthworms constructs permanent, vertical burrows extending 2 to 3 meters deep into subsoil horizons?",
+        "options": {"A": "Epigeic earthworms", "B": "Anecic earthworms", "C": "Aquatic earthworms", "D": "Parasitic roundworms"},
+        "correctOption": "B",
+        "explanation": "Anecic earthworms (e.g., Lampito mauritii) are large, deep-burrowing species that create permanent vertical tunnels down to 2-3 meters, pulling surface litter into subsoils.",
+        "tags": ["Anecic Earthworms", "Earthworm Ecology", "Burrows"]
+    },
+    {
+        "id": "AGR217-U3-MCQ03",
+        "syllabusTopic": "Waaphasa concept: soil pore microclimate (50% water vapor and 50% air), root respiration, and water conservation",
+        "difficulty": "Easy",
+        "questionText": "What is the optimal volumetric equilibrium of air and water vapor in soil pore spaces defining 'Waaphasa'?",
+        "options": {"A": "100% liquid water and 0% air", "B": "50% air (oxygen) and 50% water vapor", "C": "90% air and 10% water", "D": "0% air and 100% nitrogen"},
+        "correctOption": "B",
+        "explanation": "Waaphasa is defined as the microclimatic equilibrium in soil pore spaces containing 50% air (oxygen) and 50% water vapor, preventing root anoxia.",
+        "tags": ["Waaphasa", "Pore Equilibrium", "Root Aeration"]
+    },
+    {
+        "id": "AGR217-U3-MCQ04",
+        "syllabusTopic": "Acchadana (Mulching): Soil mulch, Straw mulch, and Live mulch (legume cover crops) for thermal and erosion control",
+        "difficulty": "Easy",
+        "questionText": "What does 'Shushka Acchadana' specifically refer to in Natural Farming?",
+        "options": {"A": "Plastic black film mulching", "B": "Dry straw and crop residue biomass mulching", "C": "Flooding fields with muddy water", "D": "Spraying chemical wax on leaves"},
+        "correctOption": "B",
+        "explanation": "'Shushka' means dry. Shushka Acchadana is mulching with dry crop residues, straw, fallen leaves, and stubble (3-5 t/ha) across the soil surface.",
+        "tags": ["Shushka Acchadana", "Straw Mulch", "Mulching"]
+    },
+    {
+        "id": "AGR217-U3-MCQ05",
+        "syllabusTopic": "Acchadana (Mulching): Soil mulch, Straw mulch, and Live mulch (legume cover crops) for thermal and erosion control",
+        "difficulty": "Easy",
+        "questionText": "What is 'Jeeva Acchadana' (Live Mulch)?",
+        "options": {"A": "Intercropping living ground-cover crops, especially spreading pulses and legumes", "B": "Applying dead animal carcasses", "C": "Spraying green synthetic paint on bare soil", "D": "Weeding out all plants"},
+        "correctOption": "A",
+        "explanation": "Jeeva Acchadana is live mulching—growing low-stature living cover crops like cowpea, moong, or clover between rows of the main crop to shade soil and fix nitrogen.",
+        "tags": ["Jeeva Acchadana", "Live Mulch", "Cover Crops"]
+    },
+    {
+        "id": "AGR217-U3-MCQ06",
+        "syllabusTopic": "Soil organic carbon (SOC) sequestration, humus formation, aggregate stability, and climate resilience",
+        "difficulty": "Easy",
+        "questionText": "What long-term effect does continuous mechanical plowing have on Soil Organic Carbon (SOC)?",
+        "options": {"A": "Doubles SOC every season", "B": "Accelerates microbial oxidation of soil organic matter, releasing stored carbon into the atmosphere as CO2 gas", "C": "Turns organic carbon into pure diamonds", "D": "Prevents any decomposition from occurring"},
+        "correctOption": "B",
+        "explanation": "Plowing inverts the soil, shattering aggregates and exposing buried organic carbon to intense aeration and heat, accelerating microbial oxidation into CO2.",
+        "tags": ["Plowing", "SOC Oxidation", "Soil Degradation"]
+    },
+    {
+        "id": "AGR217-U3-MCQ07",
+        "syllabusTopic": "Earthworms in Natural Farming: deep-burrowing native endogeic and anecic species vs exotic epigeic vermicomposting worms",
+        "difficulty": "Easy",
+        "questionText": "How do earthworm castings compare nutritionally to surrounding un-ingested bulk topsoil?",
+        "options": {"A": "They contain zero nutrients", "B": "They contain 5 times more available N, 7 times more available P, and 11 times more available K", "C": "They are highly toxic and acidic", "D": "They contain only synthetic chemicals"},
+        "correctOption": "B",
+        "explanation": "Earthworm digestion concentrates and mineralizes plant nutrients, yielding castings with roughly 5x more N, 7x more P, and 11x more K than bulk topsoil.",
+        "tags": ["Earthworm Castings", "Nutrient Concentration", "Soil Fertility"]
+    },
+    {
+        "id": "AGR217-U3-MCQ08",
+        "syllabusTopic": "Waaphasa concept: soil pore microclimate (50% water vapor and 50% air), root respiration, and water conservation",
+        "difficulty": "Easy",
+        "questionText": "Which field irrigation layout is standardly recommended in Natural Farming to maintain Waaphasa in crop rows?",
+        "options": {"A": "Continuous basin flood irrigation", "B": "Alternate-furrow irrigation in ridge-and-furrow systems", "C": "Submerging fields under 30 cm standing water", "D": "Spraying hot steam on leaves"},
+        "correctOption": "B",
+        "explanation": "Alternate furrow irrigation applies water to every second furrow, allowing lateral capillary seepage to moisten ridge roots while leaving adjacent furrows aerated.",
+        "tags": ["Alternate Furrow", "Waaphasa Irrigation", "Water Economy"]
+    },
+    {
+        "id": "AGR217-U3-MCQ09",
+        "syllabusTopic": "Acchadana (Mulching): Soil mulch, Straw mulch, and Live mulch (legume cover crops) for thermal and erosion control",
+        "difficulty": "Easy",
+        "questionText": "How much cooler does a thick straw mulch layer keep the topsoil surface during hot summer months?",
+        "options": {"A": "0 degrees C cooler", "B": "4 to 8 degrees C cooler", "C": "50 degrees C cooler", "D": "Mulch makes soil 20 degrees hotter"},
+        "correctOption": "B",
+        "explanation": "A 3-5 t/ha residue mulch insulates the soil surface against direct solar radiation, lowering daytime topsoil temperatures by 4 to 8°C.",
+        "tags": ["Thermal Buffering", "Straw Mulch", "Acchadana"]
+    },
+    {
+        "id": "AGR217-U3-MCQ10",
+        "syllabusTopic": "Soil health, the Soil Food Web, indigenous microorganisms (IMO), and biological nutrient recycling",
+        "difficulty": "Easy",
+        "questionText": "In the Soil Food Web, what critical role do bacterial-feeding nematodes and protozoa play in plant nutrition?",
+        "options": {"A": "They kill all earthworms", "B": "They consume bacteria and excrete surplus nitrogen as plant-available ammonium (NH4+)", "C": "They photosynthesize in the dark", "D": "They eat plant leaves at night"},
+        "correctOption": "B",
+        "explanation": "Protozoa and nematodes have a wider C:N ratio (30:1) than the bacteria they consume (5:1). As they graze on bacteria, they excrete excess nitrogen as plant-absorbable ammonium.",
+        "tags": ["Soil Food Web", "Nematodes", "Nutrient Mineralization"]
+    },
+    {
+        "id": "AGR217-U3-MCQ11",
+        "syllabusTopic": "Earthworms in Natural Farming: deep-burrowing native endogeic and anecic species vs exotic epigeic vermicomposting worms",
+        "difficulty": "Easy",
+        "questionText": "Which of the following is a native Indian earthworm species that builds permanent burrows in tropical soils?",
+        "options": {"A": "Eisenia fetida", "B": "Lampito mauritii", "C": "Dendrobaena veneta", "D": "Lumbricus rubellus"},
+        "correctOption": "B",
+        "explanation": "Lampito mauritii is an indigenous anecic earthworm adapted to tropical Indian soils, constructing deep vertical burrows down to 2-3 meters.",
+        "tags": ["Lampito mauritii", "Native Earthworms", "Taxonomy"]
+    },
+    {
+        "id": "AGR217-U3-MCQ12",
+        "syllabusTopic": "Waaphasa concept: soil pore microclimate (50% water vapor and 50% air), root respiration, and water conservation",
+        "difficulty": "Easy",
+        "questionText": "Why does continuous standing water in a field inhibit root nutrient absorption in upland crops?",
+        "options": {"A": "Water dissolves plant leaves", "B": "Lack of oxygen halts root aerobic respiration, preventing ATP synthesis needed for active nutrient uptake", "C": "Water cools the roots to freezing point", "D": "Roots only absorb nutrients in dry dust"},
+        "correctOption": "B",
+        "explanation": "Active mineral nutrient uptake is an ATP-dependent metabolic process driven by aerobic respiration. Waterlogging expels soil oxygen, halting root respiration and nutrient uptake.",
+        "tags": ["Root Respiration", "Anoxia", "Active Transport"]
+    },
+    {
+        "id": "AGR217-U3-MCQ13",
+        "syllabusTopic": "Acchadana (Mulching): Soil mulch, Straw mulch, and Live mulch (legume cover crops) for thermal and erosion control",
+        "difficulty": "Easy",
+        "questionText": "What is 'Mrida Acchadana' (Soil Mulch / Dust Mulch)?",
+        "options": {"A": "Covering the field with clay bricks", "B": "Shallow surface cultivation (2-3 cm) that breaks capillary tubes and halts upward evaporative water loss", "C": "Digging trenches 5 meters deep", "D": "Burying all crop seeds in concrete"},
+        "correctOption": "B",
+        "explanation": "Mrida Acchadana is shallow surface soil hoeing that severs continuous capillary pores, trapping moisture in subsoil horizons.",
+        "tags": ["Mrida Acchadana", "Soil Mulch", "Capillarity"]
+    },
+    {
+        "id": "AGR217-U3-MCQ14",
+        "syllabusTopic": "Soil organic carbon (SOC) sequestration, humus formation, aggregate stability, and climate resilience",
+        "difficulty": "Easy",
+        "questionText": "Approximately how much additional water can one hectare of soil store for every 1% increase in soil organic matter?",
+        "options": {"A": "100 liters", "B": "140,000 to 200,000 liters", "C": "5 liters", "D": "Zero additional water"},
+        "correctOption": "B",
+        "explanation": "Every 1% increase in soil organic matter expands soil moisture holding capacity by roughly 140,000 to 200,000 liters per hectare, buffering crops against mid-season droughts.",
+        "tags": ["Water Holding Capacity", "SOC", "Drought Buffering"]
+    },
+    {
+        "id": "AGR217-U3-MCQ15",
+        "syllabusTopic": "Soil health, the Soil Food Web, indigenous microorganisms (IMO), and biological nutrient recycling",
+        "difficulty": "Easy",
+        "questionText": "What percentage of total photosynthetically fixed carbon do healthy crop canopies typically pump into the rhizosphere as root exudates?",
+        "options": {"A": "0%", "B": "20% to 40%", "C": "99%", "D": "100%"},
+        "correctOption": "B",
+        "explanation": "Plants invest 20% to 40% of their photosynthetically fixed carbon into root exudates (mucilage, sugars, amino acids) specifically to feed and cultivate beneficial rhizosphere microbes.",
+        "tags": ["Root Exudates", "Rhizosphere", "Carbon Allocation"]
+    },
+    {
+        "id": "AGR217-U3-MCQ16",
+        "syllabusTopic": "Earthworms in Natural Farming: deep-burrowing native endogeic and anecic species vs exotic epigeic vermicomposting worms",
+        "difficulty": "Easy",
+        "questionText": "Why is the exotic composting earthworm Eisenia fetida called an 'epigeic' worm?",
+        "options": {"A": "It lives only in water", "B": "It lives on the surface litter layer and does not construct deep vertical burrows in soil", "C": "It lives 10 meters deep in rock", "D": "It flies in the air"},
+        "correctOption": "B",
+        "explanation": "'Epigeic' means surface-dwelling. Eisenia fetida feeds on moist decaying organic matter on the soil surface and cannot burrow deep into mineral soil horizons.",
+        "tags": ["Epigeic Worms", "Eisenia fetida", "Earthworm Ecology"]
+    },
+    {
+        "id": "AGR217-U3-MCQ17",
+        "syllabusTopic": "Waaphasa concept: soil pore microclimate (50% water vapor and 50% air), root respiration, and water conservation",
+        "difficulty": "Easy",
+        "questionText": "At what time of day is irrigation recommended in Natural Farming to support Waaphasa and minimize evaporative loss?",
+        "options": {"A": "Solar noon (12:00 PM)", "B": "Late afternoon or evening", "C": "Mid-morning", "D": "Only during rainstorms"},
+        "correctOption": "B",
+        "explanation": "Watering during late afternoons allows water to infiltrate and diffuse laterally overnight under low evaporative demand, establishing optimal Waaphasa without rapid vapor loss.",
+        "tags": ["Irrigation Timing", "Evening Scheduling", "Waaphasa"]
+    },
+    {
+        "id": "AGR217-U3-MCQ18",
+        "syllabusTopic": "Acchadana (Mulching): Soil mulch, Straw mulch, and Live mulch (legume cover crops) for thermal and erosion control",
+        "difficulty": "Easy",
+        "questionText": "How does surface straw mulching protect agricultural soil from water erosion during heavy monsoonal downpours?",
+        "options": {"A": "It freezes the raindrops", "B": "It intercepts and absorbs the kinetic energy of falling raindrops, preventing aggregate breakdown, detachment, and surface crusting", "C": "It reflects rain back into clouds", "D": "It dissolves rainwater into nitrogen"},
+        "correctOption": "B",
+        "explanation": "Falling raindrops have significant kinetic energy that shatters bare soil aggregates. Straw mulch absorbs this impact, preserving soil structure and promoting calm infiltration.",
+        "tags": ["Erosion Control", "Raindrop Kinetic Energy", "Mulch"]
+    },
+    {
+        "id": "AGR217-U3-MCQ19",
+        "syllabusTopic": "Soil organic carbon (SOC) sequestration, humus formation, aggregate stability, and climate resilience",
+        "difficulty": "Easy",
+        "questionText": "What stable, dark organic substance is formed in soil through the humification of crop residues by fungi and actinomycetes?",
+        "options": {"A": "Humus", "B": "Sand", "C": "Quartz", "D": "Urea crystals"},
+        "correctOption": "A",
+        "explanation": "Humus is the dark, complex, recalcitrant organo-mineral substance synthesized by microbial decomposition, providing high cation exchange capacity and long-term soil fertility.",
+        "tags": ["Humus", "Humification", "Soil Carbon"]
+    },
+    {
+        "id": "AGR217-U3-MCQ20",
+        "syllabusTopic": "Soil health, the Soil Food Web, indigenous microorganisms (IMO), and biological nutrient recycling",
+        "difficulty": "Easy",
+        "questionText": "What term is used in Natural Farming to describe the diverse, beneficial native microbial consortia collected from virgin soils?",
+        "options": {"A": "Indigenous Microorganisms (IMO)", "B": "Genetically Modified Organisms (GMO)", "C": "Inorganic Mineral Oxides", "D": "Industrial Manufactured Oxidizers"},
+        "correctOption": "A",
+        "explanation": "IMO stands for Indigenous Microorganisms—diverse local microbial communities collected from undisturbed forest soils and field bunds adapted to local climate and ecology.",
+        "tags": ["IMO", "Indigenous Microorganisms", "Terminology"]
+    },
+
+    # --- MEDIUM (25) ---
+    {
+        "id": "AGR217-U3-MCQ21",
+        "syllabusTopic": "Soil health, the Soil Food Web, indigenous microorganisms (IMO), and biological nutrient recycling",
+        "difficulty": "Medium",
+        "questionText": "How does the 'Poop and Pee' nutrient cycling loop operate between protozoa, nematodes, and plant roots in the Soil Food Web?",
+        "options": {"A": "Nematodes eat plant roots exclusively", "B": "Protozoa and nematodes consume bacteria with low C:N ratios (5:1) and excrete surplus nitrogen as mineralized ammonium (NH4+) directly into the root zone", "C": "Bacteria consume nematodes and release nitrogen gas", "D": "Protozoa convert plant roots into sugar"},
+        "correctOption": "B",
+        "explanation": "Bacterial cells have a high protein/nitrogen content (C:N 5:1). Protozoa and nematodes have a wider C:N ratio (30:1); to meet carbon needs, they consume excess bacteria and excrete surplus N as plant-available NH4+.",
+        "tags": ["Soil Food Web", "Microbial Loop", "Nitrogen Mineralization"]
+    },
+    {
+        "id": "AGR217-U3-MCQ22",
+        "syllabusTopic": "Soil health, the Soil Food Web, indigenous microorganisms (IMO), and biological nutrient recycling",
+        "difficulty": "Medium",
+        "questionText": "Why does continuous mechanical soil plowing suppress and destroy arbuscular mycorrhizal fungal (AMF) networks?",
+        "options": {"A": "Plowing exposes AMF to too much water", "B": "Mechanical tillage physically severs the fragile extraradical hyphal networks and buries dormant resting spores too deep for emerging crop roots to colonize", "C": "Plowing turns mycorrhizae into bacteria", "D": "Tillage heats the soil to 100 degrees C"},
+        "correctOption": "B",
+        "explanation": "AMF form continuous, delicate hyphal networks extending meters through soil. Mechanical discing and harrowing shatter these networks and bury spores deep in the subsoil, halting root colonization.",
+        "tags": ["AMF Suppression", "Tillage Impact", "Mycorrhizae"]
+    },
+    {
+        "id": "AGR217-U3-MCQ23",
+        "syllabusTopic": "Earthworms in Natural Farming: deep-burrowing native endogeic and anecic species vs exotic epigeic vermicomposting worms",
+        "difficulty": "Medium",
+        "questionText": "Why does Subhash Palekar strongly critique commercial vermicomposting using Eisenia fetida in tropical Indian agriculture?",
+        "options": {"A": "Eisenia fetida eats live cows", "B": "Eisenia fetida is a European epigeic litter-dweller that requires constant artificial moisture and perishes under tropical field heat; it consumes surface carbon without constructing deep vertical burrows to aerate subsoils", "C": "It is an illegal species banned by the Supreme Court", "D": "It turns the soil permanently acidic"},
+        "correctOption": "B",
+        "explanation": "Palekar emphasizes that Eisenia fetida is a surface litter feeder suited only for artificial composting bins. When introduced into hot tropical field soils, it dies. Natural farming instead activates native deep-burrowing geophagous worms.",
+        "tags": ["Eisenia fetida Critique", "Palekar", "Earthworm Ecology"]
+    },
+    {
+        "id": "AGR217-U3-MCQ24",
+        "syllabusTopic": "Earthworms in Natural Farming: deep-burrowing native endogeic and anecic species vs exotic epigeic vermicomposting worms",
+        "difficulty": "Medium",
+        "questionText": "What unique physical and hydraulic role do the vertical burrows constructed by anecic earthworms play in soil hydrology?",
+        "options": {"A": "They act as underground chimneys that dry out the soil", "B": "They function as continuous macro-biopores that increase hydraulic conductivity and water infiltration by 200-300%, eliminating surface runoff and preventing waterlogging", "C": "They pump groundwater into rivers", "D": "They trap air permanently and stop water infiltration"},
+        "correctOption": "B",
+        "explanation": "Anecic earthworms construct vertical channels lined with smooth, nutrient-rich mucus. These biopores channel heavy monsoonal rain directly into subsoil aquifers, increasing infiltration and eliminating surface runoff.",
+        "tags": ["Biopores", "Hydrology", "Anecic Burrows"]
+    },
+    {
+        "id": "AGR217-U3-MCQ25",
+        "syllabusTopic": "Waaphasa concept: soil pore microclimate (50% water vapor and 50% air), root respiration, and water conservation",
+        "difficulty": "Medium",
+        "questionText": "What thermodynamic mechanism explains why plant root hairs absorb water vapor under Waaphasa conditions?",
+        "options": {"A": "Plant roots generate magnetic fields that pull water droplets", "B": "Water potential in aerated soil pores at 100% relative humidity is close to zero, whereas cell water potential in root cortical cells is negative (-0.5 to -1.5 MPa), driving passive thermodynamic vapor diffusion and capillary condensation into root hairs", "C": "Vapor is actively pumped by plant leaf stomata", "D": "Water vapor contains synthetic hormones that dissolve cell walls"},
+        "correctOption": "B",
+        "explanation": "Water absorption follows water potential gradients. Under Waaphasa, saturated vapor in soil pores diffuses down the free-energy gradient into negative-potential root cells, sustaining hydration alongside oxygen for respiration.",
+        "tags": ["Water Potential", "Vapor Diffusion", "Root Biophysics"]
+    },
+    {
+        "id": "AGR217-U3-MCQ26",
+        "syllabusTopic": "Waaphasa concept: soil pore microclimate (50% water vapor and 50% air), root respiration, and water conservation",
+        "difficulty": "Medium",
+        "questionText": "Why is alternate-furrow irrigation more effective than every-furrow irrigation in preserving the Waaphasa condition?",
+        "options": {"A": "Alternate furrows generate electricity in the soil", "B": "Water applied in every second furrow seeps laterally into the ridge base while the adjacent un-irrigated furrow remains dry and open, maintaining an uninterrupted pathway for atmospheric oxygen to enter root zones", "C": "It cuts tractor fuel costs by 100%", "D": "It prevents weeds from ever growing"},
+        "correctOption": "B",
+        "explanation": "Alternate furrow irrigation leaves every other furrow dry. Water diffuses laterally into the crop ridge, while the dry furrow acts as an open chimney allowing continuous atmospheric oxygen diffusion into the rhizosphere.",
+        "tags": ["Alternate Furrow", "Aeration Pathway", "Waaphasa Dynamics"]
+    },
+    {
+        "id": "AGR217-U3-MCQ27",
+        "syllabusTopic": "Acchadana (Mulching): Soil mulch, Straw mulch, and Live mulch (legume cover crops) for thermal and erosion control",
+        "difficulty": "Medium",
+        "questionText": "How does the practice of 'Mrida Acchadana' (Soil Mulching) disrupt capillary water loss in dryland soils?",
+        "options": {"A": "It compacts the soil into rock", "B": "Shallow surface hoeing breaks the continuous vertical capillary pore networks connecting subsoil moisture to the atmosphere, replacing them with a loose dry dust barrier that halts upward liquid movement", "C": "It removes all sand from the soil", "D": "It dissolves subsoil water into air"},
+        "correctOption": "B",
+        "explanation": "Soil water rises via capillary action through continuous fine pores. Shallow harrowing creates a loose, uncompacted dust mulch (Mrida Acchadana) that breaks capillary continuity, trapping moisture beneath.",
+        "tags": ["Mrida Acchadana", "Capillary Action", "Soil Physics"]
+    },
+    {
+        "id": "AGR217-U3-MCQ28",
+        "syllabusTopic": "Acchadana (Mulching): Soil mulch, Straw mulch, and Live mulch (legume cover crops) for thermal and erosion control",
+        "difficulty": "Medium",
+        "questionText": "What ecological advantage does 'Jeeva Acchadana' (Live Mulch using legumes) provide over non-leguminous cover crops?",
+        "options": {"A": "Legumes require zero sunlight", "B": "Legumes fix atmospheric nitrogen through Rhizobium symbiosis, enrich the soil with high-nitrogen leaf litter, and secrete diverse organic root exudates while providing dense ground shade", "C": "Legumes produce synthetic pesticides in their roots", "D": "Legumes stop all rainfall from hitting the ground"},
+        "correctOption": "B",
+        "explanation": "Leguminous live mulches (cowpea, moong, clover) provide living ground cover that smothers weeds, fixes 40-80 kg N/ha via root nodules, and returns nitrogen-rich organic biomass upon senescence.",
+        "tags": ["Jeeva Acchadana", "Legume Live Mulch", "Nitrogen Fixation"]
+    },
+    {
+        "id": "AGR217-U3-MCQ29",
+        "syllabusTopic": "Soil organic carbon (SOC) sequestration, humus formation, aggregate stability, and climate resilience",
+        "difficulty": "Medium",
+        "questionText": "Why is the Fungal-to-Bacterial (F:B) biomass ratio significantly higher in Natural Farming soils compared to tilled chemical soils?",
+        "options": {"A": "Chemical fertilizers kill all bacteria", "B": "High-lignin surface straw mulching and the total absence of mechanical plowing preserve fragile fungal hyphae and provide complex lignocellulosic carbon substrates favored by saprophytic fungi", "C": "Fungi cannot grow without chemical pesticides", "D": "Natural farming soils are completely devoid of bacteria"},
+        "correctOption": "B",
+        "explanation": "Fungal hyphae are shattered by plowing and suppressed by chemical salts. Undisturbed soils covered with high-carbon straw provide the ideal substrate for saprophytic fungi and AMF, raising the F:B ratio.",
+        "tags": ["F:B Ratio", "Fungal Biomass", "Soil Ecology"]
+    },
+    {
+        "id": "AGR217-U3-MCQ30",
+        "syllabusTopic": "Soil organic carbon (SOC) sequestration, humus formation, aggregate stability, and climate resilience",
+        "difficulty": "Medium",
+        "questionText": "What biochemical mechanism enables humic acids in Natural Farming soils to enhance soil cation exchange capacity (CEC)?",
+        "options": {"A": "Humic acids produce synthetic clay minerals", "B": "Humic acids possess high densities of carboxyl (-COOH) and phenolic hydroxyl (-OH) functional groups that dissociate to yield negatively charged exchange sites, binding cations (Ca2+, Mg2+, K+)", "C": "Humic acids absorb only water molecules", "D": "Humic acids precipitate all minerals out of the soil"},
+        "correctOption": "B",
+        "explanation": "Humic substances have an exceptionally high CEC (200-400 cmol/kg). Their carboxyl and phenolic groups dissociate, creating abundant negative surface charges that retain nutrient cations against leaching.",
+        "tags": ["Cation Exchange Capacity", "Humic Acids", "Soil Chemistry"]
+    },
+    {
+        "id": "AGR217-U3-MCQ31",
+        "syllabusTopic": "Soil health, the Soil Food Web, indigenous microorganisms (IMO), and biological nutrient recycling",
+        "difficulty": "Medium",
+        "questionText": "What is the biological significance of Microbial Biomass Carbon (MBC) in measuring soil health in Natural Farming?",
+        "options": {"A": "It measures the amount of plastic in the soil", "B": "It represents the living microbial pool (1-4% of total SOC) that acts as an active biological engine, driving nutrient cycling, enzyme secretion, and aggregate formation", "C": "It measures dead charcoal residues", "D": "It indicates chemical pesticide contamination"},
+        "correctOption": "B",
+        "explanation": "MBC is the living component of soil organic matter (bacteria, fungi, actinomycetes). It serves as an early indicator of biological soil regeneration long before total SOC changes become detectable.",
+        "tags": ["MBC", "Microbial Biomass Carbon", "Soil Health Metric"]
+    },
+    {
+        "id": "AGR217-U3-MCQ32",
+        "syllabusTopic": "Earthworms in Natural Farming: deep-burrowing native endogeic and anecic species vs exotic epigeic vermicomposting worms",
+        "difficulty": "Medium",
+        "questionText": "How does the intestinal transit of soil and organic matter through the digestive tract of a native earthworm alter its microbial composition?",
+        "options": {"A": "The digestive tract sterilizes all microbes completely", "B": "Earthworm gut fluids and intestinal mucus act as a selective bio-incubator, multiplying beneficial spore-forming bacilli, actinomycetes, and nitrogen-fixing bacteria by 10 to 1,000 times", "C": "It converts all bacteria into viruses", "D": "It destroys all enzymes"},
+        "correctOption": "B",
+        "explanation": "The earthworm gut is an anaerobic-to-microaerophilic incubator rich in enzymes, mucus, and calcium carbonate. Beneficial bacteria multiply rapidly during gut passage, emerging in enriched castings.",
+        "tags": ["Earthworm Gut", "Microbial Incubator", "Castings Microbiology"]
+    },
+    {
+        "id": "AGR217-U3-MCQ33",
+        "syllabusTopic": "Waaphasa concept: soil pore microclimate (50% water vapor and 50% air), root respiration, and water conservation",
+        "difficulty": "Medium",
+        "questionText": "What field visual symptom indicates that an irrigated crop is suffering from temporary root anoxia rather than drought stress?",
+        "options": {"A": "Leaves turn dark black immediately", "B": "Plants wilt and display yellowing (chlorosis) despite standing water or completely saturated soil in the field basin", "C": "Stems turn into woody bark within 1 hour", "D": "Flowers turn into fruit instantly"},
+        "correctOption": "B",
+        "explanation": "When fields are flooded, lack of oxygen halts root ATP synthesis, paralyzing water and nutrient uptake. Plants wilt and yellow even while standing in water ('wet wilting' due to root anoxia).",
+        "tags": ["Root Anoxia", "Wet Wilting", "Waaphasa Contrast"]
+    },
+    {
+        "id": "AGR217-U3-MCQ34",
+        "syllabusTopic": "Acchadana (Mulching): Soil mulch, Straw mulch, and Live mulch (legume cover crops) for thermal and erosion control",
+        "difficulty": "Medium",
+        "questionText": "Why is the continuous retention of crop residue mulch on the soil surface superior to incorporating the residue via deep rotavating?",
+        "options": {"A": "Incorporated straw turns into toxic plastic", "B": "Surface mulch buffers temperature, prevents soil crusting, and slowly decomposes from the top down, whereas deep plowing causes temporary nitrogen immobilization and aggregate destruction", "C": "Surface mulch eliminates the need to sow seeds", "D": "Rotavating straw doubles crop yield instantly"},
+        "correctOption": "B",
+        "explanation": "Deeply incorporating high C:N cereal straw triggers immediate nitrogen immobilization, starving young crops. Surface retention mimics natural forest litter, moderating microclimate while decomposing gradually.",
+        "tags": ["Surface Mulch vs Tillage", "Residue Dynamics", "Acchadana"]
+    },
+    {
+        "id": "AGR217-U3-MCQ35",
+        "syllabusTopic": "Soil organic carbon (SOC) sequestration, humus formation, aggregate stability, and climate resilience",
+        "difficulty": "Medium",
+        "questionText": "What role do water-stable macro-aggregates (>0.25 mm) play in sequestering Soil Organic Carbon (SOC) for decades?",
+        "options": {"A": "They dissolve carbon into rainwater", "B": "They physically encapsulate organic carbon particles within mineral matrices, shielding them from microbial enzymatic breakdown and oxidative decomposition", "C": "They prevent earthworms from entering the soil", "D": "They heat the soil to 70 degrees C"},
+        "correctOption": "B",
+        "explanation": "Macro-aggregates physically protect particulate organic matter inside micropores where bacteria and extracellular enzymes cannot penetrate, stabilizing carbon for decades to centuries.",
+        "tags": ["Macro-aggregates", "Carbon Protection", "Physical Sequestration"]
+    },
+    {
+        "id": "AGR217-U3-MCQ36",
+        "syllabusTopic": "Soil health, the Soil Food Web, indigenous microorganisms (IMO), and biological nutrient recycling",
+        "difficulty": "Medium",
+        "questionText": "What collection protocol is traditionally used in Natural Farming to harvest potent Indigenous Microorganisms (IMO) from virgin habitats?",
+        "options": {"A": "Boiling forest soil in iron cauldrons", "B": "Placing wooden boxes containing semi-cooked steamed rice covered with porous paper under undisturbed bamboo groves or forest leaf litter for 3 to 5 days until white fungal mycelia colonize the rice", "C": "Spraying synthetic alcohol on tree trunks", "D": "Digging trenches 10 meters deep in gravel"},
+        "correctOption": "B",
+        "explanation": "IMO collection utilizes carbohydrate bait (steamed rice in wooden boxes) placed under virgin forest litter. Native fungi and beneficial actinomycetes colonize the rice, forming white mycelial mats.",
+        "tags": ["IMO Harvesting", "Indigenous Microorganisms", "Culture Technique"]
+    },
+    {
+        "id": "AGR217-U3-MCQ37",
+        "syllabusTopic": "Earthworms in Natural Farming: deep-burrowing native endogeic and anecic species vs exotic epigeic vermicomposting worms",
+        "difficulty": "Medium",
+        "questionText": "Why are earthworms capable of flourishing in Natural Farming fields while completely disappearing from chemical farming fields?",
+        "options": {"A": "Earthworms prefer to eat chemical fertilizers", "B": "Chemical fertilizers and synthetic pesticides (especially organophosphates and carbamates) cause chemical toxicity, while frequent plowing physically chops worms and destroys their burrows", "C": "Natural farming soils are flooded with milk", "D": "Earthworms only live in the dark"},
+        "correctOption": "B",
+        "explanation": "Mechanical plowing destroys vertical burrows and crushes worms. Chemical fertilizers raise osmotic pressure, irritating earthworm cuticle, while insecticides (chlorpyriphos, carbofuran) are lethal nerve poisons.",
+        "tags": ["Earthworm Survival", "Chemical Toxicity", "Plowing Damage"]
+    },
+    {
+        "id": "AGR217-U3-MCQ38",
+        "syllabusTopic": "Waaphasa concept: soil pore microclimate (50% water vapor and 50% air), root respiration, and water conservation",
+        "difficulty": "Medium",
+        "questionText": "How does maintaining the Waaphasa condition prevent the buildup of root-rotting fungal pathogens like Pythium and Phytophthora?",
+        "options": {"A": "Waaphasa raises soil temperature to 100 degrees C", "B": "Pythium and Phytophthora produce flagellated zoospores that require standing liquid water to swim toward host roots; aerated Waaphasa conditions lack free water films, preventing zoospore motility and infection", "C": "Waaphasa turns soil acidic", "D": "It dries the soil down to zero moisture"},
+        "correctOption": "B",
+        "explanation": "Oomycete water molds (Pythium, Phytophthora) infect roots via swimming biflagellated zoospores that require continuous liquid water films. Aerated Waaphasa prevents zoospore dispersal and infection.",
+        "tags": ["Oomycetes", "Zoospore Motility", "Disease Prevention"]
+    },
+    {
+        "id": "AGR217-U3-MCQ39",
+        "syllabusTopic": "Acchadana (Mulching): Soil mulch, Straw mulch, and Live mulch (legume cover crops) for thermal and erosion control",
+        "difficulty": "Medium",
+        "questionText": "What happens to the soil microbial population under bare, unmulched soil during peak summer in semi-arid India?",
+        "options": {"A": "Microbes multiply by 10,000 times", "B": "Solar radiation heats the top 5 cm of bare soil to 50-60°C, causing lethal thermal lysis and desiccation of non-spore-forming beneficial bacteria and mycorrhizal hyphae", "C": "Microbes transform into plant seeds", "D": "Soil becomes permanently fertile"},
+        "correctOption": "B",
+        "explanation": "Unmulched soil exposed to harsh tropical summer sun reaches 50–60°C. This extreme heat pasteurizes the surface layer, killing beneficial non-spore-forming PGPR and desolating mycorrhizae.",
+        "tags": ["Thermal Lysis", "Bare Soil Heat", "Acchadana Protection"]
+    },
+    {
+        "id": "AGR217-U3-MCQ40",
+        "syllabusTopic": "Soil organic carbon (SOC) sequestration, humus formation, aggregate stability, and climate resilience",
+        "difficulty": "Medium",
+        "questionText": "How does glomalin produced by mycorrhizal fungi stabilize soil carbon over decadal timescales?",
+        "options": {"A": "It converts carbon into pure silicon", "B": "Glomalin contains 30-40% carbon, possesses high hydrophobic resistance to microbial enzymatic degradation, and glues soil particles into stable micro- and macro-aggregates", "C": "It dissolves all organic matter in 2 days", "D": "It evaporates into the atmosphere"},
+        "correctOption": "B",
+        "explanation": "Glomalin is an insoluble glycoprotein with a recalcitrant, hydrophobic structure. It coats aggregate pores and resists microbial decomposition, sequestering carbon for 10 to 50 years.",
+        "tags": ["Glomalin Recalcitrance", "Decadal Carbon", "Aggregate Glue"]
+    },
+    {
+        "id": "AGR217-U3-MCQ41",
+        "syllabusTopic": "Soil health, the Soil Food Web, indigenous microorganisms (IMO), and biological nutrient recycling",
+        "difficulty": "Medium",
+        "questionText": "What is the Carbon-to-Nitrogen (C:N) ratio of typical bacterial cells, and how does it compare to fungal hyphae in the soil food web?",
+        "options": {"A": "Bacteria C:N is 100:1; Fungi is 2:1", "B": "Bacteria C:N is narrow (~5:1); Fungal hyphae C:N is wider (~10:1 to 15:1)", "C": "Bacteria have no nitrogen", "D": "Both have a C:N ratio of 1000:1"},
+        "correctOption": "B",
+        "explanation": "Bacteria are high-protein organisms with a narrow C:N ratio (~5:1). Fungal hyphae have thicker, chitinous walls with a wider C:N ratio (~10:1 to 15:1).",
+        "tags": ["C:N Ratio", "Bacterial Stoichiometry", "Fungal Stoichiometry"]
+    },
+    {
+        "id": "AGR217-U3-MCQ42",
+        "syllabusTopic": "Earthworms in Natural Farming: deep-burrowing native endogeic and anecic species vs exotic epigeic vermicomposting worms",
+        "difficulty": "Medium",
+        "questionText": "Why are the vertical burrows of anecic earthworms described as 'preferential flow pathways' for plant roots?",
+        "options": {"A": "Roots are afraid of earthworms and avoid burrows", "B": "The burrows offer zero mechanical resistance, high aeration, continuous moisture films, and are lined with nutrient-rich castings that roots preferentially follow deep into subsoil horizons", "C": "Burrows contain synthetic rooting hormones", "D": "Burrows heat the roots to 50 degrees C"},
+        "correctOption": "B",
+        "explanation": "Roots follow existing earthworm burrows down to 2-3 meters with zero mechanical impedance. The burrow walls (drilosphere) are enriched with nitrogen, calcium, and microbes, feeding deep roots.",
+        "tags": ["Drilosphere", "Preferential Rooting", "Biopores"]
+    },
+    {
+        "id": "AGR217-U3-MCQ43",
+        "syllabusTopic": "Waaphasa concept: soil pore microclimate (50% water vapor and 50% air), root respiration, and water conservation",
+        "difficulty": "Medium",
+        "questionText": "What is the relationship between the Waaphasa condition and the prevention of nitrate leaching in agricultural soils?",
+        "options": {"A": "Waaphasa converts all nitrates into chlorine gas", "B": "By avoiding large excess volumes of gravitational percolating water, nitrates and soluble mineral ions remain retained in the active root zone rather than leaching into groundwater aquifers", "C": "Waaphasa eliminates all nitrogen from the soil", "D": "Waaphasa increases irrigation water application by 500%"},
+        "correctOption": "B",
+        "explanation": "Heavy flood irrigation creates deep downward gravitational water flux that leaches mobile nitrate ions ($NO_3^-$) below root zones. Alternate-furrow watering under Waaphasa retains nutrients in the root profile.",
+        "tags": ["Nitrate Leaching", "Groundwater Protection", "Waaphasa Hydrology"]
+    },
+    {
+        "id": "AGR217-U3-MCQ44",
+        "syllabusTopic": "Acchadana (Mulching): Soil mulch, Straw mulch, and Live mulch (legume cover crops) for thermal and erosion control",
+        "difficulty": "Medium",
+        "questionText": "What is the biological fate of a 4 t/ha straw mulch layer over a full agricultural year in a Natural Farming field?",
+        "options": {"A": "It remains 100% intact without any change", "B": "Saprophytic fungi, actinomycetes, and native earthworms slowly digest and mineralize the lignocellulose, converting it into stable soil humus, earthworm castings, and recycled plant nutrients", "C": "It evaporates into methane within 2 hours", "D": "It turns into synthetic pesticide"},
+        "correctOption": "B",
+        "explanation": "Surface straw undergoes biological humification. Earthworms pull straw into burrows, while fungi and actinomycetes decompose cellulose and lignin, recycling nutrients into stable soil organic matter.",
+        "tags": ["Mulch Decomposition", "Biological Cycling", "Humification"]
+    },
+    {
+        "id": "AGR217-U3-MCQ45",
+        "syllabusTopic": "Soil organic carbon (SOC) sequestration, humus formation, aggregate stability, and climate resilience",
+        "difficulty": "Medium",
+        "questionText": "What distinguishes labile soil organic carbon from recalcitrant soil organic carbon?",
+        "options": {"A": "Labile carbon is found only in rocks; recalcitrant carbon is found only in water", "B": "Labile carbon consists of easily decomposable sugars and amino acids that turn over in days to weeks; recalcitrant carbon consists of complex humic polymers and charcoal that persist for decades to centuries", "C": "Labile carbon cannot be consumed by microbes", "D": "Recalcitrant carbon is toxic to all plants"},
+        "correctOption": "B",
+        "explanation": "Labile carbon fuels immediate microbial metabolism and nutrient release. Recalcitrant carbon (humic acids, glomalin, biochar) resists enzymatic breakdown, forming the stable structural SOC pool.",
+        "tags": ["Labile vs Recalcitrant", "Carbon Pools", "SOC Dynamics"]
+    },
+
+    # --- HARD (15) ---
+    {
+        "id": "AGR217-U3-MCQ46",
+        "syllabusTopic": "Soil health, the Soil Food Web, indigenous microorganisms (IMO), and biological nutrient recycling",
+        "difficulty": "Hard",
+        "questionText": "What is the ecological stoichiometry mechanism governing nitrogen mineralization in the soil food web when protozoa graze on bacteria with a C:N ratio of 5:1?",
+        "options": {"A": "Protozoa assimilate 100% of bacterial carbon and nitrogen without any excretion", "B": "Protozoa operate with a carbon assimilation efficiency of ~30-40% and a biomass C:N ratio of ~30:1; because bacteria contain far more nitrogen than protozoa require per unit of assimilated carbon, the excess nitrogen is excreted as inorganic NH4+", "C": "Protozoa convert nitrogen into pure methane gas", "D": "Protozoa turn bacterial proteins into cellulose"},
+        "correctOption": "B",
+        "explanation": "Stoichiometric constraints dictate that protozoa assimilate 30-40% of consumed carbon. Consuming bacteria (C:N 5:1) delivers far more nitrogen than protozoa can incorporate into their own biomass (C:N 30:1), forcing them to excrete excess N as plant-available ammonium.",
+        "tags": ["Ecological Stoichiometry", "Microbial Grazing", "Nitrogen Excretion"]
+    },
+    {
+        "id": "AGR217-U3-MCQ47",
+        "syllabusTopic": "Soil health, the Soil Food Web, indigenous microorganisms (IMO), and biological nutrient recycling",
+        "difficulty": "Hard",
+        "questionText": "How does the fungal-to-bacterial (F:B) ratio influence the Soil Organic Carbon (SOC) stabilization pathways in undisturbed Natural Farming soils?",
+        "options": {"A": "Fungi accelerate the complete loss of all soil carbon as CO2", "B": "Fungal cell walls contain recalcitrant polymers (chitin, beta-1,3-glucans, melanin) that possess a carbon use efficiency (CUE) of 40-50% compared to 20-30% for bacteria, resulting in higher humic substance synthesis and lower respiratory CO2 loss", "C": "Bacteria store more carbon in their shells than fungi", "D": "Fungi convert soil carbon into inorganic calcium"},
+        "correctOption": "B",
+        "explanation": "Fungi exhibit higher Carbon Use Efficiency (CUE ~0.4-0.5) than bacteria (CUE ~0.2-0.3), meaning fungi convert more consumed carbon into biomass rather than respiring it as CO2. Fungal residues (chitin, melanins) form stable humic complexes.",
+        "tags": ["F:B Ratio", "Carbon Use Efficiency", "SOC Stabilization"]
+    },
+    {
+        "id": "AGR217-U3-MCQ48",
+        "syllabusTopic": "Earthworms in Natural Farming: deep-burrowing native endogeic and anecic species vs exotic epigeic vermicomposting worms",
+        "difficulty": "Hard",
+        "questionText": "What biochemical transformation occurs in the calciferous glands of anecic earthworms during the ingestion and casting of acidic subsoils?",
+        "options": {"A": "They secrete concentrated hydrochloric acid", "B": "Calciferous glands secrete amorphous calcium carbonate (CaCO3) spherulites into the gut lumen, neutralizing gut acidity and producing alkaline-buffered castings (pH 7.0-7.5) with elevated base saturation", "C": "They convert calcium into pure quartz", "D": "They synthesize synthetic gypsum crystals"},
+        "correctOption": "B",
+        "explanation": "Earthworm calciferous glands (Morbier glands) secrete calcium carbonate spherulites into the esophagus, neutralizing ingested soil acidity. Earthworm castings consistently exhibit higher pH and exchangeable calcium than parent soils.",
+        "tags": ["Calciferous Glands", "Calcium Carbonate", "Castings Chemistry"]
+    },
+    {
+        "id": "AGR217-U3-MCQ49",
+        "syllabusTopic": "Earthworms in Natural Farming: deep-burrowing native endogeic and anecic species vs exotic epigeic vermicomposting worms",
+        "difficulty": "Hard",
+        "questionText": "In the micro-ecology of an earthworm burrow, what is the 'drilosphere' and why is it a biological hotspot for crop root nutrient uptake?",
+        "options": {"A": "The center of the earthworm's heart", "B": "The 1-2 mm zone of soil lining the burrow wall, enriched with earthworm cuticular mucus, intestinal cast linings, elevated nitrogenase activity, and dense PGPR populations through which crop roots preferentially grow", "C": "A cloud of gas emitted by earthworms", "D": "A dead zone where no plant roots can survive"},
+        "correctOption": "B",
+        "explanation": "The drilosphere is the 1-2 mm soil sheath lining the burrow. Enriched with nitrogenous mucus and microbial inoculants, it provides preferential nutrient-rich conduits that crop roots colonize to extract water and minerals.",
+        "tags": ["Drilosphere", "Burrow Micro-ecology", "Rhizosphere Interaction"]
+    },
+    {
+        "id": "AGR217-U3-MCQ50",
+        "syllabusTopic": "Waaphasa concept: soil pore microclimate (50% water vapor and 50% air), root respiration, and water conservation",
+        "difficulty": "Hard",
+        "questionText": "Under saturated flooding conditions, what metabolic shift in root cells triggers cytoplasmic acidosis and cessation of ATP-dependent nutrient transport?",
+        "options": {"A": "Instant activation of photosynthesis in roots", "B": "Anoxia halts mitochondrial oxidative phosphorylation, forcing root cells into anaerobic ethanolic and lactic acid fermentation; lactate accumulation drops cytoplasmic pH, deactivating plasma membrane H+-ATPase proton pumps", "C": "Roots begin to absorb pure oxygen from water", "D": "Cell walls dissolve into sugar within 30 seconds"},
+        "correctOption": "B",
+        "explanation": "Oxygen depletion arrests the mitochondrial electron transport chain. Anaerobic fermentation produces lactic acid, dropping cytosolic pH (cytoplasmic acidosis). This inactivates the plasma membrane H+-ATPase pumps essential for active mineral uptake.",
+        "tags": ["Root Anoxia", "Ethanolic Fermentation", "Cytoplasmic Acidosis"]
+    },
+    {
+        "id": "AGR217-U3-MCQ51",
+        "syllabusTopic": "Waaphasa concept: soil pore microclimate (50% water vapor and 50% air), root respiration, and water conservation",
+        "difficulty": "Hard",
+        "questionText": "What mathematical law governs the lateral and capillary movement of water vapor and liquid moisture in an alternate-furrow Waaphasa irrigation system?",
+        "options": {"A": "Newton's second law of motion", "B": "Buckingham-Darcy Law for unsaturated flow and Fick's Law of vapor diffusion through soil pore matrices", "C": "Boyle's law of ideal gases", "D": "Hooke's law of elasticity"},
+        "correctOption": "B",
+        "explanation": "Water movement in unsaturated soils is driven by matric suction gradients described by the Buckingham-Darcy equation: $q = -K(\\theta) \\nabla H$. Concurrently, water vapor moves across humidity gradients following Fick's first law of diffusion.",
+        "tags": ["Buckingham-Darcy Law", "Unsaturated Flow", "Soil Biophysics"]
+    },
+    {
+        "id": "AGR217-U3-MCQ52",
+        "syllabusTopic": "Acchadana (Mulching): Soil mulch, Straw mulch, and Live mulch (legume cover crops) for thermal and erosion control",
+        "difficulty": "Hard",
+        "questionText": "How does surface residue mulching alter the soil surface energy balance equation ($R_n = G + H + LE$)?",
+        "options": {"A": "Mulch reflects zero radiation and absorbs all heat", "B": "Residue mulch increases surface albedo (reflecting more shortwave radiation), provides a high-resistance boundary layer that reduces soil heat flux (G), and curtails latent heat of evaporation (LE), conserving soil moisture", "C": "Mulch turns all energy into cosmic rays", "D": "Mulch eliminates sensible heat flux completely"},
+        "correctOption": "B",
+        "explanation": "Straw mulch elevates surface albedo (reflectance), reducing net radiation ($R_n$). Its low thermal conductivity dampens downward soil heat flux ($G$), lowering soil temperatures, while boundary layer resistance curtails evaporative loss ($LE$).",
+        "tags": ["Energy Balance", "Albedo", "Surface Thermodynamics"]
+    },
+    {
+        "id": "AGR217-U3-MCQ53",
+        "syllabusTopic": "Acchadana (Mulching): Soil mulch, Straw mulch, and Live mulch (legume cover crops) for thermal and erosion control",
+        "difficulty": "Hard",
+        "questionText": "What physiological mechanism explains why intercropped live mulch (e.g., cowpea) in a natural farming orchard does not cause severe moisture competition with the main trees during dry periods?",
+        "options": {"A": "Cowpea does not require water to live", "B": "Niche differentiation and hydraulic lift: deep tree roots tap subsoil moisture and release water into dry upper horizons at night (hydraulic redistribution), supporting shallow live-mulch roots that reciprocate by cooling topsoil", "C": "Cowpea roots absorb moisture from the air only", "D": "Trees shed all their leaves to save water for cowpea"},
+        "correctOption": "B",
+        "explanation": "Deep-rooted trees exhibit hydraulic lift—drawing water from deep subsoil and passively exuding a fraction into dry topsoil at night. The shallow legume cover shades the ground, reducing overall surface evaporation.",
+        "tags": ["Hydraulic Lift", "Niche Differentiation", "Agroforestry Hydrology"]
+    },
+    {
+        "id": "AGR217-U3-MCQ54",
+        "syllabusTopic": "Soil organic carbon (SOC) sequestration, humus formation, aggregate stability, and climate resilience",
+        "difficulty": "Hard",
+        "questionText": "In the 'Microbial Carbon Pump' (MCP) concept of soil organic matter formation, how do dead microbial bodies (necromass) contribute to persistent soil organic matter?",
+        "options": {"A": "Dead microbial cells evaporate as nitrogen gas", "B": "Microbial necromass (cell wall fragments, peptidoglycan, proteins) binds tightly to clay mineral surfaces through ligand exchange and cation bridging, forming organo-mineral complexes that constitute >50% of stable soil humus", "C": "Microbial necromass turns into toxic ash", "D": "Necromass is completely degraded and leaves zero residual carbon"},
+        "correctOption": "B",
+        "explanation": "Modern biogeochemistry recognizes that stable humus consists predominantly of entombment of microbial necromass (cell debris, peptidoglycan, lipids) chemically bonded to clay and silt mineral surfaces.",
+        "tags": ["Microbial Necromass", "Microbial Carbon Pump", "Humus Formation"]
+    },
+    {
+        "id": "AGR217-U3-MCQ55",
+        "syllabusTopic": "Soil organic carbon (SOC) sequestration, humus formation, aggregate stability, and climate resilience",
+        "difficulty": "Hard",
+        "questionText": "What is the structural role of divalent cations like Calcium (Ca2+) in stabilizing organic matter within clay micro-aggregates?",
+        "options": {"A": "Calcium destroys organic molecules through oxidation", "B": "Ca2+ acts as a polyvalent electrostatic bridge, linking negatively charged clay mineral surfaces (aluminosilicates) with negatively charged carboxyl groups of humic substances ('cation bridging')", "C": "Calcium turns soil into pure limestone rock", "D": "Calcium prevents any aggregation from occurring"},
+        "correctOption": "B",
+        "explanation": "Clay minerals and humic molecules both carry net negative surface charges. Divalent calcium ($Ca^{2+}$) forms stable electrostatic bridges ($Clay^-\\text{--}Ca^{2+}\\text{--}Humus^-$), anchoring organic carbon against microbial attack.",
+        "tags": ["Cation Bridging", "Calcium Dynamics", "Organo-Mineral Complexes"]
+    },
+    {
+        "id": "AGR217-U3-MCQ56",
+        "syllabusTopic": "Soil health, the Soil Food Web, indigenous microorganisms (IMO), and biological nutrient recycling",
+        "difficulty": "Hard",
+        "questionText": "What molecular mechanism is responsible for plant-microbe signaling during the establishment of Arbuscular Mycorrhizal (AM) symbiosis in Natural Farming soils?",
+        "options": {"A": "Plants secrete hydrochloric acid to dissolve fungal walls", "B": "Phosphate-stressed plant roots exude strigolactones that stimulate AM fungal spore germination and hyphal branching; the fungus responds by secreting lipochitooligosaccharide 'Myc factors' that activate host Sym pathway genes", "C": "Fungi inject viral RNA into plant leaves", "D": "Plants produce synthetic auxins that attract fungi"},
+        "correctOption": "B",
+        "explanation": "Under natural low-available-P conditions, roots exude strigolactones, inducing fungal hyphal branching. AM fungi secrete Myc factors (Nod-like lipochitooligosaccharides), initiating calcium spiking and symbiotic colonization.",
+        "tags": ["Strigolactones", "Myc Factors", "Sym Signaling"]
+    },
+    {
+        "id": "AGR217-U3-MCQ57",
+        "syllabusTopic": "Earthworms in Natural Farming: deep-burrowing native endogeic and anecic species vs exotic epigeic vermicomposting worms",
+        "difficulty": "Hard",
+        "questionText": "Why do anecic earthworms incorporate organic matter deep into subsoil horizons (2-3 meters) whereas epigeic worms keep it confined to the top 5 cm?",
+        "options": {"A": "Anecic worms are blind and get lost underground", "B": "Anecic earthworms exhibit vertical geophagous feeding behavior, foraging on surface litter at night and retreating into permanent deep burrows where they excrete organo-mineral linings deep in the profile", "C": "Epigeic worms have shovels to dig horizontal holes", "D": "Subsoils are poisonous to anecic worms"},
+        "correctOption": "B",
+        "explanation": "Anecic worms are photophobic deep burrowers that anchor their tails in deep burrows while extending upward to pull surface straw down to subsoils, distributing organic carbon across the entire soil profile.",
+        "tags": ["Anecic Behavior", "Vertical Cycling", "Carbon Distribution"]
+    },
+    {
+        "id": "AGR217-U3-MCQ58",
+        "syllabusTopic": "Waaphasa concept: soil pore microclimate (50% water vapor and 50% air), root respiration, and water conservation",
+        "difficulty": "Hard",
+        "questionText": "What is the relationship between Soil Matric Potential (psi_m) and the Waaphasa condition in agricultural loams?",
+        "options": {"A": "Waaphasa occurs at 0 bar (complete water saturation)", "B": "Waaphasa corresponds to matric potentials between -10 kPa and -33 kPa (Field Capacity range), where gravitational water has drained from macropores leaving them aerated, while micropores retain water films", "C": "Waaphasa only occurs at -1500 kPa (Permanent Wilting Point)", "D": "Waaphasa has no relationship with matric potential"},
+        "correctOption": "B",
+        "explanation": "At Field Capacity ($-10$ to $-33\\text{ kPa}$), excess gravitational water has drained from structural macropores (filling them with air), while capillary micropores retain water films, establishing the ideal 50:50 air-vapor balance.",
+        "tags": ["Field Capacity", "Matric Potential", "Soil Physics"]
+    },
+    {
+        "id": "AGR217-U3-MCQ59",
+        "syllabusTopic": "Acchadana (Mulching): Soil mulch, Straw mulch, and Live mulch (legume cover crops) for thermal and erosion control",
+        "difficulty": "Hard",
+        "questionText": "How does the Carbon-to-Nitrogen (C:N) ratio of Shushka Acchadana (straw mulch) affect the initial rate of microbial decomposition and mineral nitrogen availability?",
+        "options": {"A": "High C:N mulch dissolves in 1 hour", "B": "High C:N straw (>60:1) decomposes slowly at the surface without causing subsoil nitrogen immobilization because the decomposing fungal biomass remains localized at the surface boundary layer", "C": "High C:N straw releases pure nitrogen gas into the air", "D": "Low C:N straw never decomposes"},
+        "correctOption": "B",
+        "explanation": "Unlike incorporated residues that rob subsoil nitrogen, surface-retained straw decomposes slowly from the top down. Saprophytic fungi transport nitrogen from the soil interface without tying up subsoil nitrogen in the root zone.",
+        "tags": ["C:N Ratio", "Surface Decomposition", "Residue Biochemistry"]
+    },
+    {
+        "id": "AGR217-U3-MCQ60",
+        "syllabusTopic": "Soil organic carbon (SOC) sequestration, humus formation, aggregate stability, and climate resilience",
+        "difficulty": "Hard",
+        "questionText": "What analytical technique is standardly employed to fractionate and quantify mineral-associated organic matter (MAOM) versus particulate organic matter (POM) in Natural Farming research?",
+        "options": {"A": "Visual inspection under sunlight", "B": "Size and density fractionation using sodium polytungstate (SPT) heavy liquid separation followed by 53-micron wet sieving and elemental C/N analyzer combustion", "C": "Boiling soil in kerosene", "D": "Weighing soil before and after rain"},
+        "correctOption": "B",
+        "explanation": "Density fractionation with sodium polytungstate (SPT @ 1.6-1.8 g/cm3) separates light particulate organic matter (POM) from heavy mineral-associated organic matter (MAOM, <53 um), quantifying stable vs labile carbon.",
+        "tags": ["Density Fractionation", "MAOM vs POM", "SOC Methodology"]
+    }
+]
+
+subjs = [
+    # 8 SHORT_ANSWER
+    {
+        "id": "AGR217-U3-SUB01",
+        "questionType": "SHORT_ANSWER",
+        "maxMarks": 5,
+        "difficulty": "Easy",
+        "syllabusTopic": "Soil health, the Soil Food Web, indigenous microorganisms (IMO), and biological nutrient recycling",
+        "questionText": "Explain the concept of the Soil Food Web and its primary trophic levels in Natural Farming.",
+        "modelAnswer": "The Soil Food Web represents the complex ecological network of living organisms inhabiting field soils, operating through interconnected trophic levels that cycle energy and nutrients without synthetic chemical inputs:\n\n1. **First Trophic Level (Primary Producers):** Crop canopies, cover crops, and weeds that capture solar energy through photosynthesis. Plants allocate 20% to 40% of their photosynthetically fixed carbon into the rhizosphere as root exudates (sugars, organic acids, amino acids) to feed soil microbes.\n2. **Second Trophic Level (Primary Decomposers & Consumers):** Indigenous bacteria, saprophytic fungi, actinomycetes, and arbuscular mycorrhizal fungi (AMF) that colonize roots and decompose surface crop residues (*Acchadana*).\n3. **Third Trophic Level (Secondary Consumers / Predators):** Protozoa (amoebae, flagellates), bacterial-feeding and fungal-feeding nematodes, and micro-arthropods that graze on primary decomposers. Because protozoa and nematodes have a wider C:N ratio (30:1) than bacteria (5:1), their predation excretes surplus nitrogen as plant-absorbable ammonium ($NH_4^+$).\n4. **Higher Trophic Levels (Ecosystem Engineers & Apex Predators):** Earthworms, predatory beetles, and spiders that burrow, fragment organic residues, and regulate pest populations.",
+        "outlinePoints": [
+            "Trophic level 1: primary producers pumping 20-40% carbon as root exudates",
+            "Trophic level 2: bacteria, fungi, actinomycetes, and mycorrhizae metabolizing carbon",
+            "Trophic level 3: protozoa and nematodes grazing on bacteria and excreting ammonium",
+            "Trophic level 4: earthworms and predatory insects engineering biopores and soil structure",
+            "Closed biological nutrient cycling eliminating chemical fertilizer requirements"
+        ]
+    },
+    {
+        "id": "AGR217-U3-SUB02",
+        "questionType": "SHORT_ANSWER",
+        "maxMarks": 5,
+        "difficulty": "Easy",
+        "syllabusTopic": "Earthworms in Natural Farming: deep-burrowing native endogeic and anecic species vs exotic epigeic vermicomposting worms",
+        "questionText": "Differentiate between epigeic, endogeic, and anecic earthworms, and explain which categories are favored in Natural Farming.",
+        "modelAnswer": "Earthworms are categorized into three distinct ecological groups based on burrowing habits, feeding behavior, and soil depth:\n\n1. **Epigeic Earthworms (Litter Dwellers):**\n   - *Habitat & Habits:* Surface dwellers that inhabit moist decaying organic litter; they do not burrow into mineral soil.\n   - *Examples:* *Eisenia fetida* (red wiggler), *Eudrilus eugeniae*.\n   - *Natural Farming Perspective:* **Rejected.** They require artificial, high-moisture composting bins and perish under tropical field heat. Palekar argues they consume surface carbon without creating soil aeration.\n2. **Endogeic Earthworms (Soil Dwellers):**\n   - *Habitat & Habits:* Inhabit the upper 10 to 30 cm of mineral soil. They consume a mixture of mineral soil and organic matter, constructing extensive horizontal, branching burrows.\n   - *Examples:* *Octochaetona serrata*, *Pheretima posthuma*.\n3. **Anecic Earthworms (Deep Burrowers):**\n   - *Habitat & Habits:* Large, deep-burrowing species that construct permanent, vertical burrows extending **2 to 3 meters** deep. They come to the surface at night to drag straw mulch down into their burrows and deposit nutrient-rich mineral castings on the surface.\n   - *Examples:* *Lampito mauritii*.\n\nNatural Farming specifically promotes **native endogeic and anecic species** because their deep vertical biopores aerate subsoils and channel monsoonal rainwater into subterranean aquifers.",
+        "outlinePoints": [
+            "Epigeic worms: surface litter feeders (Eisenia fetida) requiring artificial bins, non-burrowing",
+            "Rejection of Eisenia fetida in natural farming due to thermal sensitivity and lack of soil burrowing",
+            "Endogeic worms: mineral soil consumers creating horizontal branching tunnels in the top 30 cm",
+            "Anecic worms: large deep-burrowing species (Lampito mauritii) building 2-3 meter vertical tunnels",
+            "Natural farming preference: native anecic/endogeic worms creating permanent drainage biopores"
+        ]
+    },
+    {
+        "id": "AGR217-U3-SUB03",
+        "questionType": "SHORT_ANSWER",
+        "maxMarks": 5,
+        "difficulty": "Medium",
+        "syllabusTopic": "Earthworms in Natural Farming: deep-burrowing native endogeic and anecic species vs exotic epigeic vermicomposting worms",
+        "questionText": "Describe the chemical and biological composition of earthworm castings and their influence on crop nutrition.",
+        "modelAnswer": "Earthworm castings (vermicasts) represent the digested and excreted organo-mineral aggregates produced by geophagous earthworms, serving as concentrated bio-fertilizer packets in undisturbed soils.\n\n### Chemical Composition vs. Bulk Topsoil\nDuring gut transit, ingested mineral soil and organic residues are subjected to enzymatic digestion, mechanical grinding in the gizzard, and blending with intestinal mucus. Castings exhibit dramatic chemical enrichment compared to the surrounding un-ingested bulk topsoil:\n- **Available Nitrogen ($N$):** 5 times higher, present as readily absorbable ammonium ($NH_4^+$) and nitrate ($NO_3^-$).\n- **Available Phosphorus ($P_2O_5$):** 7 times higher, solubilized by intestinal phosphatases.\n- **Exchangeable Potassium ($K_2O$):** 11 times higher, released from weathered clay and mica minerals.\n- **Available Calcium and Magnesium:** 2 to 3 times higher, buffered by calciferous gland secretions ($CaCO_3$).\n\n### Biological Properties\nCastings are coated with protective mucilaginous peritrophic membranes and harbor millions of living beneficial bacteria—including free-living diazotrophs (*Azotobacter*), phosphate solubilizers, and *Bacillus* strains. Castings act as slow-release biological nutrient capsules, improving water-holding capacity and stimulating root branching.",
+        "outlinePoints": [
+            "Genesis: gizzard grinding, enzymatic digestion, and mucus blending during gut transit",
+            "Chemical enrichment: 5x available N, 7x available P, 11x exchangeable K compared to bulk soil",
+            "Calcium buffering via calciferous gland secretions raising base saturation",
+            "Biological properties: protective peritrophic coating and dense beneficial bacterial populations",
+            "Agronomic outcome: slow-release nutrient delivery and stimulated root branching"
+        ]
+    },
+    {
+        "id": "AGR217-U3-SUB04",
+        "questionType": "SHORT_ANSWER",
+        "maxMarks": 5,
+        "difficulty": "Easy",
+        "syllabusTopic": "Waaphasa concept: soil pore microclimate (50% water vapor and 50% air), root respiration, and water conservation",
+        "questionText": "What is 'Waaphasa' and how does alternate-furrow irrigation create this condition?",
+        "modelAnswer": "**Waaphasa** is a core operational pillar of Natural Farming that describes the optimal moisture-aeration equilibrium in the crop root zone: a microclimatic state where soil pore spaces maintain **50% air (oxygen) and 50% water vapor**.\n\n### The Physiological Rationale\nPlant roots do not absorb liquid water directly; they absorb water vapor along free-energy potential gradients. Furthermore, root cells require continuous oxygen to power mitochondrial respiration, generating ATP for active mineral nutrient uptake. Conventional flood irrigation completely floods soil macropores with liquid water, driving out air and creating acute temporary anoxia (oxygen starvation). This suffocates roots, damages fine root hairs, and halts nutrient absorption.\n\n### Alternate-Furrow Irrigation Mechanics\nTo maintain continuous Waaphasa:\n1. Crops are established on raised ridges separated by furrows.\n2. Irrigation water is applied strictly into **alternate furrows** (e.g., Furrows 1, 3, 5 are watered, while Furrows 2, 4, 6 remain dry).\n3. Water in the wet furrow seeps laterally into the base of the crop ridge through capillary action, moistening root hairs without flooding the upper root zone.\n4. The adjacent dry furrow remains completely aerated, acting as an open conduit for atmospheric oxygen to diffuse continuously into the rhizosphere.\nThis design prevents root anoxia while reducing total irrigation water consumption by **50% to 70%**.",
+        "outlinePoints": [
+            "Definition of Waaphasa: 50% air and 50% water vapor in soil pore spaces",
+            "Physiological necessity: aerobic respiration required for ATP-driven active nutrient transport",
+            "Critique of flood irrigation: root anoxia, suffocating root hairs and halting uptake",
+            "Alternate-furrow mechanics: lateral capillary wetting combined with open dry-furrow oxygen conduits",
+            "Water savings dividend: 50-70% reduction in total irrigation requirements"
+        ]
+    },
+    {
+        "id": "AGR217-U3-SUB05",
+        "questionType": "SHORT_ANSWER",
+        "maxMarks": 5,
+        "difficulty": "Easy",
+        "syllabusTopic": "Acchadana (Mulching): Soil mulch, Straw mulch, and Live mulch (legume cover crops) for thermal and erosion control",
+        "questionText": "Describe the three types of Acchadana (Mulching) in Natural Farming and their respective functions.",
+        "modelAnswer": "In Subhash Palekar's Natural Farming methodology, **Acchadana** (mulching) is categorized into three complementary practices:\n\n1. **Mrida Acchadana (Soil Mulch / Dust Mulch):**\n   - *Technique:* Shallow surface cultivation (top 2–3 cm) using hand hoes or light harrow passes while crops are young.\n   - *Function:* Mechanically breaks the continuous vertical capillary pore conduits connecting moist subsoils with the atmosphere, creating a loose dry soil barrier that halts upward evaporative water loss.\n2. **Shushka Acchadana (Straw / Dry Biomass Mulch):**\n   - *Technique:* Spreading a continuous layer (3–5 t/ha) of dry, dead crop residues—such as paddy straw, wheat stubble, sugarcane trash, or fallen tree leaves—across the field surface.\n   - *Function:* Acts as an insulating thermal blanket, lowering summer topsoil temperatures by 4–8°C, protecting photophobic earthworms and microflora from thermal death, cushioning raindrop impact to prevent erosion, and providing carbon food for saprophytic fungi.\n3. **Jeeva Acchadana (Live Mulch):**\n   - *Technique:* Intercropping low-growing, spreading cover crops—predominantly grain legumes and pulses like cowpea, green gram, black gram, or clover—between rows of the main tall crop.\n   - *Function:* Living plant canopies provide continuous ground shade, smothering emerging weeds, cooling the soil microclimate, and fixing atmospheric nitrogen through root nodule symbiosis.",
+        "outlinePoints": [
+            "Mrida Acchadana: shallow surface hoeing severing capillary conduits to conserve subsoil water",
+            "Shushka Acchadana: 3-5 t/ha dry straw residue blanket buffering soil temperature and feeding earthworms",
+            "Jeeva Acchadana: intercropped live spreading legumes fixing nitrogen and smothering weeds",
+            "Functional distinction: physical capillary break vs organic residue blanket vs living biological symbiosis"
+        ]
+    },
+    {
+        "id": "AGR217-U3-SUB06",
+        "questionType": "SHORT_ANSWER",
+        "maxMarks": 5,
+        "difficulty": "Medium",
+        "syllabusTopic": "Acchadana (Mulching): Soil mulch, Straw mulch, and Live mulch (legume cover crops) for thermal and erosion control",
+        "questionText": "How does straw mulching mitigate soil erosion and buffer microclimatic temperatures in tropical soils?",
+        "modelAnswer": "Surface straw mulching (*Shushka Acchadana*) plays a critical dual role in physical soil conservation and thermal microclimatic regulation:\n\n### 1. Soil Erosion Mitigation\n- **Raindrop Kinetic Energy Absorption:** Terminal velocity raindrops possess tremendous kinetic energy that shatters bare soil aggregates, dislodging fine clay particles that seal surface pores and form impermeable crusts. A 3–5 t/ha residue mulch intercepts falling raindrops, absorbing their kinetic energy and dissipating the impact.\n- **Runoff Velocity Reduction:** Mulch creates a physical barrier of tortuous micro-dams across the soil surface. This slows overland runoff velocity, converting erosive turbulent flow into calm, non-erosive sheet flow and giving rainwater ample time to infiltrate deep into the profile through biopores.\n\n### 2. Thermal Microclimatic Buffering\n- **Albedo & Thermal Insulation:** High-albedo dry straw reflects a substantial fraction of incoming shortwave solar radiation. Furthermore, the porous air spaces trapped within straw mulch act as an insulating blanket with very low thermal conductivity.\n- **Temperature Moderation:** Under intense tropical summer heat, unmulched bare soil temperatures frequently exceed 50–60°C in the top 5 cm, causing thermal death of beneficial microbes and earthworms. Thick straw mulch keeps topsoil temperatures **4°C to 8°C cooler during the day** and warmer at night, cushioning delicate root systems against thermal shock.",
+        "outlinePoints": [
+            "Erosion mitigation 1: absorbing raindrop kinetic energy, preventing aggregate detachment and surface crusting",
+            "Erosion mitigation 2: physical impedance slowing surface runoff velocity and boosting infiltration",
+            "Thermal buffering 1: high albedo reflecting shortwave solar radiation",
+            "Thermal buffering 2: low thermal conductivity insulating topsoil and lowering daytime temperatures by 4-8°C",
+            "Ecological protection: shielding photophobic earthworms and beneficial microflora from thermal mortality"
+        ]
+    },
+    {
+        "id": "AGR217-U3-SUB07",
+        "questionType": "SHORT_ANSWER",
+        "maxMarks": 5,
+        "difficulty": "Medium",
+        "syllabusTopic": "Soil organic carbon (SOC) sequestration, humus formation, aggregate stability, and climate resilience",
+        "questionText": "Explain the role of glomalin and mycorrhizae in stabilizing soil organic carbon into macro-aggregates.",
+        "modelAnswer": "Arbuscular Mycorrhizal Fungi (AMF) (*Glomus*, *Gigaspora*) are key drivers of soil physical structure and long-term Soil Organic Carbon (SOC) stabilization:\n\n### 1. Hyphal Enmeshment and Glomalin Secretion\nAMF colonize plant roots and extend extensive networks of extraradical hyphae (up to 50–100 meters per gram of soil) into the surrounding rhizosphere. The hyphal walls produce and secrete **glomalin** (quantified as Glomalin-Related Soil Protein - GRSP), an insoluble, hydrophobic glycoprotein containing 30% to 40% carbon by weight alongside iron.\n\n### 2. Macro-Aggregate Stabilization Mechanism\n- **Biological Glue:** Glomalin coats fungal hyphae and soil mineral particles, acting as a biological glue that cements individual sand, silt, and clay particles together into **water-stable macro-aggregates (>0.25 mm)**.\n- **Hydrophobic Shell:** The hydrophobic nature of glomalin creates a waterproof barrier around soil aggregates, preventing them from slaking and collapsing during sudden rainfall immersion.\n\n### 3. Physical Carbon Protection\nParticulate organic matter (plant and microbial debris) is physically encapsulated inside these glomalin-cemented macro-aggregates. Trapped inside narrow aggregate pores (<0.2 microns), organic carbon is physically inaccessible to saprophytic bacteria and extracellular enzymes. This physical protection shields carbon from microbial oxidation, stabilizing SOC pools for decades.",
+        "outlinePoints": [
+            "Fungal hyphal networks extending up to 50-100 m/g soil throughout the rhizosphere",
+            "Glomalin biochemistry: insoluble, hydrophobic glycoprotein containing 30-40% carbon",
+            "Macro-aggregate formation: cementing silt and clay particles into water-stable aggregates (>0.25 mm)",
+            "Hydrophobic protection preventing slaking and collapse during rainfall immersion",
+            "Physical encapsulation: shielding particulate organic carbon from microbial enzymatic oxidation for decades"
+        ]
+    },
+    {
+        "id": "AGR217-U3-SUB08",
+        "questionType": "SHORT_ANSWER",
+        "maxMarks": 5,
+        "difficulty": "Hard",
+        "syllabusTopic": "Soil organic carbon (SOC) sequestration, humus formation, aggregate stability, and climate resilience",
+        "questionText": "How does Natural Farming enhance climate resilience and drought tolerance in rainfed crops?",
+        "modelAnswer": "Rainfed agricultural systems in semi-arid zones face severe vulnerability to mid-season drought dry spells (15–30 days) and erratic monsoons. Natural Farming provides systemic climate resilience through three interconnected edaphic mechanisms:\n\n1. **Expanded Soil Water-Holding Capacity:** Continuous surface residue retention (*Shushka Acchadana*) and zero plowing build up Soil Organic Carbon (SOC). Every 1% increase in soil organic matter enables soil to store roughly **140,000 to 200,000 liters of additional water per hectare**. In rainfed natural farming fields, elevated SOC allows crops to withstand 20 to 25 days of drought without wilting.\n2. **Deep Root Stratification via Polyculture:** Intercropping systems (e.g., Groundnut + Pigeonpea or Cotton + Pulses) create complementary vertical root architecture. While shallow crop roots forage the upper 20 cm, deep taproots of companion crops (pigeonpea/cotton) penetrate >1.5–2.0 meters into subsoils, tapping deep moisture reserves.\n3. **Mycorrhizal Water Scavenging:** Regular Jeevamrit applications stimulate dense arbuscular mycorrhizal fungal (AMF) networks. Fine fungal hyphae (diameter 2–5 microns) penetrate microscopic soil pores inaccessible to thick plant root hairs, scavenging capillary water and transferring it to host crops during moisture stress.",
+        "outlinePoints": [
+            "Hydrologic resilience: 1% increase in SOM storing 140,000-200,000 L additional water per hectare",
+            "Thermal insulation via mulch reducing evaporative water loss during dry spells",
+            "Root stratification: complementary deep taproots (>1.5 m) tapping subsoil moisture",
+            "Mycorrhizal scavenging: fine AMF hyphae foraging microscopic soil pores inaccessible to root hairs",
+            "Empirical outcome: crops enduring 20-25 day mid-season droughts without catastrophic wilting"
+        ]
+    },
+
+    # 6 LONG_ANSWER
+    {
+        "id": "AGR217-U3-SUB09",
+        "questionType": "LONG_ANSWER",
+        "maxMarks": 10,
+        "difficulty": "Medium",
+        "syllabusTopic": "Soil health, the Soil Food Web, indigenous microorganisms (IMO), and biological nutrient recycling",
+        "questionText": "Critically analyze the biological structure and ecological functions of the Soil Food Web in Natural Farming, detailing the roles of root exudates, primary decomposers, and predatory microfauna in nutrient mineralization.",
+        "modelAnswer": "In conventional chemical agriculture, soil is treated as an inert mechanical medium requiring synthetic fertilizers to support plant growth. Natural Farming rejects this reductionist model, viewing soil as a living, self-organizing biological matrix governed by the **Soil Food Web**.\n\n### 1. Root Exudation: The Carbon Engine of the Rhizosphere\nThe soil food web is initiated and sustained by plant photosynthesis. Rather than keeping all fixed carbohydrates for vegetative biomass, healthy plants allocate **20% to 40% of their total photosynthetically fixed carbon** into the rhizosphere as **root exudates**. These exudates comprise:\n- Simple sugars (glucose, fructose, sucrose)\n- Low-molecular-weight amino acids and peptides\n- Carboxylic and organic acids (citric, malic, oxalic)\n- Phenolic signaling molecules and mucilage\nThis carbon influx creates the **rhizosphere effect**, supporting bacterial and fungal populations that are 10 to 100 times denser than in bulk soil.\n\n### 2. Primary Decomposers and Mineral Solubilizers\n- **Indigenous Bacteria & PGPR:** *Bacillus*, *Pseudomonas*, and *Lactobacillus* species rapidly assimilate simple sugars from root exudates. They produce extracellular enzymes (cellulases, proteases) and low-molecular-weight organic acids (gluconic, citric) that lower localized rhizosphere micro-pH and chelate mineral cations ($Ca^{2+}, Fe^{3+}, Al^{3+}$), solubilizing locked-up phosphorus and potassium.\n- **Free-Living Diazotrophs:** *Azotobacter* and *Azospirillum* fix atmospheric dinitrogen ($N_2$) into ammonia in the rhizosphere.\n- **Saprophytic Fungi & Actinomycetes:** Specialize in decomposing complex, recalcitrant polymers (lignin, cellulose, suberin) present in surface straw mulch (*Acchadana*), synthesizing humic precursors.\n\n### 3. The Predatory 'Poop and Pee' Mineralization Loop\nWhile primary decomposers immobilize nutrients within their cellular biomass, plants cannot directly absorb nutrients locked inside living bacterial cells. Nutrient release is driven by secondary predators:\n- **Protozoa (Amoebae, Flagellates, Ciliates) and Bacterial-Feeding Nematodes:** Graze voraciously on rhizosphere bacteria. A single protozoan consumes up to 10,000 bacteria per day.\n- **Ecological Stoichiometry Mechanism:** Bacteria have an extremely narrow Carbon-to-Nitrogen ratio (**C:N $\\approx$ 5:1**). Protozoa and nematodes have a wider C:N ratio (**C:N $\\approx$ 30:1**). To satisfy their carbon requirements, predators must consume far more bacterial biomass than their nitrogen requirements dictate. Consequently, the excess nitrogen is excreted directly into the rhizosphere as **plant-absorbable ammonium ($NH_4^+$)**.\n- **Significance:** This biological grazing loop generates 50 to 150 kg of plant-available mineral nitrogen per hectare per season directly at root surfaces, eliminating the need for synthetic chemical fertilizers.\n\n### 4. Apex Ecosystem Engineers: Earthworms\nAt the apex of the invertebrate soil food web, anecic and endogeic earthworms shred organic residues, blend them with mineral soil, and create vertical biopores that channel air, water, and roots deep into the profile.",
+        "outlinePoints": [
+            "Rhizosphere carbon pump: 20-40% of fixed carbon allocated to root exudates",
+            "Root exudate chemistry: sugars, amino acids, carboxylates creating the rhizosphere effect",
+            "Primary decomposers: PGPR, diazotrophs, and saprophytic fungi solubilizing minerals and fixing N2",
+            "Secondary predators: protozoa and bacterial-feeding nematodes grazing on bacterial populations",
+            "Ecological stoichiometry mechanism: narrow bacterial C:N (5:1) vs predator C:N (30:1) driving ammonium excretion",
+            "Biological nitrogen release: 50-150 kg N/ha mineralized directly at root surfaces",
+            "Earthworm ecosystem engineering completing the soil food web hierarchy"
+        ]
+    },
+    {
+        "id": "AGR217-U3-SUB10",
+        "questionType": "LONG_ANSWER",
+        "maxMarks": 10,
+        "difficulty": "Hard",
+        "syllabusTopic": "Earthworms in Natural Farming: deep-burrowing native endogeic and anecic species vs exotic epigeic vermicomposting worms",
+        "questionText": "Critically analyze the ecological classification of earthworms in Natural Farming, contrasting deep-burrowing native anecic species with exotic epigeic vermicomposting worms, and evaluate the biophysical and chemical impacts of earthworm castings.",
+        "modelAnswer": "Earthworms are recognized as the primary 'ecosystem engineers' of terrestrial soils. However, Natural Farming draws a sharp scientific distinction between different ecological guilds of earthworms, actively critiquing commercial vermicomposting practices while promoting native soil-dwelling species.\n\n### 1. Ecological Guilds: Morphological and Behavioral Divergence\nFrench soil biologist Marcel Bouché categorized earthworms into three distinct ecological guilds based on feeding ecology, burrowing behavior, and vertical soil stratification:\n\n#### A. Epigeic Earthworms (Litter Dwellers)\n- **Species:** *Eisenia fetida* (tiger worm / red wiggler), *Eudrilus eugeniae*, *Perionyx excavatus*.\n- **Ecology & Behavior:** Small, pigmented, non-burrowing surface dwellers that consume decaying organic matter under high-moisture conditions (80–90% RH). They do not consume mineral soil and construct no permanent subterranean burrows.\n- **Natural Farming Critique:** Subhash Palekar strongly opposes commercial vermicomposting with *Eisenia fetida*. As an exotic European temperate species, it cannot survive the high heat of tropical field soils (>35–40°C). Palekar argues that commercial vermicomposting keeps farmers dependent on purchased earthworm cultures and bulky composting infrastructure, whereas *Eisenia* castings in open fields quickly desiccate.\n\n#### B. Endogeic Earthworms (Mineral Soil Feeders)\n- **Species:** *Octochaetona serrata*, *Pheretima posthuma*.\n- **Ecology & Behavior:** Light-colored, geophagous worms inhabiting the upper 10 to 30 cm of mineral soil. They consume a mixture of mineral particles and organic humus, constructing horizontal, branching, temporary burrows that mix and aggregate the topsoil.\n\n#### C. Anecic Earthworms (Deep Burrowers)\n- **Species:** *Lampito mauritii* (indigenous to India), *Lumbricus terrestris* (temperate).\n- **Ecology & Behavior:** Large, muscular worms that construct **permanent, vertical burrows extending 2 to 3 meters deep** into subsoil horizons. They exhibit nocturnal foraging, coming to the surface to pull straw mulch (*Acchadana*) down into their burrows, and returning to the surface to deposit organo-mineral castings.\n\n### 2. Biophysical Impacts: Biopores and Hydrology\n- **Biopore Continuity:** Anecic burrows (diameter 4–8 mm) form continuous vertical macro-biopores that extend from the surface deep into subsoil aquifers. These biopores increase water infiltration rates by **200% to 300%**, capturing monsoonal downpours and virtually eliminating surface erosion.\n- **Preferential Root Conduits:** Crop roots preferentially follow existing earthworm burrows, penetrating compacted subsoils with zero mechanical resistance to access deep subsoil moisture.\n\n### 3. Chemical and Biochemical Transformations in Castings\nEarthworm digestion is a sophisticated biochemical refinery:\n- **Gizzard Grinding & Mucus Addition:** Soil mineral particles and organic residues are finely ground in the gizzard and blended with intestinal mucus containing proteins and polysaccharides.\n- **Calciferous Glands:** Secrete calcium carbonate ($CaCO_3$) spherulites into the gut lumen, buffering acidic subsoils to neutral pH (7.0–7.4).\n- **Nutrient Mineralization:** Intestinal enzymes and microbial symbionts mineralize nutrients. Castings contain **5 times more available N**, **7 times more available P**, and **11 times more exchangeable K** than surrounding bulk soil.\n- **Microbial Inoculation:** The earthworm gut acts as a bio-incubator; castings are densely populated with beneficial *Bacillus*, *Pseudomonas*, and actinomycetes coated in protective peritrophic membranes.",
+        "outlinePoints": [
+            "Bouché's three ecological guilds: Epigeic, Endogeic, and Anecic",
+            "Epigeic critique (Eisenia fetida): temperate litter-dweller, non-burrowing, vulnerable to tropical field heat",
+            "Endogeic ecology: horizontal geophagous burrowing aggregating topsoil (10-30 cm)",
+            "Anecic architecture: deep permanent vertical burrows extending 2-3 meters (Lampito mauritii)",
+            "Biophysical impacts: continuous biopores boosting infiltration by 200-300% and providing root conduits",
+            "Chemical transformations: gizzard grinding, calciferous gland buffering, and 5x N, 7x P, 11x K enrichment"
+        ]
+    },
+    {
+        "id": "AGR217-U3-SUB11",
+        "questionType": "LONG_ANSWER",
+        "maxMarks": 10,
+        "difficulty": "Hard",
+        "syllabusTopic": "Waaphasa concept: soil pore microclimate (50% water vapor and 50% air), root respiration, and water conservation",
+        "questionText": "Deconstruct the biophysical and thermodynamic foundations of the Waaphasa condition in Natural Farming, contrasting its physiological impacts on crop root respiration with the pathology of flood irrigation.",
+        "modelAnswer": "In modern agricultural orthodoxy, irrigation is evaluated primarily by the volume of liquid water applied to field basins. Natural Farming fundamentally challenges this premise through the biophysical doctrine of **Waaphasa**.\n\n### 1. Definition and Biophysical Matrix of Waaphasa\nWaaphasa is defined as the microclimatic equilibrium in the crop root zone where total soil pore spaces maintain **50% air (atmospheric oxygen) and 50% water vapor**.\n- **Thermodynamics of Water Vapor Uptake:** In an aerated soil pore at or near Field Capacity (matric potential $\\psi_m = -10\\text{ to } -33\\text{ kPa}$), the relative humidity of soil air is practically 100%, and the water potential of soil air pores is close to zero ($\\psi_{\\text{air}} \\approx 0\\text{ to } -0.1\\text{ MPa}$). In contrast, actively transpiring crop roots maintain negative cell water potentials ($\\psi_{\\text{root}} = -0.5\\text{ to } -1.5\\text{ MPa}$). Water moves passively down this thermodynamic free-energy gradient through molecular vapor diffusion and condensation onto microscopic root hair surfaces.\n\n### 2. The Pathology of Flood Irrigation: Root Anoxia and Wet Wilting\nConventional basin flooding completely inundates soil pore spaces with liquid water, driving out air and triggering acute root hypoxia/anoxia:\n- **Arrest of Mitochondrial Respiration:** Oxygen diffusion through liquid water is approximately **10,000 times slower** than through air. Within hours of flooding, dissolved oxygen in the root zone is exhausted by microbial and root respiration. Oxygen concentrations drop to near zero, shutting down the mitochondrial electron transport chain.\n- **Cytoplasmic Acidosis and Energy Depletion:** Root cells shift from aerobic respiration (producing 36–38 ATP per glucose) to anaerobic ethanolic and lactic acid fermentation (yielding only 2 ATP per glucose). Lactic acid accumulation causes **cytoplasmic acidosis**, dropping cytosolic pH from 7.5 to <6.5. This acidosis inactivates the plasma membrane $H^+$-ATPase proton pumps.\n- **Paralysis of Active Nutrient Transport:** Active mineral absorption ($NO_3^-, H_2PO_4^-, K^+$) requires ATP to drive transmembrane proton gradients. Under anoxia, active transport ceases completely. Fine root hairs collapse, and plants display **'wet wilting'**—wilting and chlorosis despite standing in water.\n\n### 3. Field Irrigation Engineering for Waaphasa Maintenance\nNatural Farming achieves continuous Waaphasa through three engineering practices:\n1. **Ridge-and-Furrow Geometry:** Crops are grown on raised ridges, with root systems developing above the furrow floor.\n2. **Alternate-Furrow Irrigation (AFI):** Water is applied strictly into alternate furrows (Furrows 1, 3, 5). Water infiltrates and seeps laterally through capillary suction into the ridge base, moistening the lower root zone. The adjacent un-watered furrow (Furrows 2, 4, 6) remains completely dry and porous, acting as a continuous vertical conduit that ventilates atmospheric oxygen into the ridge core.\n3. **Late Afternoon Scheduling:** Irrigation is delivered in late afternoons, allowing capillary equilibration overnight under low evaporative demand.\n\n### 4. Hydrologic and Agronomic Dividends\n- **50% to 70% Water Conservation:** Eliminates deep percolation losses and surface evaporation.\n- **Continuous Nutrient Absorption:** Uninterrupted aerobic root respiration sustains continuous ATP-driven nutrient uptake.\n- **Suppression of Water Molds:** Eliminates the continuous liquid water films required by flagellated zoospores of *Pythium* and *Phytophthora*, preventing damping-off and root rots.",
+        "outlinePoints": [
+            "Biophysical definition: 50% air and 50% water vapor pore equilibrium",
+            "Thermodynamics of vapor uptake: water potential gradients driving diffusion at 100% relative humidity",
+            "Pathology of flooding: 10,000x slower O2 diffusion through water causing acute root anoxia",
+            "Cytoplasmic acidosis: anaerobic fermentation generating lactic acid, dropping pH, and paralyzing H+-ATPase pumps",
+            "Wet wilting phenomenon: active nutrient and water uptake shutdown under standing water",
+            "Alternate-furrow irrigation engineering: lateral capillary seepage paired with open oxygen ventilation furrows",
+            "Agronomic outcomes: 50-70% water savings, continuous aerobic nutrient transport, and Oomycete suppression"
+        ]
+    },
+    {
+        "id": "AGR217-U3-SUB12",
+        "questionType": "LONG_ANSWER",
+        "maxMarks": 10,
+        "difficulty": "Medium",
+        "syllabusTopic": "Acchadana (Mulching): Soil mulch, Straw mulch, and Live mulch (legume cover crops) for thermal and erosion control",
+        "questionText": "Provide an extensive agronomic evaluation of the tripartite Acchadana (Mulching) system in Natural Farming, detailing the techniques, biophysical mechanisms, and ecological benefits of Soil Mulch, Straw Mulch, and Live Mulch.",
+        "modelAnswer": "Acchadana (continuous mulching) is the third operational pillar of Natural Farming, designed to replicate the biological self-mulching of virgin forest floors. Subhash Palekar established a tripartite mulching framework comprising three distinct operational practices:\n\n### 1. Mrida Acchadana (Soil Mulch / Dust Mulch)\n- **Technique:** Shallow surface hoeing or light harrowing of the top 2 to 3 cm of soil while crops are young.\n- **Biophysical Mechanism:** In undisturbed tilled soils, continuous vertical capillary pore networks connect subsoil moisture to the atmosphere, drawing water upward like a wick where it evaporates. Shallow harrowing severs these capillary conduits, creating an uncompacted, dry surface dust layer that acts as a physical vapor barrier, halting upward evaporative loss and trapping moisture in the seed zone.\n\n### 2. Shushka Acchadana (Straw / Dry Biomass Mulch)\n- **Technique:** Spreading a continuous 3 to 5 t/ha blanket of dried crop residues (paddy straw, wheat stubble, sugarcane trash, fallen tree leaves) across the field surface.\n- **Erosion & Structural Protection:** Bare soil subjected to intense monsoonal rains suffers aggregate detachment from raindrop kinetic energy. The straw blanket intercepts and absorbs this impact, preventing surface aggregate breakdown, slaking, and crusting. Runoff velocity is slowed, giving water time to infiltrate through biopores.\n- **Thermal Moderation:** Dry straw exhibits high albedo (reflecting shortwave solar radiation) and low thermal conductivity due to trapped air spaces. Under peak summer sun, topsoil temperatures in bare fields reach 50–60°C, causing thermal death of earthworms and beneficial bacteria. Straw mulch keeps topsoils **4°C to 8°C cooler during the day**, providing the continuous darkness and moderate temperature required by native anecic earthworms.\n- **Carbon Cycling:** Straw mulch decomposes slowly from the top down, feeding saprophytic fungi and actinomycetes without causing the subsoil nitrogen immobilization associated with deep plowing.\n\n### 3. Jeeva / Kashta Acchadana (Live Mulch / Living Cover)\n- **Technique:** Intercropping low-growing, spreading cover crops—predominantly grain legumes and pulses like cowpea (*Vigna unguiculata*), green gram (*Vigna radiata*), black gram (*Vigna mungo*), or clover—between rows of the main tall crop.\n- **Biological Synergisms:**\n  - *Weed Smothering:* Rapid canopy expansion shades the ground within 25 days, intercepting Photosynthetically Active Radiation (PAR) and starving emerging weed seedlings of light.\n  - *Biological Nitrogen Fixation:* Legume root nodules fix 40 to 80 kg N/ha from the atmosphere, returning nitrogen-rich organic biomass upon senescence.\n  - *Active Rhizosphere Maintenance:* Pumping diverse root exudates into topsoil horizons throughout the growing season, sustaining dense microbial populations.\n\n### 4. Systemic Integration and Field Synthesis\nIn a mature Natural Farming system, all three mulching methods work in sequence: Mrida Acchadana protects early seedlings, Jeeva Acchadana provides living nitrogen-fixing cover during vegetative growth, and Shushka Acchadana provides long-term residue protection following harvest, maintaining year-round soil coverage.",
+        "outlinePoints": [
+            "Tripartite classification: Soil Mulch (Mrida), Straw Mulch (Shushka), Live Mulch (Jeeva)",
+            "Mrida Acchadana: breaking capillary conduits to halt subsoil evaporative water loss",
+            "Shushka Acchadana: 3-5 t/ha residue blanket absorbing raindrop kinetic energy and preventing crusting",
+            "Thermal insulation physics: high albedo and low thermal conductivity cooling topsoil by 4-8°C",
+            "Jeeva Acchadana: intercropped spreading legumes smothering weeds, fixing N2, and feeding the rhizosphere",
+            "Systemic integration: seasonal progression from dust mulch to live canopy to straw residue cover"
+        ]
+    },
+    {
+        "id": "AGR217-U3-SUB13",
+        "questionType": "LONG_ANSWER",
+        "maxMarks": 10,
+        "difficulty": "Hard",
+        "syllabusTopic": "Soil organic carbon (SOC) sequestration, humus formation, aggregate stability, and climate resilience",
+        "questionText": "Detail the biogeochemical mechanisms of Soil Organic Carbon (SOC) sequestration and humification under Natural Farming, explaining how zero tillage, residue retention, and microbial necromass build decadal carbon sinks.",
+        "modelAnswer": "Agricultural soils represent the largest terrestrial carbon reservoir, holding more carbon than the atmosphere and global vegetation combined. However, conventional chemical agriculture and intensive mechanical tillage have depleted 50% to 70% of baseline soil organic carbon across tropical soils. Natural Farming reverses this degradation through systematic biogeochemical carbon stabilization.\n\n### 1. The Carbon Influx Mechanisms\nNatural Farming delivers continuous, diverse carbon inputs throughout the year:\n- **Surface Residue Retention:** 3 to 5 tonnes/ha of dry crop residues (*Shushka Acchadana*) returned to the soil surface annually.\n- **Rhizodeposition:** Living plant roots allocate 20% to 40% of their photosynthetically fixed carbon into the rhizosphere as low-molecular-weight exudates (sugars, amino acids, carboxylates), mucilage, and sloughed root border cells.\n- **Liquid Bio-Cultures:** Regular applications of Jeevamrit introduce billions of microbial cells and soluble organic carbon substrates.\n\n### 2. Eliminating Oxidative Carbon Loss (Zero Tillage)\nIn conventional farming, mechanical plowing inverts and shatters soil aggregates, exposing previously encapsulated organic matter to intense aeration and heat. Heterotrophic bacteria undergo an oxidative respiratory burst, releasing stored carbon into the atmosphere as $CO_2$. Natural Farming eliminates mechanical plowing completely, keeping organic carbon protected from oxidative breakdown.\n\n### 3. Modern Humification Paradigms: The Microbial Carbon Pump (MCP)\nTraditional soil science assumed that humus forms purely from the slow chemical condensation of recalcitrant plant lignin. Modern biogeochemistry has disproven this, revealing that stable humus is driven by the **Microbial Carbon Pump (MCP)**:\n- **Microbial Anabolism & Turnover:** Labile plant sugars and root exudates are rapidly metabolized by bacteria and fungi with high carbon use efficiency (CUE). Microbes assimilate carbon into cellular components: cell walls (peptidoglycan in bacteria, chitin and $\\beta$-glucans in fungi), membrane lipids, and functional proteins.\n- **Necromass Entombment:** When soil microorganisms die, their cellular remains—**microbial necromass**—constitute over **50% to 60% of total stable soil organic matter**. Unlike raw plant straw, microbial necromass carries high densities of polar functional groups that bind with high affinity to mineral surfaces.\n\n### 4. Mineral-Associated Organic Matter (MAOM) Stabilization\n- **Organo-Mineral Complexes:** Microbial necromass and humified molecules bind to the charged surfaces of fine clay and silt minerals (<53 microns) through ligand exchange, polyvalent cation bridging ($Ca^{2+}, Fe^{3+}, Al^{3+}$), and hydrophobic interactions.\n- **Decadal Residence Time:** Mineral-Associated Organic Matter (MAOM) is chemically stabilized against enzymatic degradation, with carbon residence times extending from **decades to centuries**.\n\n### 5. Macro-Aggregate Physical Protection\nConcurrently, arbuscular mycorrhizal fungi produce **glomalin**, a hydrophobic glycoprotein that binds mineral particles into water-stable macro-aggregates (>0.25 mm). Particulate organic matter is physically encapsulated within aggregate micropores where oxygen and bacterial enzymes cannot penetrate, providing physical protection against decomposition.\n\n### 6. Macro-Impact on Climate Mitigation and Water Holding Capacity\nTransitioning to Natural Farming sequesters **0.5 to 1.5 tonnes of carbon per hectare per year**. Every 1% increase in soil organic matter enables soil to store an additional **140,000 to 200,000 liters of water per hectare**, transforming agricultural land into climate-resilient carbon sinks.",
+        "outlinePoints": [
+            "Carbon loss context: conventional plowing depleting 50-70% of tropical SOC via oxidative respiration",
+            "Carbon influx streams: 3-5 t/ha residue retention, 20-40% rhizodeposition exudates, and Jeevamrit inputs",
+            "Zero tillage preservation: halting the respiratory CO2 burst caused by aggregate shattering",
+            "The Microbial Carbon Pump (MCP): microbial anabolism transforming labile plant carbon into cellular polymers",
+            "Necromass entombment: dead microbial bodies constituting >50% of stable soil organic matter",
+            "MAOM stabilization: organo-mineral binding via cation bridges (Ca2+) conferring decadal residence times",
+            "Glomalin macro-aggregation: physical encapsulation of particulate carbon inside waterproof aggregates",
+            "Climate mitigation dividend: 0.5-1.5 t C/ha/year sequestration and 140,000 L/ha water holding capacity expansion"
+        ]
+    },
+    {
+        "id": "AGR217-U3-SUB14",
+        "questionType": "LONG_ANSWER",
+        "maxMarks": 10,
+        "difficulty": "Hard",
+        "syllabusTopic": "Soil health, the Soil Food Web, indigenous microorganisms (IMO), and biological nutrient recycling",
+        "questionText": "Evaluate the biology and management of Indigenous Microorganisms (IMO) in Natural Farming, detailing collection protocols from virgin habitats, multiplication phases, and field application.",
+        "modelAnswer": "In Natural Farming and Korean Natural Farming (KNF) traditions, **Indigenous Microorganisms (IMO)** represent the diverse, uncultivated, native soil biological communities collected directly from pristine local habitats (such as old-growth forests, bamboo groves, or undisturbed field bunds). Unlike packaged commercial laboratory monocultures, IMO strains are adapted to local climatic, edaphic, and thermal conditions.\n\n### 1. Phase 1: Collection of Primary Inoculum (IMO-1)\n- **Habitat Selection:** Identify a shaded, undisturbed natural forest floor, bamboo grove, or century-old tree root zone where thick layers of decaying organic leaf litter have created rich, white, sweet-smelling mold layers.\n- **Carbohydrate Bait Box:** Partially fill a porous, untreated wooden box (approx. 20 cm $\\times$ 30 cm $\\times$ 10 cm) with steamed, hard-cooked white rice (avoiding sticky, overly moist rice). The rice acts as a clean carbohydrate and starch substrate.\n- **Field Placement:** Clear loose top leaves, set the wooden box firmly on the fungal-rich soil surface, cover the top of the box with porous handmade paper or cotton cloth tied with string, and place an inverted wire mesh over it to exclude rodents. Cover the box with dry forest leaf litter to shield it from sun and rain.\n- **Colonization Period:** Leave undisturbed for **3 to 5 days** in warm weather (5–7 days in cooler climates). When the box is opened, the rice should be fully colonized by dense, fluffy, white mycelial mats emitting an earthy forest mushroom aroma. This colonized substrate is **IMO-1**.\n\n### 2. Phase 2: Sugar Stabilization (IMO-2)\n- **Procedure:** Blend the colonized IMO-1 rice with unrefined organic brown sugar or jaggery in a strict **1:1 weight ratio** inside a clean glass or clay jar. Cover with porous cloth.\n- **Biochemical Osmotic Extraction:** Sugar draws out cellular moisture through osmosis, creating a stable, shelf-stable microbial syrup (*IMO-2*) that can be stored for up to 6 months at room temperature.\n\n### 3. Phase 3 & 4: Solid-State Biomass Multiplication (IMO-3 and IMO-4)\n- **IMO-3 (Rice Bran Carrier Multiplication):** Dilute IMO-2 syrup (1:500 ratio in water) and blend thoroughly into **wheat bran or rice bran** until moisture reaches 55–60%. Heap the damp bran on a shaded dirt floor, cover with straw, and allow aerobic solid-state fermentation to raise core temperature to **45–50°C** for 5 to 7 days, turning the heap when temperatures exceed 55°C.\n- **IMO-4 (Soil Blending):** Mix 1 part IMO-3 with 1 part rich field soil and 1 part virgin forest soil. Moisten to 50% and ferment under shade for another 5 days. The resulting dark, crumbly bio-inoculant (*IMO-4*) is densely populated with billions of native bacilli, actinomycetes, and mycorrhizal fungi.\n\n### 4. Field Application and Ecosystem Restoration\n- **Basal Soil Application:** Apply IMO-4 at **200 to 500 kg per acre** into sowing furrows or broadcast under thick straw mulch (*Acchadana*) prior to sowing.\n- **Restoration Dividend:** Introducing diverse native IMO re-establishes the complete soil food web, accelerates residue decomposition, suppresses soil-borne pathogens, and eliminates the need for purchased commercial bio-fertilizers.",
+        "outlinePoints": [
+            "Definition of IMO: diverse uncultivated native microbial communities adapted to local ecologies",
+            "Phase 1 (IMO-1): steamed rice bait placed in wooden boxes under forest/bamboo leaf litter for 3-5 days",
+            "Microbial indicators of IMO-1: fluffy white fungal mycelia emitting an earthy mushroom aroma",
+            "Phase 2 (IMO-2): 1:1 sugar/jaggery stabilization creating a shelf-stable osmotic microbial syrup",
+            "Phase 3 (IMO-3): solid-state fermentation on rice/wheat bran maintaining 45-50°C for 5-7 days",
+            "Phase 4 (IMO-4): blending with field and forest soils to create a balanced biological carrier",
+            "Field application: 200-500 kg/acre basal application under mulch restoring soil food web biodiversity"
+        ]
+    },
+
+    # 3 COMPARISON
+    {
+        "id": "AGR217-U3-SUB15",
+        "questionType": "COMPARISON",
+        "maxMarks": 5,
+        "difficulty": "Medium",
+        "syllabusTopic": "Earthworms in Natural Farming: deep-burrowing native endogeic and anecic species vs exotic epigeic vermicomposting worms",
+        "questionText": "Compare the ecological attributes and field performance of exotic epigeic earthworms (Eisenia fetida) with native anecic earthworms (Lampito mauritii).",
+        "modelAnswer": "Earthworm species exhibit divergent morphological, physiological, and ecological adaptations that determine their utility in agriculture:\n\n1. **Ecological Guild and Habitat:**\n   - *Eisenia fetida (Tiger / Red Wiggler):* An exotic European **epigeic** earthworm. It lives exclusively in moist surface decaying organic matter and compost heaps; it does not ingest mineral soil or construct subterranean burrows.\n   - *Lampito mauritii (Native Anecic Worm):* An indigenous Indian **anecic** earthworm. It is geophagous (consumes both mineral soil and organic matter), constructing permanent, vertical burrows extending **2 to 3 meters deep** into subsoils.\n2. **Thermotolerance and Tropical Field Survival:**\n   - *Eisenia fetida:* Highly sensitive to heat and desiccation; perishes when soil temperatures exceed 30–35°C, making it incapable of surviving in open tropical fields under summer sun.\n   - *Lampito mauritii:* Evolutionary adaptation to tropical semi-arid soils; tolerates high ambient temperatures by retreating deep into moist subsoil burrows, entering diapause during peak summer and reviving upon rainfall.\n3. **Soil Physical Architecture Impacts:**\n   - *Eisenia fetida:* Confined to artificial vermicompost bins, contributing zero physical biopores or structural improvements to field subsoils.\n   - *Lampito mauritii:* Constructs extensive vertical macro-biopores that increase field water infiltration by 200–300%, eliminate surface runoff, and provide preferential root channels for crops.\n4. **Castings Placement and Soil Enrichment:**\n   - *Eisenia fetida:* Produces castings within compost bins that must be manually harvested, hauled, and spread onto fields.\n   - *Lampito mauritii:* Continuously forages on surface straw mulch at night and deposits nutrient-rich, buffered mineral castings directly on the field surface and along burrow walls.",
+        "outlinePoints": [
+            "Ecological niche: surface litter feeder (Eisenia fetida) vs 2-3 meter deep vertical burrower (Lampito mauritii)",
+            "Thermotolerance: thermal mortality >30-35°C in Eisenia vs tropical heat/drought adaptation in Lampito",
+            "Soil physical impacts: zero field biopore formation in Eisenia vs 200-300% infiltration surge via Lampito burrows",
+            "Castings logistics: manual hauling of bin vermicompost vs in-situ biological casting deposition across fields"
+        ]
+    },
+    {
+        "id": "AGR217-U3-SUB16",
+        "questionType": "COMPARISON",
+        "maxMarks": 5,
+        "difficulty": "Medium",
+        "syllabusTopic": "Waaphasa concept: soil pore microclimate (50% water vapor and 50% air), root respiration, and water conservation",
+        "questionText": "Differentiate between Conventional Basin Flood Irrigation and Alternate-Furrow Waaphasa Irrigation across water consumption, soil aeration, root physiology, and disease risk.",
+        "modelAnswer": "Conventional basin flood irrigation and alternate-furrow Waaphasa irrigation represent contrasting water management systems:\n\n1. **Water Application Volume and Irrigation Efficiency:**\n   - *Basin Flood Irrigation:* Inundates the entire field surface with 50 to 75 mm of standing water per irrigation pass, incurring heavy losses through surface evaporation and deep percolation.\n   - *Alternate-Furrow Waaphasa Irrigation:* Waters strictly every second furrow, allowing lateral capillary seepage to moisten the ridge base, cutting total irrigation water requirements by **50% to 70%**.\n2. **Soil Pore Aeration and Oxygen Diffusion:**\n   - *Basin Flood Irrigation:* Saturates both micropores and macropores, expelling all atmospheric air. Oxygen diffusion through water is 10,000 times slower than through air, creating acute temporary anoxia in the root zone.\n   - *Alternate-Furrow Waaphasa Irrigation:* The un-irrigated dry furrow remains completely aerated and open, acting as a continuous ventilation conduit that delivers atmospheric oxygen into the crop ridge.\n3. **Root Physiology and Nutrient Transport:**\n   - *Basin Flood Irrigation:* Anoxia causes cytoplasmic acidosis, paralyzing root plasma membrane $H^+$-ATPase pumps. Roots suffer 'wet wilting' and active nutrient uptake halts until excess water drains.\n   - *Alternate-Furrow Waaphasa Irrigation:* Roots maintain continuous aerobic mitochondrial respiration, generating ATP to drive uninterrupted active carrier-mediated mineral nutrient absorption.\n4. **Soil-Borne Disease Vulnerability:**\n   - *Basin Flood Irrigation:* Continuous standing water films provide ideal conduits for flagellated zoospores of water molds (*Pythium*, *Phytophthora*), triggering damping-off and root rots.\n   - *Alternate-Furrow Waaphasa Irrigation:* Lack of continuous liquid water films suppresses zoospore motility, protecting roots from water-mold infections.",
+        "outlinePoints": [
+            "Water volume: heavy 75 mm basin inundation vs 50-70% savings under alternate furrow watering",
+            "Soil aeration: complete macropore saturation and anoxia vs dry-furrow oxygen ventilation conduits",
+            "Root physiology: ATP pump paralysis and wet wilting vs continuous aerobic nutrient transport",
+            "Pathology: promotion of swimming Pythium zoospores vs biological suppression of water molds"
+        ]
+    },
+    {
+        "id": "AGR217-U3-SUB17",
+        "questionType": "COMPARISON",
+        "maxMarks": 5,
+        "difficulty": "Hard",
+        "syllabusTopic": "Acchadana (Mulching): Soil mulch, Straw mulch, and Live mulch (legume cover crops) for thermal and erosion control",
+        "questionText": "Compare Shushka Acchadana (Straw Mulch) with synthetic Black Plastic Polyethylene Mulch across soil biology, microclimate, environmental sustainability, and long-term soil carbon.",
+        "modelAnswer": "Organic straw mulching (*Shushka Acchadana*) and synthetic black polyethylene plastic mulching are compared across four agronomic and ecological parameters:\n\n1. **Impact on Soil Biological Life:**\n   - *Straw Mulch:* Acts as a living biological substrate. As fungi, actinomycetes, and native earthworms slowly decompose the cellulose and lignin, the straw feeds the soil food web, stimulating microbial biomass carbon and earthworm populations.\n   - *Black Plastic Mulch:* Provides zero food or organic carbon for soil microflora. Under intense sunlight, trapped heat beneath black plastic can elevate soil temperatures above 50°C, sterilizing surface biological activity.\n2. **Soil Aeration and Gas Exchange:**\n   - *Straw Mulch:* Highly porous and breathable, allowing unrestricted diffusion of oxygen into the root zone and escape of respiratory carbon dioxide, maintaining optimal Waaphasa conditions.\n   - *Black Plastic Mulch:* Forms an impermeable barrier that restricts natural gas exchange, often creating localized anoxic pockets in heavy clay soils.\n3. **Long-Term Soil Organic Carbon (SOC):**\n   - *Straw Mulch:* Gradually humifies into stable humic acids and glomalin-bound aggregates, sequestering **0.5 to 1.5 tonnes of carbon/ha/year** directly into the soil.\n   - *Black Plastic Mulch:* Contributes zero carbon to the soil matrix. Residue plowing is prevented, and soil organic carbon continues to decline over time.\n4. **Environmental Footprint and Disposal:**\n   - *Straw Mulch:* 100% biodegradable, renewable, and circular; recycles on-farm agricultural by-products with zero pollution.\n   - *Black Plastic Mulch:* Manufactured from petroleum fossil fuels; generates massive plastic waste that is difficult to retrieve, fragmenting into persistent microplastics that contaminate rural environments.",
+        "outlinePoints": [
+            "Biological impact: feeding saprophytic fungi/earthworms vs biological starvation and thermal sterilization",
+            "Aeration: breathable gas exchange supporting Waaphasa vs impermeable barrier trapping anoxic pockets",
+            "Carbon sequestration: humifying into 0.5-1.5 t C/ha/yr stable SOC vs zero organic carbon contribution",
+            "Environmental sustainability: 100% biodegradable circular on-farm recycling vs persistent microplastic pollution"
+        ]
+    },
+
+    # 2 APPLICATION
+    {
+        "id": "AGR217-U3-SUB18",
+        "questionType": "APPLICATION",
+        "maxMarks": 10,
+        "difficulty": "Hard",
+        "syllabusTopic": "Waaphasa concept: soil pore microclimate (50% water vapor and 50% air), root respiration, and water conservation",
+        "questionText": "A 4-acre vegetable grower in a drought-affected district of Telangana has limited borewell water (yielding only 2 hours of pumping per day). Design an integrated ridge-and-furrow alternate-furrow irrigation system combined with Acchadana (mulching) to sustain his tomato and chili crops while maximizing the Waaphasa condition.",
+        "modelAnswer": "### 1. Agronomic Assessment and Water Budget\nWith borewell yield restricted to 2 hours per day (approx. 10,000–12,000 liters/day total discharge), conventional basin flood irrigation would cause rapid crop failure across 4 acres. An integrated **Ridge-and-Furrow Alternate-Furrow Irrigation (AFI)** system combined with **Shushka Acchadana (straw mulch)** will reduce water consumption by 60%, allowing the available water budget to sustain the entire acreage.\n\n### 2. Field Engineering and Layout Design\n1. **Land Geometry:** Using tractor-drawn ridge-makers, construct broad ridges spaced **120 cm center-to-center** (ridge height: 25–30 cm; furrow bottom width: 30 cm).\n2. **Planting Position:** Transplant tomato and chili seedlings in single rows along the upper shoulders of the ridge (spaced 45 cm plant-to-plant). Planting on the ridge shoulder places root crowns 15–20 cm above the furrow floor, preventing water immersion.\n3. **Alternate Furrow Delivery System:**\n   - Divide the 4 acres into 4 one-acre rotational zones.\n   - Water is delivered via gated pipes or PVC siphon tubes strictly into **alternate furrows** (Furrows 1, 3, 5, 7, etc.).\n   - Furrows 2, 4, 6, 8 remain permanently dry and un-irrigated.\n\n### 3. Execution of Acchadana (Mulching)\n- **Straw Mulch Deployment:** Spread a uniform **8–10 cm thick blanket (approx. 4 tonnes/acre)** of dry paddy straw or sorghum stubble across the entire field—covering both the ridges and the dry furrows.\n- **Functions:**\n  - Covers the wet furrows, cutting surface evaporation by 70%.\n  - Insulates the ridge topsoil, maintaining temperatures between 26°C and 30°C (preventing heat-induced root desiccation).\n  - Traps moisture under the mulch, creating a continuous 100% relative humidity vapor zone around root crowns.\n\n### 4. Biophysical Operation of Waaphasa in the System\n- **Lateral Capillary Seepage:** During the 30-minute watering of Furrow 1, water infiltrates and seeps laterally through capillary suction into the base of the adjacent ridges, moistening the lower root zone.\n- **Aerobic Gas Exchange:** Furrow 2 remains dry and uncompacted under its straw mulch, acting as an open ventilation chimney that continuously diffuses atmospheric oxygen ($O_2$) into the ridge core. Root hairs experience optimal **Waaphasa (50% air and 50% water vapor)**, sustaining aerobic ATP-driven nutrient uptake.\n\n### 5. Irrigation Scheduling and Operational Protocol\n- **Rotational Cycle:** Irrigate Zone A on Day 1 (2 hours), Zone B on Day 2, Zone C on Day 3, and Zone D on Day 4. Return to Zone A on Day 5 (4-day irrigation interval).\n- **Afternoon Timing:** Water strictly between **04:30 PM and 06:30 PM**. Cooler overnight temperatures allow lateral seepage without daytime evaporative loss.\n\n### 6. Projected Agronomic Dividends\n- Total irrigation water reduction of **60% to 65%**.\n- Complete elimination of blossom end rot (calcium deficiency) through continuous calcium absorption enabled by aerobic root respiration.\n- Preservation of full marketable yield despite severe water scarcity.",
+        "outlinePoints": [
+            "Water budget diagnosis: 10,000-12,000 L/day capacity insufficient for flood irrigation across 4 acres",
+            "Field geometry: 120 cm ridge-and-furrow layout with seedlings planted on ridge shoulders",
+            "Alternate furrow delivery: watering furrows 1, 3, 5 while keeping furrows 2, 4, 6 permanently dry",
+            "Acchadana deployment: 4 t/acre straw blanket across ridges and furrows cutting evaporation by 70%",
+            "Waaphasa biophysics: lateral capillary seepage paired with dry furrow oxygen ventilation",
+            "4-zone rotational schedule operating late afternoons (04:30-06:30 PM)",
+            "Outcomes: 60-65% water savings and elimination of calcium blossom end rot"
+        ]
+    },
+    {
+        "id": "AGR217-U3-SUB19",
+        "questionType": "APPLICATION",
+        "maxMarks": 10,
+        "difficulty": "Medium",
+        "syllabusTopic": "Soil organic carbon (SOC) sequestration, humus formation, aggregate stability, and climate resilience",
+        "questionText": "A watershed development officer is assigned to rehabilitate 200 hectares of degraded, severely eroded red sandy loam soils (Alfisols) with low organic carbon (<0.25%). Formulate a 3-year phased Natural Farming soil rehabilitation plan incorporating zero-tillage, live cover cropping, and biological inoculants to elevate SOC to >0.75%.",
+        "modelAnswer": "### 1. Baseline Degradation Analysis\nThe 200-hectare watershed suffers from severe structural degradation characteristic of depleted tropical Alfisols: very low soil organic carbon (<0.25%), weak aggregate stability, poor water retention (desiccating within 5 days of rain), and high susceptibility to sheet erosion. The objective is to restore the biological engine, aggregate stability, and raise SOC to **>0.75% within 3 years**.\n\n### 2. Three-Year Phased Rehabilitation Blueprint\n\n#### Year 1: Halting Mechanical Destruction and Establishing Pre-Monsoon Biological Cover\n- **Total Elimination of Inversion Tillage:** Strictly ban tractor disc plowing, rotavators, and burning of crop stubbles to halt oxidative carbon losses.\n- **Pre-Monsoon Dry Sowing (PMDS) Polyculture:** In late May (prior to the monsoon onset), broadcast a multi-species 'Navadhanya' biological mix (15–20 diverse seeds of cereals, pulses, and oilseeds: pearl millet, cowpea, sunnhemp, sesame, horsegram @ 25 kg/ha) into untilled dry soil with light harrowing (*Mrida Acchadana*).\n- **First-Flush Cover:** Pre-monsoon showers germinate this dense polyculture carpet, providing 100% canopy cover by early June. The cover intercepts raindrop impact, halts sheet erosion, and pumps root exudates into topsoil.\n- **Green Biocover Flattening:** At 45–50 days (flowering), roll and crimp the polyculture using a tractor-drawn roller-crimper to form a thick in-situ live-mulch mat (*Jeeva Acchadana*).\n- **Microbial Inoculation:** Apply **Ghanajeevamrit @ 150 kg/ha** as basal dressing alongside seed sowing of main kharif crops (Pigeonpea + Groundnut), followed by two applications of liquid **Jeevamrit (200 L/ha)** with rainfall flushes.\n\n#### Year 2: Multi-Tier Agroforestry Integration and Macro-Aggregate Building\n- **Integration of Legume Live Mulches:** In all standing crops, intercrop continuous live mulches of **Cowpea or Horsegram** to fix 50–70 kg N/ha and supply high-protein leaf litter.\n- **Straw Mulch Augmentation:** Collect all post-harvest crop residues and spread a continuous **3–4 t/ha straw blanket (*Shushka Acchadana*)** across fields.\n- **Native Earthworm Activation:** The combination of shade, moisture, and straw residues reactivates native endogeic/anecic earthworms (*Lampito mauritii*). Earthworms construct vertical biopores and excrete mineral-associated castings, increasing soil infiltration.\n- **Mycorrhizal Inoculation:** Soil-applied Jeevamrit introduces mycorrhizal spores. Fungal hyphae secrete **glomalin**, binding loose silt and clay particles into water-stable macro-aggregates (>0.25 mm) that physically encapsulate carbon.\n\n#### Year 3: System Consolidation, FPO Organic Linkage, and SOC Verification\n- **Consolidation of Five-Layer Orchard Models:** On 20% of the watershed land, establish 36x36 ft agroforestry modules (mango/guava/drumstick/banana/ginger), creating permanent multi-tier carbon sinks.\n- **Soil Carbon Monitoring:** Conduct GPS-referenced soil sampling at 0–15 cm and 15–30 cm depths.\n\n### 3. Projected Soil Trajectory\n- SOC will increase from <0.25% to **0.75–0.85%** through microbial necromass stabilization and continuous residue humification.\n- Infiltration rates will triple from 8 mm/hr to 25–30 mm/hr, eliminating runoff and recharging local watershed aquifers.",
+        "outlinePoints": [
+            "Baseline degradation: <0.25% SOC, aggregate collapse, and high erosion vulnerability in Alfisols",
+            "Year 1: zero tillage enforcement and Pre-Monsoon Dry Sowing (PMDS) 15-species polyculture cover",
+            "Roller-crimper termination creating an in-situ mulch mat paired with Ghanajeevamrit (150 kg/ha)",
+            "Year 2: continuous legume live mulches, 3-4 t/ha straw blankets, and native anecic earthworm reactivation",
+            "Mycorrhizal glomalin synthesis binding mineral particles into water-stable macro-aggregates",
+            "Year 3: Five-Layer agroforestry integration and GPS-referenced SOC verification",
+            "Projected metrics: SOC rising to >0.75%, tripling infiltration, and recharging watershed aquifers"
+        ]
+    },
+
+    # 1 CASE_STUDY
+    {
+        "id": "AGR217-U3-SUB20",
+        "questionType": "CASE_STUDY",
+        "maxMarks": 10,
+        "difficulty": "Hard",
+        "syllabusTopic": "Waaphasa concept: soil pore microclimate (50% water vapor and 50% air), root respiration, and water conservation",
+        "questionText": "CASE STUDY: In the black soil (Vertisol) cotton belt of Jalgaon, Maharashtra, 80 farmers participated in a comparative field evaluation during a high-rainfall monsoon followed by a 28-day terminal drought: 40 farmers practiced conventional flat planting with flood irrigation and chemical fertilizers; 40 practiced Natural Farming (Broad Bed and Furrow layout, alternate-furrow Waaphasa watering, 4 t/ha cotton stalk mulching, and Jeevamrit). Survey findings revealed: (a) During heavy monsoonal rains (350 mm in 5 days), chemical fields suffered severe waterlogging, cotton leaves yellowed, and plants shed 65% of squares due to root asphyxiation; (b) Natural farming plots drained excess water rapidly through furrows without waterlogging; (c) During the subsequent 28-day drought, chemical plots developed deep soil cracks (3-5 cm wide) and wilted, while natural farming plots retained moisture, showed zero soil cracking, and harvested 42% higher seed cotton. Deconstruct the physical, biological, and physiological factors governing these outcomes.",
+        "modelAnswer": "### 1. Deconstruction of the Waterlogging Crisis in Conventional Vertisols\nVertisols (deep black cotton soils) are characterized by high concentrations of swelling-shrinking montmorillonite/smectite clays. Under conventional chemical management, repeated plowing shatters natural soil aggregates, reducing macro-pore continuity and creating an impermeable subsoil hardpan at 15–20 cm depth:\n- **Pathology of Heavy Monsoonal Downpour (350 mm / 5 days):** In flat, unmulched chemical fields, falling raindrops broke surface aggregates, creating surface slaking and sealing topsoil pores. With no drainage furrows and a compacted subsoil hardpan, water could not percolate, turning fields into stagnant waterlogged basins.\n- **Root Asphyxiation and Square Shedding:** Waterlogging displaced all oxygen from the root zone, causing acute root anoxia. Lack of oxygen halted mitochondrial respiration and ATP synthesis in root cells. The resulting **cytoplasmic acidosis** shut down root plasma membrane $H^+$-ATPase pumps, paralyzing water and mineral uptake. In response to root starvation and stress ethylene spikes, the plants synthesized high concentrations of **abscisic acid (ABA) and ethylene**, triggering extensive dissolution of middle lamellae in pedicels and causing a **65% loss of young squares**.\n\n### 2. Resilience Mechanics of the Natural Farming Cohort During Heavy Rains\nThe Natural Farming plots withstood the 350 mm downpour without waterlogging due to three design factors:\n- **Broad Bed and Furrow (BBF) Drainage Architecture:** The raised beds elevated crop root crowns 20–25 cm above the furrow floor. Excess gravitational water drained into the furrows and flowed out of the field, preventing root crown submergence.\n- **Preservation of Anecic Earthworm Biopores:** The absence of plowing preserved deep vertical burrows constructed by native earthworms (*Lampito mauritii*). These permanent biopores channeled water directly into subsoils at infiltration rates >25 mm/hr.\n- **Straw Mulch Protection:** The 4 t/ha residue mulch absorbed raindrop kinetic energy, preventing surface slaking and crusting.\n\n### 3. Deconstruction of the 28-Day Drought Resilience\nDuring the subsequent 28-day dry spell, the two cohorts diverged sharply due to soil physical and biological properties:\n\n#### A. Conventional Chemical Failure\n- As the unmulched Vertisol dried, high shrink-swell smectite clays underwent shrinkage, opening **deep, wide vertical cracks (3–5 cm wide and >1 m deep)**.\n- These cracks exposed subsoil root horizons directly to the dry atmosphere, accelerating deep evaporative water loss and physically tearing lateral root hairs, causing severe wilting and crop failure.\n\n#### B. Natural Farming Success\n- **Elimination of Soil Cracking via Acchadana:** The 4 t/ha surface mulch blanket shaded the soil, keeping surface temperatures 6–8°C cooler and preventing rapid moisture evaporation. Because the soil dried gradually and evenly under the mulch, **zero soil cracking occurred**.\n- **Waaphasa Moisture-Aeration Equilibrium:** Alternate-furrow watering provided lateral capillary moisture into the bed base while preserving aerated pore spaces for root respiration.\n- **Mycorrhizal Scavenging:** Undisturbed arbuscular mycorrhizal hyphae scavenged capillary water from microscopic pores, transferring water to cotton plants and sustaining photosynthesis throughout the 28-day drought, yielding **42% higher harvest**.",
+        "outlinePoints": [
+            "Vertisol characteristics: high smectite clay content prone to swelling, waterlogging, and deep cracking",
+            "Chemical waterlogging pathology: aggregate slaking, subsoil hardpan, acute root anoxia, and 65% square shedding",
+            "BBF drainage engineering: raised beds and furrows channeling excess water without root crown submergence",
+            "Biopore continuity: native anecic earthworm burrows maintaining infiltration >25 mm/hr",
+            "Drought deconstruction: unmulched soil opening 5 cm deep cracks, tearing roots, and accelerating moisture loss",
+            "Mulch drought buffering: 6-8°C cooling, complete elimination of soil cracking, and mycorrhizal water scavenging",
+            "Outcome: 42% higher seed cotton yield through integrated soil physical and biological management"
+        ]
+    }
+]
+
+fcs = [
+    {
+        "id": "AGR217-U3-FC01",
+        "front": "What glycoprotein produced by AMF glues soil aggregates together?",
+        "back": "Glomalin, a hydrophobic glycoprotein secreted by mycorrhizal hyphae that cements mineral particles into stable macro-aggregates.",
+        "hint": "Glomalin",
+        "syllabusTopic": "Soil health, the Soil Food Web, indigenous microorganisms (IMO), and biological nutrient recycling"
+    },
+    {
+        "id": "AGR217-U3-FC02",
+        "front": "What are anecic earthworms?",
+        "back": "Large native deep-burrowing earthworms (e.g., Lampito mauritii) that build vertical tunnels down to 2-3 meters.",
+        "hint": "Deep vertical burrowers (Lampito mauritii)",
+        "syllabusTopic": "Earthworms in Natural Farming: deep-burrowing native endogeic and anecic species vs exotic epigeic vermicomposting worms"
+    },
+    {
+        "id": "AGR217-U3-FC03",
+        "front": "Why is Eisenia fetida rejected in Natural Farming?",
+        "back": "It is an exotic epigeic litter-dweller that requires moist compost bins, cannot survive tropical field heat, and creates no soil biopores.",
+        "hint": "Exotic surface-dweller, non-burrowing",
+        "syllabusTopic": "Earthworms in Natural Farming: deep-burrowing native endogeic and anecic species vs exotic epigeic vermicomposting worms"
+    },
+    {
+        "id": "AGR217-U3-FC04",
+        "front": "How do earthworm castings compare nutritionally to bulk soil?",
+        "back": "Castings contain roughly 5x more available N, 7x more available P, and 11x more exchangeable K than bulk topsoil.",
+        "hint": "5x N, 7x P, 11x K",
+        "syllabusTopic": "Earthworms in Natural Farming: deep-burrowing native endogeic and anecic species vs exotic epigeic vermicomposting worms"
+    },
+    {
+        "id": "AGR217-U3-FC05",
+        "front": "What is 'Waaphasa'?",
+        "back": "The root zone equilibrium of 50% air (oxygen) and 50% water vapor in soil pore spaces, sustaining aerobic root respiration.",
+        "hint": "50% air and 50% water vapor",
+        "syllabusTopic": "Waaphasa concept: soil pore microclimate (50% water vapor and 50% air), root respiration, and water conservation"
+    },
+    {
+        "id": "AGR217-U3-FC06",
+        "front": "Why is flood irrigation harmful to root respiration?",
+        "back": "Flooding saturates soil pores, displacing oxygen and causing root anoxia, which paralyzes ATP-dependent nutrient transport.",
+        "hint": "Causes root anoxia and halts ATP transport",
+        "syllabusTopic": "Waaphasa concept: soil pore microclimate (50% water vapor and 50% air), root respiration, and water conservation"
+    },
+    {
+        "id": "AGR217-U3-FC07",
+        "front": "How does alternate-furrow irrigation create Waaphasa?",
+        "back": "Water seeps laterally into crop ridges from wet furrows while adjacent dry furrows provide open conduits for oxygen diffusion.",
+        "hint": "Lateral capillary wetting + open dry furrow aeration",
+        "syllabusTopic": "Waaphasa concept: soil pore microclimate (50% water vapor and 50% air), root respiration, and water conservation"
+    },
+    {
+        "id": "AGR217-U3-FC08",
+        "front": "What is Mrida Acchadana?",
+        "back": "Soil mulch—shallow surface hoeing (2-3 cm) that severs capillary conduits, halting upward evaporative water loss.",
+        "hint": "Dust/soil mulch breaking capillary pores",
+        "syllabusTopic": "Acchadana (Mulching): Soil mulch, Straw mulch, and Live mulch (legume cover crops) for thermal and erosion control"
+    },
+    {
+        "id": "AGR217-U3-FC09",
+        "front": "What is Shushka Acchadana?",
+        "back": "Straw mulch—spreading 3-5 t/ha of dry crop residues to insulate soil, prevent erosion, and feed earthworms.",
+        "hint": "Dry straw/biomass residue mulch",
+        "syllabusTopic": "Acchadana (Mulching): Soil mulch, Straw mulch, and Live mulch (legume cover crops) for thermal and erosion control"
+    },
+    {
+        "id": "AGR217-U3-FC10",
+        "front": "What is Jeeva Acchadana?",
+        "back": "Live mulch—intercropping spreading legumes (cowpea, moong) that shade soil, smother weeds, and fix nitrogen.",
+        "hint": "Intercropped live legume cover",
+        "syllabusTopic": "Acchadana (Mulching): Soil mulch, Straw mulch, and Live mulch (legume cover crops) for thermal and erosion control"
+    },
+    {
+        "id": "AGR217-U3-FC11",
+        "front": "How much does straw mulch lower summer topsoil temperatures?",
+        "back": "It lowers daytime topsoil temperatures by 4°C to 8°C, protecting earthworms and microbes from thermal death.",
+        "hint": "4°C to 8°C cooler",
+        "syllabusTopic": "Acchadana (Mulching): Soil mulch, Straw mulch, and Live mulch (legume cover crops) for thermal and erosion control"
+    },
+    {
+        "id": "AGR217-U3-FC12",
+        "front": "How much additional water does a 1% increase in SOM store?",
+        "back": "Roughly 140,000 to 200,000 liters of additional water per hectare, providing crucial drought buffering.",
+        "hint": "140,000 to 200,000 L/ha per 1% SOM",
+        "syllabusTopic": "Soil organic carbon (SOC) sequestration, humus formation, aggregate stability, and climate resilience"
+    },
+    {
+        "id": "AGR217-U3-FC13",
+        "front": "What is Microbial Biomass Carbon (MBC)?",
+        "back": "The living fraction of soil organic carbon (bacteria, fungi), serving as an early indicator of biological soil health.",
+        "hint": "Living microbial carbon pool (1-4% of SOC)",
+        "syllabusTopic": "Soil health, the Soil Food Web, indigenous microorganisms (IMO), and biological nutrient recycling"
+    },
+    {
+        "id": "AGR217-U3-FC14",
+        "front": "What percentage of fixed carbon do crops pump as root exudates?",
+        "back": "20% to 40% of photosynthetically fixed carbon is released into the rhizosphere to cultivate beneficial soil microbes.",
+        "hint": "20% to 40% of fixed carbon",
+        "syllabusTopic": "Soil health, the Soil Food Web, indigenous microorganisms (IMO), and biological nutrient recycling"
+    },
+    {
+        "id": "AGR217-U3-FC15",
+        "front": "What is the 'drilosphere' in soil ecology?",
+        "back": "The 1-2 mm soil zone lining earthworm burrows, enriched with mucus, nitrogen, and PGPR where crop roots preferentially grow.",
+        "hint": "The mucus-lined earthworm burrow wall",
+        "syllabusTopic": "Earthworms in Natural Farming: deep-burrowing native endogeic and anecic species vs exotic epigeic vermicomposting worms"
+    },
+    {
+        "id": "AGR217-U3-FC16",
+        "front": "How does protozoan grazing release plant-absorbable nitrogen?",
+        "back": "Protozoa graze on bacteria with narrow C:N (5:1) and excrete surplus nitrogen as plant-absorbable ammonium (NH4+).",
+        "hint": "Excretes excess N as ammonium (NH4+)",
+        "syllabusTopic": "Soil health, the Soil Food Web, indigenous microorganisms (IMO), and biological nutrient recycling"
+    },
+    {
+        "id": "AGR217-U3-FC17",
+        "front": "What is the 'Microbial Carbon Pump' (MCP)?",
+        "back": "The biogeochemical process where microbial necromass (dead microbial cells) binds to clay surfaces, forming stable humus.",
+        "hint": "Microbial necromass entombment into humus",
+        "syllabusTopic": "Soil organic carbon (SOC) sequestration, humus formation, aggregate stability, and climate resilience"
+    },
+    {
+        "id": "AGR217-U3-FC18",
+        "front": "What are Indigenous Microorganisms (IMO)?",
+        "back": "Native, uncultivated soil microbial communities harvested from undisturbed forest soils and field bunds.",
+        "hint": "Native forest soil microbial consortia",
+        "syllabusTopic": "Soil health, the Soil Food Web, indigenous microorganisms (IMO), and biological nutrient recycling"
+    },
+    {
+        "id": "AGR217-U3-FC19",
+        "front": "How does straw mulch stop soil cracking in Vertisols?",
+        "back": "It retains moisture and cools the soil, ensuring gradual and even drying that prevents high-smectite clays from shrinking.",
+        "hint": "Prevents clay shrinkage and deep cracks",
+        "syllabusTopic": "Acchadana (Mulching): Soil mulch, Straw mulch, and Live mulch (legume cover crops) for thermal and erosion control"
+    },
+    {
+        "id": "AGR217-U3-FC20",
+        "front": "What role does Calcium (Ca2+) play in organo-mineral complexes?",
+        "back": "It forms electrostatic cation bridges linking negatively charged clay minerals with negatively charged humic acids.",
+        "hint": "Cation bridging linking clay and humic acids",
+        "syllabusTopic": "Soil organic carbon (SOC) sequestration, humus formation, aggregate stability, and climate resilience"
+    }
+]
+
+u3_data["mcqs"] = mcqs
+u3_data["subjectiveQuestions"] = subjs
+u3_data["flashcards"] = fcs
+
+output_file = "scripts/generators/agr217_u3.py"
+with open(output_file, "w") as f:
+    f.write('"""AGR217 Unit 3 Data Generator: Soil Health, Mulching, and Waaphasa"""\n\n')
+    f.write('def get_unit3_data():\n')
+    f.write('    return ' + repr(u3_data) + '\n')
+
+print(f"Successfully generated {output_file} with {len(mcqs)} MCQs, {len(subjs)} Subjs, and {len(fcs)} FCs.")
