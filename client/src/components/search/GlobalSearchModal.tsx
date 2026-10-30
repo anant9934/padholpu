@@ -8,7 +8,7 @@ interface SearchItem {
   id: string;
   title: string;
   subtitle: string;
-  category: "Course" | "Unit" | "Topic" | "Practice" | "Exam" | "Resource";
+  category: "Programme" | "Course" | "Unit" | "Topic" | "Practice" | "Exam" | "Resource";
   href: string;
   code?: string;
 }
@@ -51,7 +51,8 @@ export function GlobalSearchModal({ open, onOpenChange }: GlobalSearchModalProps
     queryKey: ["/api/search", debouncedQuery],
     queryFn: async () => {
       const q = debouncedQuery.trim();
-      const endpoint = q ? `/api/search?q=${encodeURIComponent(q)}` : `/api/search?q=C`;
+      if (!q) return [];
+      const endpoint = `/api/search?q=${encodeURIComponent(q)}`;
       const res = await fetch(endpoint);
       if (!res.ok) return [];
       const data = await res.json();
@@ -64,7 +65,7 @@ export function GlobalSearchModal({ open, onOpenChange }: GlobalSearchModalProps
         code: d.code,
       }));
     },
-    enabled: open,
+    enabled: open && debouncedQuery.trim().length > 0,
     staleTime: 1000 * 30, // 30s cache
   });
 
@@ -92,6 +93,7 @@ export function GlobalSearchModal({ open, onOpenChange }: GlobalSearchModalProps
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
+      case "Programme":
       case "Course":
         return <GraduationCap className="w-4 h-4 text-[#9A6205]" />;
       case "Unit":
@@ -124,7 +126,7 @@ export function GlobalSearchModal({ open, onOpenChange }: GlobalSearchModalProps
               setSelectedIndex(0);
             }}
             onKeyDown={handleKeyDown}
-            placeholder="Search CSE111, Unit 4, Binary Trees, Differentiation..."
+            placeholder="Search programmes, subjects, units, topics, and notes..."
             className="w-full bg-transparent text-sm text-[#181510] dark:text-[#f0ece4] placeholder:text-[#696158] outline-none font-sans"
           />
           {isLoading && (
@@ -183,7 +185,7 @@ export function GlobalSearchModal({ open, onOpenChange }: GlobalSearchModalProps
           ) : (
             <div className="p-8 text-center space-y-1">
               <p className="text-sm font-medium text-[#181510] dark:text-[#f0ece4]">No academic materials found</p>
-              <p className="text-xs text-[#696158]">Try searching by course code (e.g. CSE111, MTH166), unit, or topic.</p>
+              <p className="text-xs text-[#696158]">Try a programme name, subject code, unit title, or topic.</p>
             </div>
           )}
         </div>
