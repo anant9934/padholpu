@@ -161,6 +161,7 @@ export default function SubjectivePage() {
         body: JSON.stringify({ concept: qText, subjectId }),
       });
       const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Academic retrieval failed.");
       setAiResult(data);
     } catch {
       toast({ title: "Academic material could not be retrieved.", description: "Try opening the subject unit or searching with syllabus wording.", variant: "destructive" });
@@ -483,6 +484,26 @@ export default function SubjectivePage() {
                 <div className="bg-muted/30 p-4 rounded-xl border border-border/60 text-sm whitespace-pre-line leading-relaxed">
                   {aiResult.explanation}
                 </div>
+
+                {aiResult.evidenceAvailable === false && (
+                  <div className="rounded-lg border border-amber-300/50 bg-amber-50/60 p-3 text-xs text-amber-900 dark:border-amber-800/50 dark:bg-amber-950/20 dark:text-amber-200">
+                    No matching approved academic material was found. The tutor has not invented an explanation.
+                  </div>
+                )}
+
+                {Array.isArray(aiResult.sources) && aiResult.sources.length > 0 && (
+                  <div className="rounded-lg border border-border/60 p-3 space-y-2">
+                    <h5 className="text-xs font-bold text-foreground">Retrieved from</h5>
+                    <ul className="space-y-1.5 text-xs text-muted-foreground">
+                      {aiResult.sources.map((source: any, index: number) => (
+                        <li key={`${source.subjectCode}-${source.unitNumber}-${source.sectionTitle}-${index}`}>
+                          <span className="font-semibold text-foreground">{source.subjectCode} · Unit {source.unitNumber}</span>
+                          <span> — {source.unitTitle} / {source.sectionTitle}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
                 {aiResult.keyPoints && aiResult.keyPoints.length > 0 && (
                   <div className="bg-orange-50/60 dark:bg-orange-950/20 p-3 rounded-lg border border-orange-200/50 dark:border-orange-900/30">
