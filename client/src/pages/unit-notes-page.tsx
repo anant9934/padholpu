@@ -68,7 +68,9 @@ export default function UnitNotesPage() {
       const res = await fetch(`/api/academic/subjects/${encodeURIComponent(code)}/units/${unitNumber}/mark-read`, {
         method: "POST",
       });
-      return res.json();
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Could not save unit completion.");
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/academic/subjects", code, "progress"] });
