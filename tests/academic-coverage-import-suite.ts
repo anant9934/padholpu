@@ -1,5 +1,6 @@
 import assert from "assert";
 import { AcademicCoverageService, ContentCoverageStatus } from "../server/services/academic-coverage";
+import { hasConfiguredDatabase } from "../server/db";
 import { ResourceImportService, ResourceImportRow } from "../server/services/resource-import";
 
 async function runCoverageAndImportSuite() {
@@ -313,13 +314,7 @@ async function runCoverageAndImportSuite() {
   });
 
   // ── 4. End-to-End Live Database Content Verification ───────
-  const hasDatabaseConnection = Boolean(
-    process.env.DATABASE_URL ||
-    process.env.POSTGRES_URL ||
-    process.env.STUDYLPU_DATABASE_URL ||
-    process.env.NEON_DATABASE_URL ||
-    process.env.POSTGRES_PRISMA_URL
-  );
+  const hasDatabaseConnection = hasConfiguredDatabase;
 
   if (hasDatabaseConnection) {
     await asyncTest("Live Database: Coverage report runs against production Neon DB and returns real data", async () => {
