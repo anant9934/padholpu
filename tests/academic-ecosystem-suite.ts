@@ -1,4 +1,4 @@
-import { calculateSM2, getConceptExplanation } from "../server/services/academic-ecosystem";
+import { calculateSM2, getConceptExplanation, distributeStudyPlanUnits } from "../server/services/academic-ecosystem";
 
 function assert(condition: boolean, msg: string) {
   if (!condition) {
@@ -41,14 +41,39 @@ async function runAcademicSuite() {
   const floor = calculateSM2(0, 1.35, 1, 0);
   assert(floor.easeFactor === 1.3, "Ease factor cannot drop below hard minimum floor of 1.3");
 
-  // 6. AI-Assisted Learning Boundary Offline Fallback
-  const aiFallback = await getConceptExplanation("B-Trees in Database Systems", "CSE302");
-  assert(typeof aiFallback.explanation === "string" && aiFallback.explanation.length > 50, "Concept explanation returns formatted content");
-  assert(aiFallback.disclaimer.length > 0, "All explanations carry transparent academic disclaimer");
-  assert(Array.isArray(aiFallback.keyPoints) && aiFallback.keyPoints.length > 0, "Key syllabus examination points provided");
+  // 6. The deterministic planner schedules only supplied syllabus units, before the exam date.
+  const scheduled = distributeStudyPlanUnits([
+    { subjectCode: "AEE103", unitNumber: 1, unitName: "Education" },
+    { subjectCode: "AEE103", unitNumber: 2, unitName: "Extension Systems in India" },
+    { subjectCode: "AEE103", unitNumber: 3, unitName: "New Trends in Agricultural Extension" },
+  ], new Date("2026-10-30T00:00:00.000Z"), new Date("2026-11-02T00:00:00.000Z"));
+  assert(scheduled.length === 3, "Planner schedules exactly the supplied syllabus units");
+  assert(scheduled[0].scheduledDate === "2026-10-30", "First unit is scheduled on the planning date");
+  assert(scheduled[2].scheduledDate === "2026-11-01", "Final unit is scheduled before the exam date");
+  assert(scheduled.every((task) => task.title.includes(task.subjectCode)), "Scheduled tasks preserve their subject code");
+
+  // 7. The rule-based tutor retrieves AEE103 source content and never calls a model.
+  const previousGeminiKey = process.env.GEMINI_API_KEY;
+  process.env.GEMINI_API_KEY = "must-not-trigger-a-network-call";
+  try {
+    const tutor = await getConceptExplanation("formal non-formal informal education", "AEE103");
+    assert(tutor.isAIGenerated === false, "Tutor reports no external model inference");
+    assert(tutor.mode === "RULE_BASED_RETRIEVAL", "Tutor identifies its deterministic retrieval mode");
+    assert(tutor.evidenceAvailable, "Tutor detects matching evidence in AEE103 notes");
+    assert(tutor.sources.some((source) => source.unitNumber === 1), "Tutor cites the matching AEE103 unit");
+    assert(tutor.explanation.toLowerCase().includes("formal education"), "Tutor returns matching source material");
+    assert(tutor.disclaimer.includes("No external AI inference"), "Tutor discloses its zero-inference behaviour");
+
+    const missing = await getConceptExplanation("B-Trees in Database Systems");
+    assert(!missing.evidenceAvailable, "Tutor refuses to explain without subject evidence");
+    assert(missing.explanation.includes("No matching syllabus material"), "Tutor clearly reports missing evidence");
+  } finally {
+    if (previousGeminiKey === undefined) delete process.env.GEMINI_API_KEY;
+    else process.env.GEMINI_API_KEY = previousGeminiKey;
+  }
 
   console.log("==================================================");
-  console.log("ALL 6 ACADEMIC ECOSYSTEM TESTS PASSED");
+  console.log("ALL ACADEMIC ECOSYSTEM ASSERTIONS PASSED");
   console.log("==================================================");
 }
 
