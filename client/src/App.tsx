@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { Layout } from "@/components/layout";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ForbiddenPage, UnauthorizedPage } from "@/components/ErrorPage";
@@ -557,6 +558,7 @@ function App() {
         <AuthProvider>
           <Router />
           <Toaster />
+          <SpeedInsights />
         </AuthProvider>
       </QueryClientProvider>
     </ErrorBoundary>
