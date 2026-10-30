@@ -63,6 +63,7 @@ import { AcademicContentReportsTable } from "@/components/admin/AcademicContentR
 import { CurriculumImportModal } from "@/components/admin/CurriculumImportModal";
 import { ResourceImportModal } from "@/components/admin/ResourceImportModal";
 import { AcademicContentCoverage } from "@/components/admin/AcademicContentCoverage";
+import { AcademicQualityAudit } from "@/components/admin/AcademicQualityAudit";
 
 
 export default function AdminDashboard() {
@@ -351,6 +352,7 @@ export default function AdminDashboard() {
             <TabsTrigger value="quizzes" className="rounded-lg px-6 py-2">Quizzes</TabsTrigger>
             <TabsTrigger value="programmes" className="rounded-lg px-6 py-2">🎓 Programmes &amp; Schools</TabsTrigger>
             <TabsTrigger value="coverage" className="rounded-lg px-6 py-2">📊 Content Coverage</TabsTrigger>
+            <TabsTrigger value="quality" className="rounded-lg px-6 py-2">🛡️ Academic Quality</TabsTrigger>
             <TabsTrigger value="moderation" className="rounded-lg px-6 py-2">Moderation</TabsTrigger>
             <TabsTrigger value="note-submissions" className="rounded-lg px-6 py-2">📝 Note Submissions</TabsTrigger>
             <TabsTrigger value="support" className="rounded-lg px-6 py-2">Support</TabsTrigger>
@@ -906,6 +908,11 @@ export default function AdminDashboard() {
           {/* Academic Content Coverage Tab */}
           <TabsContent value="coverage" className="space-y-6">
             <AcademicContentCoverage />
+          </TabsContent>
+
+          {/* Read-only academic quality findings */}
+          <TabsContent value="quality" className="space-y-6">
+            <AcademicQualityAudit />
           </TabsContent>
         </Tabs>
         
