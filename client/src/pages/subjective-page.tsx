@@ -147,7 +147,7 @@ export default function SubjectivePage() {
     }
   };
 
-  // Trigger AI Concept Explanation
+  // Retrieve syllabus-grounded material without external model inference
   const askAITutor = async (qText: string, subjectId?: number) => {
     setAiConcept(qText);
     setAiModalOpen(true);
@@ -323,7 +323,7 @@ export default function SubjectivePage() {
                         onClick={() => askAITutor(q.questionText, q.subjectId ?? undefined)}
                         className="text-xs text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950/40 gap-1 h-8 px-2.5"
                       >
-                        <BrainCircuit className="w-3.5 h-3.5" /> Explain Concept
+                        <BrainCircuit className="w-3.5 h-3.5" /> Find Syllabus Material
                       </Button>
                       <Button
                         variant="ghost"
@@ -465,7 +465,7 @@ export default function SubjectivePage() {
                 {aiResult?.isAIGenerated ? "External model" : "Rule-based · No external model"}
               </Badge>
             </div>
-            <DialogTitle className="text-lg font-bold">Concept Explanation & Exam Focus</DialogTitle>
+            <DialogTitle className="text-lg font-bold">Related Syllabus Material</DialogTitle>
           </DialogHeader>
 
           <div className="py-2">
