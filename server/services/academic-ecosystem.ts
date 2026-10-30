@@ -518,9 +518,9 @@ export async function generateStudyPlan(
     throw new Error("Daily study hours must be between 0.5 and 16.");
   }
 
-  const normalizedCodes = [...new Set(
-    selectedSubjectCodes.map((code) => String(code || "").trim().toUpperCase()).filter(Boolean)
-  )];
+  const normalizedCodes = selectedSubjectCodes
+    .map((code) => String(code || "").trim().toUpperCase())
+    .filter((code, index, values) => Boolean(code) && values.indexOf(code) === index);
   if (normalizedCodes.length === 0) throw new Error("Please specify at least one subject code.");
   if (!title.trim()) throw new Error("Study plan title is required.");
 
@@ -559,7 +559,7 @@ export async function generateStudyPlan(
       } : null;
     })
     .filter((unit: StudyPlanUnitInput | null): unit is StudyPlanUnitInput => Boolean(unit))
-    .sort((a, b) =>
+    .sort((a: StudyPlanUnitInput, b: StudyPlanUnitInput) =>
       (subjectOrder.get(a.subjectCode.toUpperCase()) ?? 0) -
         (subjectOrder.get(b.subjectCode.toUpperCase()) ?? 0) ||
       a.unitNumber - b.unitNumber
@@ -1042,10 +1042,13 @@ const ACADEMIC_TUTOR_STOPWORDS = new Set([
 ]);
 
 function tokenizeAcademicQuery(value: string): string[] {
-  return [...new Set(
-    (value.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").match(/[a-z0-9]{3,}/g) || [])
-      .filter((token) => !ACADEMIC_TUTOR_STOPWORDS.has(token))
-  )];
+  const matches = value.toLowerCase()
+    .normalize("NFKD")
+    .replace(/[^a-z0-9 ]/g, " ")
+    .match(/[a-z0-9]{3,}/g) || [];
+  return matches.filter((token, index) =>
+    !ACADEMIC_TUTOR_STOPWORDS.has(token) && matches.indexOf(token) === index
+  );
 }
 
 function academicTextMatchScore(queryTokens: string[], value: string): number {
@@ -1163,16 +1166,16 @@ export async function getConceptExplanation(
       mode: "RULE_BASED_RETRIEVAL",
       evidenceAvailable: true,
       explanation,
-      keyPoints: [...new Set(selected.map((candidate) =>
-        `Unit ${candidate.unit.unitNumber}: ${candidate.section.heading}`
-      ))],
+      keyPoints: selected
+        .map((candidate) => `Unit ${candidate.unit.unitNumber}: ${candidate.section.heading}`)
+        .filter((value, index, values) => values.indexOf(value) === index),
       sources,
       disclaimer: "Retrieved from Padho LPU's structured AEE103 study notes. No external AI inference was used. These are study notes, not an official university answer key."
     };
   }
 
   if (!subject.id) return noAcademicEvidence(cleanTopic, subject.name);
-  const unitRows = await db
+  const unitRows: Array<{ id: number; unitNumber: number; unitName: string }> = await db
     .select({ id: units.id, unitNumber: units.unitNumber, unitName: units.unitName })
     .from(units)
     .where(eq(units.subjectId, subject.id))
@@ -1180,17 +1183,23 @@ export async function getConceptExplanation(
 
   if (unitRows.length === 0) return noAcademicEvidence(cleanTopic, subject.name);
 
-  const topicRows = await db
+  const topicRows: Array<{ unitId: number | null; topicName: string }> = await db
     .select({ unitId: topics.unitId, topicName: topics.topicName })
     .from(topics)
-    .where(inArray(topics.unitId, unitRows.map((unit) => unit.id)));
+    .where(inArray(topics.unitId, unitRows.map((unit: { id: number }) => unit.id)));
 
-  const candidates = unitRows.map((unit) => {
-    const unitTopics = topicRows.filter((row) => row.unitId === unit.id).map((row) => row.topicName);
+  const candidates: Array<{
+    unit: { id: number; unitNumber: number; unitName: string };
+    unitTopics: string[];
+    score: number;
+  }> = unitRows.map((unit: { id: number; unitNumber: number; unitName: string }) => {
+    const unitTopics = topicRows
+      .filter((row: { unitId: number | null; topicName: string }) => row.unitId === unit.id)
+      .map((row: { unitId: number | null; topicName: string }) => row.topicName);
     const context = [unit.unitName, ...unitTopics].join(" ");
     return { unit, unitTopics, score: academicTextMatchScore(tokens, context) };
-  }).filter((candidate) => candidate.score > 0)
-    .sort((a, b) => b.score - a.score)
+  }).filter((candidate: { score: number }) => candidate.score > 0)
+    .sort((a: { score: number }, b: { score: number }) => b.score - a.score)
     .slice(0, 5);
 
   if (candidates.length === 0) return noAcademicEvidence(cleanTopic, subject.name);
