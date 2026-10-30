@@ -343,16 +343,17 @@ export function generateNextBestAction(params: {
   }
 
   // Priority 5: Revision due / General Practice
+  // This branch is reached only when at least one syllabus unit exists.
   const fallback = unitsMastery[0];
   return {
     type: "PRACTICE_UNIT",
-    course: fallback?.courseCode || "CSE111",
-    courseId: fallback?.courseId,
-    unit: fallback?.unitNumber || 1,
-    title: `Reinforce ${fallback?.courseCode || "Course"} Concepts`,
+    course: fallback.courseCode,
+    courseId: fallback.courseId,
+    unit: fallback.unitNumber,
+    title: `Reinforce ${fallback.courseCode} Concepts`,
     reason: "Maintain your consistency and keep syllabus recall fresh with a quick review session.",
     cta: "Practice Drill",
-    destination: `/practice?course=${encodeURIComponent(fallback?.courseCode || "CSE111")}`,
+    destination: `/practice?course=${encodeURIComponent(fallback.courseCode)}`,
     priority: 5,
   };
 }
