@@ -200,6 +200,18 @@ export interface UnitMasteryRecord {
   lastAttemptedAt?: Date | null;
 }
 
+function exploreCoursesAction(): NextBestAction {
+  return {
+    type: "EXPLORE_COURSES",
+    course: "",
+    title: "Choose your programme and subjects",
+    reason: "No active course is selected yet. Choose your academic programme to receive relevant study recommendations.",
+    cta: "Explore Programmes",
+    destination: "/programmes",
+    priority: 6,
+  };
+}
+
 /**
  * Deterministic Next Best Action Engine (V1)
  * 
@@ -220,17 +232,18 @@ export function generateNextBestAction(params: {
 }): NextBestAction {
   const { unitsMastery, overallCoverage, primaryCourseCode, primaryCourseId, totalAttempts } = params;
 
-  // New user with 0 attempts: Prompt to start initial diagnostic
+  // New users without an active course must choose their own curriculum first.
   if (totalAttempts === 0 || unitsMastery.length === 0) {
-    const courseCode = primaryCourseCode || "CSE111";
+    if (!primaryCourseCode) return exploreCoursesAction();
+
     return {
       type: "PRACTICE_UNIT",
-      course: courseCode,
+      course: primaryCourseCode,
       courseId: primaryCourseId,
-      title: `Start Diagnostic: ${courseCode}`,
-      reason: "No attempts recorded yet. Complete a 10-question baseline drill to diagnose your readiness.",
+      title: `Start Diagnostic: ${primaryCourseCode}`,
+      reason: "No attempts recorded yet. Complete a baseline drill for your selected subject.",
       cta: "Start Diagnostic Drill",
-      destination: `/practice?course=${encodeURIComponent(courseCode)}`,
+      destination: `/practice?course=${encodeURIComponent(primaryCourseCode)}`,
       priority: 6,
     };
   }
@@ -318,7 +331,9 @@ export function generateNextBestAction(params: {
 
   // Priority 4: Mock Exam if course coverage >= 60%
   if (overallCoverage >= 60) {
-    const courseCode = primaryCourseCode || unitsMastery[0]?.courseCode || "CSE111";
+    const courseCode = primaryCourseCode || unitsMastery[0]?.courseCode;
+    if (!courseCode) return exploreCoursesAction();
+
     return {
       type: "TAKE_EXAM",
       course: courseCode,
@@ -333,15 +348,18 @@ export function generateNextBestAction(params: {
 
   // Priority 5: Revision due / General Practice
   const fallback = unitsMastery[0];
+  const courseCode = primaryCourseCode || fallback?.courseCode;
+  if (!courseCode) return exploreCoursesAction();
+
   return {
     type: "PRACTICE_UNIT",
-    course: fallback?.courseCode || "CSE111",
-    courseId: fallback?.courseId,
+    course: courseCode,
+    courseId: primaryCourseId || fallback?.courseId,
     unit: fallback?.unitNumber || 1,
-    title: `Reinforce ${fallback?.courseCode || "Course"} Concepts`,
+    title: `Reinforce ${courseCode} Concepts`,
     reason: "Maintain your consistency and keep syllabus recall fresh with a quick review session.",
     cta: "Practice Drill",
-    destination: `/practice?course=${encodeURIComponent(fallback?.courseCode || "CSE111")}`,
+    destination: `/practice?course=${encodeURIComponent(courseCode)}`,
     priority: 5,
   };
 }
