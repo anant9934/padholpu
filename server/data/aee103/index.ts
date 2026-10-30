@@ -20,56 +20,34 @@ export const aee103Metadata: SubjectMetadata = {
   courseOutcomes: [
     {
       code: "CO1",
-      title: "Foundations of Extension & Programme Planning",
-      description: "Understand the concept of education, extension education, its scope, foundational principles, and systematic grassroots programme planning."
+      title: "Concept and principles of extension education",
+      description: "Aware about the concept and principles of extension education and effective teaching methods of farmers for agricultural development."
     },
     {
       code: "CO2",
-      title: "Extension Systems & Rural Development Programmes",
-      description: "Critically evaluate pre- and post-independence extension experiments, the Training and Visit (T&V) system, and major agricultural and poverty alleviation programmes."
+      title: "Organizational set-up of agricultural extension",
+      description: "Memorize the organizational set-up of agricultural extension for rural development."
     },
     {
       code: "CO3",
-      title: "New Trends, Collectivization & Innovation Attributes",
-      description: "Analyze emerging paradigms including privatized extension, cyber extension, market-led and farmer-led extension, FPOs, TOT models, and monitoring and evaluation."
+      title: "Adoption, diffusion, planning and evaluation",
+      description: "Observe the adoption/diffusion of innovations, motivation, planning, and evaluation of extension programmes."
     },
     {
       code: "CO4",
-      title: "Community Development & Rural Leadership",
-      description: "Comprehend community development philosophies and principles, government rural development schemes (MGNREGA, PMGSY), and techniques for identifying rural leaders."
+      title: "Communication and new trends in agricultural extension",
+      description: "Discuss the principles of communication and new trends in agricultural extension."
     },
     {
       code: "CO5",
-      title: "Extension Administration, Teaching Methods & Communication",
-      description: "Apply POSDCORB administrative functions, select and execute individual/group/mass teaching methods, and analyze communication models, barriers, and innovation diffusion."
+      title: "ICT applications in transfer of technology",
+      description: "Apply the ICT applications in transfer of technology for community development."
     }
   ],
-  gradingStructure: [
-    {
-      component: "Continuous Assessment (CA)",
-      weightage: "20%",
-      marks: "30 Marks (Best 2 of 3)",
-      details: "Two best descriptive continuous assessments of 30 marks each, scaled to 20% weightage, covering ongoing unit content and practical exercises."
-    },
-    {
-      component: "Mid-Term Examination (MTE)",
-      weightage: "20%",
-      marks: "40 Marks",
-      details: "Mid-term university examination covering Units 1, 2, and 3, comprising objective and short/medium descriptive questions."
-    },
-    {
-      component: "End-Term Examination (ETE)",
-      weightage: "40%",
-      marks: "70 Marks",
-      details: "Comprehensive university examination covering all six theory units (Units 1 to 6) testing knowledge, analysis, and practical scenarios."
-    },
-    {
-      component: "Practical Examination & Lab Viva",
-      weightage: "20%",
-      marks: "50 Marks",
-      details: "Evaluation of practical lab record, viva-voce, PRA exercise presentations, audio-visual aid preparation, and field visit reports."
-    }
-  ],
+  // The supplied syllabus states L:1, T:0, P:2 and 2 credits, but does not
+  // specify assessment weightages. Do not infer or display an unverified split.
+  gradingStructure: [],
+  gradingDisclosure: "The supplied AEE103 syllabus specifies L: 1, T: 0, P: 2 and 2 credits, but does not state assessment weightages. Check the current course instructions or faculty communication for the applicable grading pattern.",
   textbooks: [
     {
       title: "Fundamentals of Agricultural Extension Education",
