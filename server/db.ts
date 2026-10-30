@@ -14,6 +14,9 @@ const rawConnectionString = (
   ""
 ).trim().replace(/^"|"$/g, '');
 
+/** True only when an operator explicitly configured a real database URL. */
+export const hasConfiguredDatabase = rawConnectionString.length > 0;
+
 if (!rawConnectionString && process.env.NODE_ENV === "production") {
   throw new Error(
     "No database connection string found. Set DATABASE_URL or POSTGRES_URL."
