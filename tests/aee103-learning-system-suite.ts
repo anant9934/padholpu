@@ -18,7 +18,7 @@ const EXPECTED_AEE103_UNITS = [
   { unitNumber: 2, title: "Unit 2: Extension Systems in India" },
   { unitNumber: 3, title: "Unit 3: New Trends in Agricultural Extension" },
   { unitNumber: 4, title: "Unit 4: Rural Development" },
-  { unitNumber: 5, title: "Unit 5: Extension Administration & Teaching Methods" },
+  { unitNumber: 5, title: "Unit 5: Extension Administration" },
   { unitNumber: 6, title: "Unit 6: Communication" }
 ];
 
@@ -169,20 +169,12 @@ export async function runAEE103LearningSystemSuite() {
     assert.strictEqual(totalCards, 120, `Expected 120 total flashcards, found ${totalCards}`);
   });
 
-  // ── TEST 8: Verified LPU Grading Weightages ────────────────────────────────
-  await test("Verified LPU Course Evaluation matches CA (20%), MTE (20%), ETE (40%), Practicals (20%)", async () => {
-    const { gradingStructure } = aee103CompleteSubject.metadata;
-    assert.strictEqual(gradingStructure.length, 4, "Expected 4 grading components");
-
-    const ca = gradingStructure.find((g) => g.component.includes("Continuous Assessment"));
-    const mte = gradingStructure.find((g) => g.component.includes("Mid-Term"));
-    const ete = gradingStructure.find((g) => g.component.includes("End-Term"));
-    const prac = gradingStructure.find((g) => g.component.includes("Practical"));
-
-    assert(ca && ca.weightage === "20%", "CA must be 20%");
-    assert(mte && mte.weightage === "20%", "MTE must be 20%");
-    assert(ete && ete.weightage === "40%", "ETE must be 40%");
-    assert(prac && prac.weightage === "20%", "Practicals must be 20%");
+  // ── TEST 8: Do not invent grading percentages absent from the supplied syllabus.
+  await test("AEE103 grading weightages remain undisclosed without a course-specific source", async () => {
+    const { gradingStructure, gradingDisclosure } = aee103CompleteSubject.metadata;
+    assert.strictEqual(gradingStructure.length, 0, "The supplied syllabus does not state assessment weightages");
+    assert(gradingDisclosure && gradingDisclosure.includes("does not state assessment weightages"),
+      "Student-facing disclosure explains the source limitation");
   });
 
   // ── TEST 9: Course Outcomes CO1-CO5 Defined ───────────────────────────────
@@ -191,6 +183,12 @@ export async function runAEE103LearningSystemSuite() {
     assert.strictEqual(courseOutcomes.length, 5, `Expected 5 COs, found ${courseOutcomes.length}`);
     const codes = courseOutcomes.map((co) => co.code);
     assert.deepStrictEqual(codes, ["CO1", "CO2", "CO3", "CO4", "CO5"], "CO codes must be CO1 to CO5");
+    assert(courseOutcomes[0].description.includes("effective teaching methods"), "CO1 preserves the supplied teaching-method outcome");
+    assert(courseOutcomes[1].description.includes("organizational set-up"), "CO2 preserves the supplied organizational outcome");
+    assert(courseOutcomes[2].description.includes("adoption/diffusion"), "CO3 preserves the supplied adoption/diffusion outcome");
+    assert(courseOutcomes[3].description.includes("new trends in agricultural extension"), "CO4 preserves the supplied communications/trends outcome");
+    assert(courseOutcomes[4].description.includes("ICT applications"), "CO5 preserves the supplied ICT/TOT outcome");
+    assert.strictEqual(aee103CompleteSubject.units[4].title, "Extension Administration", "Unit V uses the official syllabus title");
   });
 
   // ── TEST 10: Official Prescribed Textbooks Traced ─────────────────────────

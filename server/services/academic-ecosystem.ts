@@ -6,7 +6,7 @@ import {
   personalNotes, bookmarks,
   studyGroups, studyGroupMembers, studyGroupPosts,
   contentFeedback, contentIssueReports,
-  subjects, units, resources, users, notifications,
+  subjects, units, topics, resources, users, notifications,
   type FlashcardDeck, type Flashcard, type UserFlashcardReview,
   type SubjectiveQuestion, type UserSubjectiveAnswer,
   type NoteSubmission, type InsertNoteSubmission,
@@ -16,6 +16,7 @@ import {
 } from "../../shared/schema";
 import { eq, and, or, ne, desc, sql, asc, inArray, gte, lte } from "drizzle-orm";
 import { invalidatePattern, delCache } from "../lib/redis";
+import aee103CompleteSubject from "../data/aee103";
 
 // ============================================================================
 // 1. FLASHCARDS & SM-2 SPACED REPETITION ENGINE
@@ -454,6 +455,50 @@ export async function moderateNoteSubmission(
 // 4. STUDY PLANNER & EXAM PREPARATION ENGINE
 // ============================================================================
 
+export interface StudyPlanUnitInput {
+  subjectCode: string;
+  unitNumber: number;
+  unitName: string;
+}
+
+export interface ScheduledStudyPlanTask {
+  subjectCode: string;
+  unitNumber: number;
+  title: string;
+  scheduledDate: string;
+}
+
+/** Distribute registered syllabus units over available calendar days before the exam. */
+export function distributeStudyPlanUnits(
+  unitsToSchedule: StudyPlanUnitInput[],
+  startDate: Date,
+  targetExamDate: Date
+): ScheduledStudyPlanTask[] {
+  if (!Number.isFinite(startDate.getTime()) || !Number.isFinite(targetExamDate.getTime())) {
+    throw new Error("Invalid study-plan dates.");
+  }
+  if (unitsToSchedule.length === 0) return [];
+
+  const startDay = Date.UTC(startDate.getUTCFullYear(), startDate.getUTCMonth(), startDate.getUTCDate());
+  const examDay = Date.UTC(targetExamDate.getUTCFullYear(), targetExamDate.getUTCMonth(), targetExamDate.getUTCDate());
+  if (examDay <= startDay) {
+    throw new Error("The exam date must be at least one day after the study-plan start date.");
+  }
+
+  const dayMs = 24 * 60 * 60 * 1000;
+  const availableDays = Math.ceil((examDay - startDay) / dayMs);
+
+  return unitsToSchedule.map((unit, index) => {
+    const dayOffset = Math.min(availableDays - 1, Math.floor((index * availableDays) / unitsToSchedule.length));
+    return {
+      subjectCode: unit.subjectCode,
+      unitNumber: unit.unitNumber,
+      title: `Master Unit ${unit.unitNumber}: ${unit.unitName} (${unit.subjectCode})`,
+      scheduledDate: new Date(startDay + dayOffset * dayMs).toISOString().slice(0, 10),
+    };
+  });
+}
+
 export async function generateStudyPlan(
   userId: number,
   title: string,
@@ -462,85 +507,83 @@ export async function generateStudyPlan(
   dailyStudyHours: number = 2.0,
   examType: string = "END_TERM"
 ) {
-  // 1. Validate Target Exam Date
   const now = new Date();
-  if (isNaN(targetExamDate.getTime())) {
-    throw new Error("Invalid target exam date.");
-  }
-  // Exam date must be in the future (at least end of today)
-  if (targetExamDate.getTime() < now.getTime() - 24 * 60 * 60 * 1000) {
-    throw new Error("Exam date must be scheduled in the future.");
-  }
+  if (!Number.isFinite(targetExamDate.getTime())) throw new Error("Invalid target exam date.");
 
-  // Normalize subject codes
-  const normalizedCodes = selectedSubjectCodes.map(c => c.trim().toUpperCase()).filter(Boolean);
-  if (normalizedCodes.length === 0) {
-    throw new Error("Please specify at least one subject code.");
+  const todayUtc = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  const examDayUtc = Date.UTC(targetExamDate.getUTCFullYear(), targetExamDate.getUTCMonth(), targetExamDate.getUTCDate());
+  if (examDayUtc <= todayUtc) throw new Error("Exam date must be at least one day in the future to schedule revision tasks.");
+
+  if (!Number.isFinite(dailyStudyHours) || dailyStudyHours < 0.5 || dailyStudyHours > 16) {
+    throw new Error("Daily study hours must be between 0.5 and 16.");
   }
 
-  // 2. Create main plan
-  const [plan] = await db.insert(studyPlans).values({
-    userId,
-    title,
-    targetExamDate,
-    selectedSubjectCodes: normalizedCodes,
-    dailyStudyHours: Math.max(0.5, Math.min(16, dailyStudyHours)),
-    examType,
-    isActive: true,
-  }).returning();
+  const normalizedCodes = selectedSubjectCodes
+    .map((code) => String(code || "").trim().toUpperCase())
+    .filter((code, index, values) => Boolean(code) && values.indexOf(code) === index);
+  if (normalizedCodes.length === 0) throw new Error("Please specify at least one subject code.");
+  if (!title.trim()) throw new Error("Study plan title is required.");
 
-  // 3. Fetch all units for the selected subject codes
-  const subRows = await db.select().from(subjects).where(inArray(subjects.code, normalizedCodes));
-  const subIds = subRows.map((s: any) => s.id);
-  const unitsList = subIds.length
-    ? await db.select().from(units).where(inArray(units.subjectId, subIds)).orderBy(units.unitNumber)
-    : [];
-
-  const diffDays = Math.max(1, Math.ceil((targetExamDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
-  const tasksToInsert = [];
-  let dayOffset = 0;
-
-  if (unitsList.length > 0) {
-    for (const u of unitsList) {
-      const targetDate = new Date(now.getTime() + (dayOffset % diffDays) * 24 * 60 * 60 * 1000);
-      const dateStr = targetDate.toISOString().split("T")[0];
-      const sub = subRows.find((s: any) => s.id === u.subjectId);
-
-      tasksToInsert.push({
-        planId: plan.id,
-        subjectCode: sub?.code || "COURSE",
-        unitNumber: u.unitNumber,
-        title: `Master Unit ${u.unitNumber}: ${u.unitName} (${sub?.code})`,
-        scheduledDate: dateStr,
-        isCompleted: false,
-      });
-      dayOffset++;
-    }
-  } else {
-    // If subjects don't have units populated in DB, generate standard syllabus units 1-5
-    for (const code of normalizedCodes) {
-      for (let unitNum = 1; unitNum <= 5; unitNum++) {
-        const targetDate = new Date(now.getTime() + (dayOffset % diffDays) * 24 * 60 * 60 * 1000);
-        const dateStr = targetDate.toISOString().split("T")[0];
-
-        tasksToInsert.push({
-          planId: plan.id,
-          subjectCode: code,
-          unitNumber: unitNum,
-          title: `Master Unit ${unitNum}: Core Syllabus Concepts (${code})`,
-          scheduledDate: dateStr,
-          isCompleted: false,
-        });
-        dayOffset++;
-      }
-    }
+  // Validate every subject before creating any plan record.
+  const subjectRows = await db.select().from(subjects).where(inArray(subjects.code, normalizedCodes));
+  const foundCodes = new Set(subjectRows.map((subject: any) => subject.code.toUpperCase()));
+  const unknownCodes = normalizedCodes.filter((code) => !foundCodes.has(code));
+  if (unknownCodes.length > 0) {
+    throw new Error(`Unknown subject code(s): ${unknownCodes.join(", ")}. Select registered subjects only.`);
   }
 
-  if (tasksToInsert.length > 0) {
-    await db.insert(studyPlanTasks).values(tasksToInsert);
+  const orderedSubjects = normalizedCodes.map((code) =>
+    subjectRows.find((subject: any) => subject.code.toUpperCase() === code)!
+  );
+  const subjectOrder = new Map(normalizedCodes.map((code, index) => [code, index]));
+  const subjectIds = orderedSubjects.map((subject: any) => subject.id);
+  const unitRows = await db.select().from(units).where(inArray(units.subjectId, subjectIds));
+
+  const subjectsWithoutUnits = orderedSubjects
+    .filter((subject: any) => !unitRows.some((unit: any) => unit.subjectId === subject.id))
+    .map((subject: any) => subject.code);
+  if (subjectsWithoutUnits.length > 0) {
+    throw new Error(
+      `No syllabus units are registered for: ${subjectsWithoutUnits.join(", ")}. ` +
+      "Add real syllabus-unit mappings before planning; placeholder units are not generated."
+    );
   }
 
-  return plan;
+  const scheduleInputs: StudyPlanUnitInput[] = unitRows
+    .map((unit: any) => {
+      const subject = orderedSubjects.find((row: any) => row.id === unit.subjectId);
+      return subject ? {
+        subjectCode: subject.code,
+        unitNumber: unit.unitNumber,
+        unitName: unit.unitName,
+      } : null;
+    })
+    .filter((unit: StudyPlanUnitInput | null): unit is StudyPlanUnitInput => Boolean(unit))
+    .sort((a: StudyPlanUnitInput, b: StudyPlanUnitInput) =>
+      (subjectOrder.get(a.subjectCode.toUpperCase()) ?? 0) -
+        (subjectOrder.get(b.subjectCode.toUpperCase()) ?? 0) ||
+      a.unitNumber - b.unitNumber
+    );
+
+  const scheduledTasks = distributeStudyPlanUnits(scheduleInputs, new Date(todayUtc), targetExamDate);
+
+  // Plan and task creation are atomic.
+  return db.transaction(async (tx: any) => {
+    const [plan] = await tx.insert(studyPlans).values({
+      userId,
+      title: title.trim(),
+      targetExamDate,
+      selectedSubjectCodes: normalizedCodes,
+      dailyStudyHours,
+      examType,
+      isActive: true,
+    }).returning();
+
+    await tx.insert(studyPlanTasks).values(
+      scheduledTasks.map((task) => ({ planId: plan.id, ...task, isCompleted: false }))
+    );
+    return plan;
+  });
 }
 
 export async function getUserStudyPlans(userId: number) {
@@ -972,77 +1015,223 @@ export async function deleteSubjectiveQuestion(questionId: number) {
 // 8. AI-ASSISTED LEARNING BOUNDARY (OPTIONAL / GRACEFUL FALLBACK)
 // ============================================================================
 
+export interface AcademicTutorSource {
+  subjectCode: string;
+  subjectName: string;
+  unitNumber: number;
+  unitTitle: string;
+  sectionTitle: string;
+}
+
 export interface AIExplanationResult {
-  isAIGenerated: boolean;
+  /** Retained for API compatibility. This implementation always returns false. */
+  isAIGenerated: false;
+  mode: "RULE_BASED_RETRIEVAL";
+  evidenceAvailable: boolean;
   explanation: string;
   keyPoints: string[];
+  sources: AcademicTutorSource[];
   disclaimer: string;
 }
 
-/**
- * Explains an academic concept or question.
- * Protected with request timeout (8s), input sanitization (max 500 chars),
- * and guaranteed 100% offline syllabus outline fallback with institutional disclaimers.
- */
-export async function getConceptExplanation(topic: string, subjectCode?: string): Promise<AIExplanationResult> {
-  const cleanTopic = topic.trim().slice(0, 500);
-  const cleanSubject = (subjectCode || "computer science & engineering").trim().slice(0, 100);
+const ACADEMIC_TUTOR_STOPWORDS = new Set([
+  "the", "and", "for", "with", "from", "that", "this", "what", "when", "where",
+  "why", "how", "explain", "define", "discuss", "describe", "about", "into",
+  "its", "are", "was", "were", "can", "could", "would", "should", "your",
+  "their", "them", "than", "then", "have", "has", "had", "does", "did"
+]);
 
-  const hasAIKey = Boolean(process.env.GEMINI_API_KEY || process.env.OPENAI_API_KEY);
+function tokenizeAcademicQuery(value: string): string[] {
+  const matches: string[] = value.toLowerCase()
+    .normalize("NFKD")
+    .replace(/[^a-z0-9 ]/g, " ")
+    .match(/[a-z0-9]{3,}/g) || [];
+  return matches.filter((token, index) =>
+    !ACADEMIC_TUTOR_STOPWORDS.has(token) && matches.indexOf(token) === index
+  );
+}
 
-  // If real AI provider is configured in production, call it securely with strict timeout:
-  if (hasAIKey && process.env.GEMINI_API_KEY) {
-    try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{
-              parts: [{
-                text: `You are an academic tutor at Lovely Professional University for ${cleanSubject}. Explain the following concept clearly with key examination points, practical code/example, and common exam mistakes: "${cleanTopic}". Keep response formatted in clean markdown.`
-              }]
-            }]
-          }),
-          signal: AbortSignal.timeout(8000), // 8-second strict timeout
-        }
-      );
-      const data = await response.json();
-      const generated = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (generated) {
-        return {
-          isAIGenerated: true,
-          explanation: generated,
-          keyPoints: [
-            "Generated in real-time by Google Gemini AI assistant.",
-            "Always cross-reference with official LPU syllabus and lecture slides."
-          ],
-          disclaimer: "AI-generated explanation for study assistance. Not an official university grading reference."
-        };
-      }
-    } catch (e) {
-      console.warn("[AI-ASSISTANT] Gemini API call timed out or failed, falling back to curated academic knowledge base.");
-    }
-  }
+function academicTextMatchScore(queryTokens: string[], value: string): number {
+  const normalized = value.toLowerCase();
+  return queryTokens.reduce((score, token) => score + (normalized.includes(token) ? 1 : 0), 0);
+}
 
-  // Authoritative Academic Knowledge Fallback (Guaranteed to work 100% offline & without third-party API keys)
+function noAcademicEvidence(topic: string, subjectLabel: string): AIExplanationResult {
   return {
     isAIGenerated: false,
-    explanation: `### Academic Concept Overview: ${cleanTopic}\n\n` +
-      `This core syllabus topic is critical for both Continuous Assessment (CA) and End-Term Examinations in ${cleanSubject}.\n\n` +
-      `#### Core Theoretical Fundamentals\n` +
-      `1. **Definition & Purpose:** Establishes the foundational logic and design patterns required for academic coursework.\n` +
-      `2. **Key Mechanisms:** Involves modular decomposition, optimal resource management, and adherence to standard algorithmic complexity limits.\n` +
-      `3. **Exam Tips:** In subjective questions, always draw the conceptual diagram and write clean, commented code snippets or formulas.\n\n` +
-      `#### Recommended Study Path\n` +
-      `• Review Unit Notes and faculty presentations under the **Learn** tab.\n` +
-      `• Test your knowledge by taking a unit-wise quiz under **Practice**.\n` +
-      `• Solve previous year question papers (PYQs) to understand question phrasing.`,
+    mode: "RULE_BASED_RETRIEVAL",
+    evidenceAvailable: false,
+    explanation:
+      `No matching syllabus material was found for "${topic}" in ${subjectLabel}. ` +
+      "There is not enough indexed academic evidence to explain this accurately. Try the exact wording from the subject syllabus or open the relevant unit notes.",
     keyPoints: [
-      "Curated syllabus-linked reference guide.",
-      "Matches LPU examination marking criteria."
+      "No explanation was generated from unsupported or unrelated material.",
+      "This rule-based tutor does not call an external model."
     ],
-    disclaimer: "Curated academic reference. Verified by university curriculum standards."
+    sources: [],
+    disclaimer: "Rule-based academic retrieval. No external AI inference was used. This is not an official university answer key."
+  };
+}
+
+/**
+ * Retrieve matching academic material with deterministic scoring.
+ * AEE103 uses structured notes; other subjects expose syllabus taxonomy matches.
+ * This path never sends student content to an external model provider.
+ */
+export async function getConceptExplanation(
+  topic: string,
+  subjectCode?: string,
+  subjectId?: number
+): Promise<AIExplanationResult> {
+  const cleanTopic = String(topic || "").trim().slice(0, 500);
+  const cleanCode = String(subjectCode || "").trim().toUpperCase().slice(0, 32);
+  const tokens = tokenizeAcademicQuery(cleanTopic);
+
+  if (!cleanTopic || tokens.length === 0) {
+    return noAcademicEvidence(cleanTopic || "the requested concept", cleanCode || "the selected subject");
+  }
+  if (!cleanCode && (!Number.isInteger(subjectId) || Number(subjectId) <= 0)) {
+    return noAcademicEvidence(cleanTopic, "an unspecified subject");
+  }
+
+  let subject: { id?: number; code: string; name: string } | undefined;
+  if (cleanCode === "AEE103" && !subjectId) {
+    subject = { code: aee103CompleteSubject.metadata.code, name: aee103CompleteSubject.metadata.name };
+  } else {
+    const [subjectRow] = await db
+      .select({ id: subjects.id, code: subjects.code, name: subjects.name })
+      .from(subjects)
+      .where(subjectId ? eq(subjects.id, subjectId) : eq(subjects.code, cleanCode))
+      .limit(1);
+
+    if (subjectRow && cleanCode && subjectRow.code.toUpperCase() !== cleanCode) {
+      return noAcademicEvidence(cleanTopic, "the supplied subject context (subject ID/code mismatch)");
+    }
+    subject = subjectRow;
+  }
+
+  if (!subject) return noAcademicEvidence(cleanTopic, cleanCode || "the selected subject");
+
+  if (subject.code.toUpperCase() === "AEE103") {
+    const candidates: Array<{
+      score: number;
+      unit: (typeof aee103CompleteSubject.units)[number];
+      section: (typeof aee103CompleteSubject.units)[number]["notes"]["sections"][number];
+    }> = [];
+
+    for (const unit of aee103CompleteSubject.units) {
+      const unitContext = [unit.title, ...unit.syllabusTopics].join(" ");
+      for (const section of unit.notes.sections) {
+        const subContext = (section.subsections || [])
+          .map((subsection) => {
+            const tableText = subsection.table
+              ? [subsection.table.headers.join(" "), ...subsection.table.rows.map((row) => row.join(" "))].join(" ")
+              : "";
+            return `${subsection.subheading} ${subsection.content} ${(subsection.keyPoints || []).join(" ")} ${tableText}`;
+          })
+          .join(" ");
+        const body = [section.heading, section.content, subContext].join(" ");
+        const matched = tokens.filter((token) => `${unitContext} ${body}`.toLowerCase().includes(token));
+        const requiredMatches = tokens.length >= 5 ? Math.ceil(tokens.length / 3) : 1;
+        if (matched.length < requiredMatches) continue;
+
+        candidates.push({
+          score: academicTextMatchScore(tokens, unitContext) * 5 +
+            academicTextMatchScore(tokens, body) +
+            academicTextMatchScore(tokens, section.heading) * 4,
+          unit,
+          section
+        });
+      }
+    }
+
+    candidates.sort((a, b) => b.score - a.score);
+    const selected = candidates.slice(0, 3);
+    if (selected.length === 0) return noAcademicEvidence(cleanTopic, subject.name);
+
+    const explanation = selected.map((candidate) => {
+      const subsectionContent = (candidate.section.subsections || [])
+        .map((subsection) => {
+          const tableContent = subsection.table
+            ? `\n${subsection.table.headers.join(" | ")}\n${subsection.table.rows.map((row) => row.join(" | ")).join("\n")}`
+            : "";
+          return `#### ${subsection.subheading}\n${subsection.content}\n${(subsection.keyPoints || []).map((point) => `- ${point}`).join("\n")}${tableContent}`;
+        })
+        .join("\n\n");
+      const content = [candidate.section.content, subsectionContent].filter(Boolean).join("\n\n");
+      return `### Unit ${candidate.unit.unitNumber}: ${candidate.unit.title}\n**${candidate.section.heading}**\n\n${content.slice(0, 1800)}`;
+    }).join("\n\n---\n\n");
+
+    const sources = selected.map((candidate) => ({
+      subjectCode: subject!.code,
+      subjectName: subject!.name,
+      unitNumber: candidate.unit.unitNumber,
+      unitTitle: candidate.unit.title,
+      sectionTitle: candidate.section.heading
+    }));
+    return {
+      isAIGenerated: false,
+      mode: "RULE_BASED_RETRIEVAL",
+      evidenceAvailable: true,
+      explanation,
+      keyPoints: selected
+        .map((candidate) => `Unit ${candidate.unit.unitNumber}: ${candidate.section.heading}`)
+        .filter((value, index, values) => values.indexOf(value) === index),
+      sources,
+      disclaimer: "Retrieved from Padho LPU's structured AEE103 study notes. No external AI inference was used. These are study notes, not an official university answer key."
+    };
+  }
+
+  if (!subject.id) return noAcademicEvidence(cleanTopic, subject.name);
+  const unitRows: Array<{ id: number; unitNumber: number; unitName: string }> = await db
+    .select({ id: units.id, unitNumber: units.unitNumber, unitName: units.unitName })
+    .from(units)
+    .where(eq(units.subjectId, subject.id))
+    .orderBy(asc(units.unitNumber));
+
+  if (unitRows.length === 0) return noAcademicEvidence(cleanTopic, subject.name);
+
+  const topicRows: Array<{ unitId: number | null; topicName: string }> = await db
+    .select({ unitId: topics.unitId, topicName: topics.topicName })
+    .from(topics)
+    .where(inArray(topics.unitId, unitRows.map((unit: { id: number }) => unit.id)));
+
+  const candidates: Array<{
+    unit: { id: number; unitNumber: number; unitName: string };
+    unitTopics: string[];
+    score: number;
+  }> = unitRows.map((unit: { id: number; unitNumber: number; unitName: string }) => {
+    const unitTopics = topicRows
+      .filter((row: { unitId: number | null; topicName: string }) => row.unitId === unit.id)
+      .map((row: { unitId: number | null; topicName: string }) => row.topicName);
+    const context = [unit.unitName, ...unitTopics].join(" ");
+    return { unit, unitTopics, score: academicTextMatchScore(tokens, context) };
+  }).filter((candidate: { score: number }) => candidate.score > 0)
+    .sort((a: { score: number }, b: { score: number }) => b.score - a.score)
+    .slice(0, 5);
+
+  if (candidates.length === 0) return noAcademicEvidence(cleanTopic, subject.name);
+
+  const sources = candidates.map((candidate) => ({
+    subjectCode: subject!.code,
+    subjectName: subject!.name,
+    unitNumber: candidate.unit.unitNumber,
+    unitTitle: candidate.unit.unitName,
+    sectionTitle: candidate.unitTopics.filter((name) => academicTextMatchScore(tokens, name) > 0).join(", ") || candidate.unit.unitName
+  }));
+
+  return {
+    isAIGenerated: false,
+    mode: "RULE_BASED_RETRIEVAL",
+    evidenceAvailable: true,
+    explanation:
+      `### Matching registered syllabus topics — ${subject.name}\n\n` +
+      candidates.map((candidate) =>
+        `- **Unit ${candidate.unit.unitNumber}: ${candidate.unit.unitName}**\n  ${candidate.unitTopics.filter((name) => academicTextMatchScore(tokens, name) > 0).join("; ") || "Unit title match"}`
+      ).join("\n") +
+      "\n\nThe database contains matching syllabus taxonomy, but no explanatory notes are indexed here. Open the referenced unit before treating this as a complete explanation.",
+    keyPoints: sources.map((source) => `Review Unit ${source.unitNumber}: ${source.sectionTitle}`),
+    sources,
+    disclaimer: "Rule-based retrieval from registered unit/topic metadata. No external AI inference was used; topic labels are not a model answer."
   };
 }

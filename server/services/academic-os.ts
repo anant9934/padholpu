@@ -220,17 +220,28 @@ export function generateNextBestAction(params: {
 }): NextBestAction {
   const { unitsMastery, overallCoverage, primaryCourseCode, primaryCourseId, totalAttempts } = params;
 
-  // New user with 0 attempts: Prompt to start initial diagnostic
+  // New user with no course context: invite programme/subject selection rather than assuming CSE.
   if (totalAttempts === 0 || unitsMastery.length === 0) {
-    const courseCode = primaryCourseCode || "CSE111";
+    if (!primaryCourseCode) {
+      return {
+        type: "EXPLORE_COURSES",
+        course: "",
+        title: "Choose a subject to get started",
+        reason: "No enrolled subject or practice history is available yet. Select your programme and subjects to build a relevant study path.",
+        cta: "Explore Programmes",
+        destination: "/programmes",
+        priority: 6,
+      };
+    }
+
     return {
       type: "PRACTICE_UNIT",
-      course: courseCode,
+      course: primaryCourseCode,
       courseId: primaryCourseId,
-      title: `Start Diagnostic: ${courseCode}`,
-      reason: "No attempts recorded yet. Complete a 10-question baseline drill to diagnose your readiness.",
+      title: `Start Diagnostic: ${primaryCourseCode}`,
+      reason: "No attempts recorded yet. Complete a baseline drill for this selected subject to establish an initial benchmark.",
       cta: "Start Diagnostic Drill",
-      destination: `/practice?course=${encodeURIComponent(courseCode)}`,
+      destination: `/practice?course=${encodeURIComponent(primaryCourseCode)}`,
       priority: 6,
     };
   }
@@ -318,7 +329,7 @@ export function generateNextBestAction(params: {
 
   // Priority 4: Mock Exam if course coverage >= 60%
   if (overallCoverage >= 60) {
-    const courseCode = primaryCourseCode || unitsMastery[0]?.courseCode || "CSE111";
+    const courseCode = primaryCourseCode || unitsMastery[0]?.courseCode;
     return {
       type: "TAKE_EXAM",
       course: courseCode,
@@ -332,16 +343,17 @@ export function generateNextBestAction(params: {
   }
 
   // Priority 5: Revision due / General Practice
+  // This branch is reached only when at least one syllabus unit exists.
   const fallback = unitsMastery[0];
   return {
     type: "PRACTICE_UNIT",
-    course: fallback?.courseCode || "CSE111",
-    courseId: fallback?.courseId,
-    unit: fallback?.unitNumber || 1,
-    title: `Reinforce ${fallback?.courseCode || "Course"} Concepts`,
+    course: fallback.courseCode,
+    courseId: fallback.courseId,
+    unit: fallback.unitNumber,
+    title: `Reinforce ${fallback.courseCode} Concepts`,
     reason: "Maintain your consistency and keep syllabus recall fresh with a quick review session.",
     cta: "Practice Drill",
-    destination: `/practice?course=${encodeURIComponent(fallback?.courseCode || "CSE111")}`,
+    destination: `/practice?course=${encodeURIComponent(fallback.courseCode)}`,
     priority: 5,
   };
 }

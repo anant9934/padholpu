@@ -13,7 +13,7 @@ import {
   bookmarks,
   studentActivityEvents
 } from "../../shared/schema";
-import { eq, and, sql, desc } from "drizzle-orm";
+import { eq, and, sql, desc, inArray } from "drizzle-orm";
 import aee103CompleteSubject from "../data/aee103";
 
 const router = Router();
@@ -73,11 +73,35 @@ router.get(["/api/academic/subjects/:code/syllabus", "/academic/subjects/:code/s
         .innerJoin(flashcards, eq(flashcards.deckId, flashcardDecks.id))
         .where(eq(flashcardDecks.subjectId, subj.id));
 
+      // Unit inventories come from persisted database records, not static source-array sizes.
+      const [mcqCounts, subjectiveCounts, flashcardCounts] = await Promise.all([
+        db.select({
+          unitId: questions.unitId,
+          count: sql<number>`count(*)`
+        }).from(questions).where(eq(questions.subjectId, subj.id)).groupBy(questions.unitId),
+        db.select({
+          unitId: subjectiveQuestions.unitId,
+          count: sql<number>`count(*)`
+        }).from(subjectiveQuestions).where(eq(subjectiveQuestions.subjectId, subj.id)).groupBy(subjectiveQuestions.unitId),
+        db.select({
+          unitId: flashcardDecks.unitId,
+          count: sql<number>`count(${flashcards.id})`
+        }).from(flashcardDecks)
+          .innerJoin(flashcards, eq(flashcards.deckId, flashcardDecks.id))
+          .where(eq(flashcardDecks.subjectId, subj.id))
+          .groupBy(flashcardDecks.unitId)
+      ]);
+
+      const mcqByUnit = new Map(mcqCounts.map((row: any) => [row.unitId, Number(row.count) || 0]));
+      const subjectiveByUnit = new Map(subjectiveCounts.map((row: any) => [row.unitId, Number(row.count) || 0]));
+      const flashcardsByUnit = new Map(flashcardCounts.map((row: any) => [row.unitId, Number(row.count) || 0]));
+
       const unitSummaries = unitData.map((u: any) => {
         const matchingDbUnit = dbUnits.find((du: any) => du.unitNumber === u.unitNumber);
+        const unitId = matchingDbUnit?.id ?? null;
         return {
           unitNumber: u.unitNumber,
-          unitId: matchingDbUnit?.id || u.unitNumber,
+          unitId,
           title: u.title,
           shortDescription: u.shortDescription,
           overview: u.shortDescription,
@@ -85,16 +109,16 @@ router.get(["/api/academic/subjects/:code/syllabus", "/academic/subjects/:code/s
           estimatedMinutes: u.estimatedReadTimeMinutes,
           syllabusTopics: u.syllabusTopics,
           topics: u.syllabusTopics,
-          mcqCount: u.mcqs.length,
-          subjectiveCount: u.subjectiveQuestions.length,
-          flashcardCount: u.flashcards.length
+          mcqCount: unitId === null ? 0 : (mcqByUnit.get(unitId) || 0),
+          subjectiveCount: unitId === null ? 0 : (subjectiveByUnit.get(unitId) || 0),
+          flashcardCount: unitId === null ? 0 : (flashcardsByUnit.get(unitId) || 0)
         };
       });
 
       const gradingComponents = metadata.gradingStructure.map((g: any) => ({
         name: g.component,
         type: g.component,
-        weightage: parseInt(g.weightage, 10) || 20,
+        weightage: Number.parseInt(g.weightage, 10),
         marks: g.marks,
         details: g.details,
         coverage: g.component.includes("Mid-Term") 
@@ -125,19 +149,19 @@ router.get(["/api/academic/subjects/:code/syllabus", "/academic/subjects/:code/s
         overview: metadata.overview,
         courseOutcomes: metadata.courseOutcomes,
         gradingStructure: metadata.gradingStructure,
-        grading: {
-          totalMarks: 100,
-          components: gradingComponents
-        },
+        grading: metadata.gradingStructure.length > 0
+          ? { totalMarks: 100, components: gradingComponents }
+          : null,
+        gradingDisclosure: metadata.gradingDisclosure,
         textbooks: metadata.textbooks,
         practicalsCount: metadata.practicals.length,
         practicalsSummary: metadata.practicals.map((p: any) => ({ id: p.id, title: p.title })),
         units: unitSummaries,
         stats: {
           totalUnits: unitSummaries.length,
-          totalMcqs: Number(mcqCountResult?.count) || 360,
-          totalSubjectiveQuestions: Number(subjCountResult?.count) || 120,
-          totalFlashcards: Number(fcCountResult?.count) || 120,
+          totalMcqs: Number(mcqCountResult?.count ?? 0),
+          totalSubjectiveQuestions: Number(subjCountResult?.count ?? 0),
+          totalFlashcards: Number(fcCountResult?.count ?? 0),
           totalPracticals: metadata.practicals.length
         }
       });
@@ -743,7 +767,7 @@ router.get(["/api/academic/subjects/:code/progress", "/academic/subjects/:code/p
           and(
             eq(studentActivityEvents.userId, req.user.id),
             eq(studentActivityEvents.courseId, subj.id),
-            eq(studentActivityEvents.eventType, "RESOURCE_OPENED")
+            inArray(studentActivityEvents.eventType, ["RESOURCE_OPENED", "UNIT_COMPLETED"])
           )
         );
 
@@ -847,7 +871,7 @@ router.get(["/api/academic/subjects/:code/progress", "/academic/subjects/:code/p
 
 /**
  * POST /api/academic/subjects/:code/units/:unitNumber/mark-read
- * Record that student read the unit notes.
+ * Record that the student explicitly marked the unit complete.
  */
 router.post(["/api/academic/subjects/:code/units/:unitNumber/mark-read", "/academic/subjects/:code/units/:unitNumber/mark-read"], async (req: Request, res: Response) => {
   if (!isUserAuthenticated(req) || !req.user) {
@@ -864,13 +888,38 @@ router.post(["/api/academic/subjects/:code/units/:unitNumber/mark-read", "/acade
       .where(sql`UPPER(${subjects.code}) = ${code}`);
 
     if (subj) {
-      await db.insert(studentActivityEvents).values({
-        userId: req.user.id,
-        eventType: "RESOURCE_OPENED",
-        courseId: subj.id,
-        referenceId: `AEE103-U${unitNum}-NOTES`,
-        metadata: { unitNumber: unitNum, subjectCode: code }
-      });
+      const [unitRow] = await db
+        .select({ id: units.id })
+        .from(units)
+        .where(and(eq(units.subjectId, subj.id), eq(units.unitNumber, unitNum)))
+        .limit(1);
+
+      if (!unitRow) {
+        return res.status(404).json({ message: "Syllabus unit not found for this subject." });
+      }
+
+      const referenceId = `${code}-U${unitNum}-NOTES`;
+      const [existingCompletion] = await db
+        .select({ id: studentActivityEvents.id })
+        .from(studentActivityEvents)
+        .where(and(
+          eq(studentActivityEvents.userId, req.user.id),
+          eq(studentActivityEvents.courseId, subj.id),
+          eq(studentActivityEvents.unitId, unitRow.id),
+          eq(studentActivityEvents.eventType, "UNIT_COMPLETED")
+        ))
+        .limit(1);
+
+      if (!existingCompletion) {
+        await db.insert(studentActivityEvents).values({
+          userId: req.user.id,
+          eventType: "UNIT_COMPLETED",
+          courseId: subj.id,
+          unitId: unitRow.id,
+          referenceId,
+          metadata: { unitNumber: unitNum, subjectCode: code, completionSource: "student_confirmed" }
+        });
+      }
     }
 
     res.json({ success: true });

@@ -147,8 +147,8 @@ export default function SubjectivePage() {
     }
   };
 
-  // Trigger AI Concept Explanation
-  const askAITutor = async (qText: string) => {
+  // Retrieve syllabus-grounded material without external model inference
+  const askAITutor = async (qText: string, subjectId?: number) => {
     setAiConcept(qText);
     setAiModalOpen(true);
     setAiLoading(true);
@@ -158,12 +158,13 @@ export default function SubjectivePage() {
       const res = await fetch("/api/ecosystem/ai/explain", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ concept: qText }),
+        body: JSON.stringify({ concept: qText, subjectId }),
       });
       const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Academic retrieval failed.");
       setAiResult(data);
     } catch {
-      toast({ title: "AI tutor is temporarily busy. Showing syllabus outline.", variant: "destructive" });
+      toast({ title: "Academic material could not be retrieved.", description: "Try opening the subject unit or searching with syllabus wording.", variant: "destructive" });
     } finally {
       setAiLoading(false);
     }
@@ -319,10 +320,10 @@ export default function SubjectivePage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => askAITutor(q.questionText)}
+                        onClick={() => askAITutor(q.questionText, q.subjectId ?? undefined)}
                         className="text-xs text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950/40 gap-1 h-8 px-2.5"
                       >
-                        <BrainCircuit className="w-3.5 h-3.5" /> Explain Concept
+                        <BrainCircuit className="w-3.5 h-3.5" /> Find Syllabus Material
                       </Button>
                       <Button
                         variant="ghost"
@@ -461,10 +462,10 @@ export default function SubjectivePage() {
           <DialogHeader>
             <div className="flex items-center gap-2 mb-1">
               <Badge variant="outline" className="text-orange-600 border-orange-500/30 text-[10px]">
-                {aiResult?.isAIGenerated ? "Google Gemini Powered" : "Curated Syllabus Fallback"}
+                {aiResult?.isAIGenerated ? "External model" : "Rule-based · No external model"}
               </Badge>
             </div>
-            <DialogTitle className="text-lg font-bold">Concept Explanation & Exam Focus</DialogTitle>
+            <DialogTitle className="text-lg font-bold">Related Syllabus Material</DialogTitle>
           </DialogHeader>
 
           <div className="py-2">
@@ -483,6 +484,26 @@ export default function SubjectivePage() {
                 <div className="bg-muted/30 p-4 rounded-xl border border-border/60 text-sm whitespace-pre-line leading-relaxed">
                   {aiResult.explanation}
                 </div>
+
+                {aiResult.evidenceAvailable === false && (
+                  <div className="rounded-lg border border-amber-300/50 bg-amber-50/60 p-3 text-xs text-amber-900 dark:border-amber-800/50 dark:bg-amber-950/20 dark:text-amber-200">
+                    No matching approved academic material was found. The tutor has not invented an explanation.
+                  </div>
+                )}
+
+                {Array.isArray(aiResult.sources) && aiResult.sources.length > 0 && (
+                  <div className="rounded-lg border border-border/60 p-3 space-y-2">
+                    <h5 className="text-xs font-bold text-foreground">Retrieved from</h5>
+                    <ul className="space-y-1.5 text-xs text-muted-foreground">
+                      {aiResult.sources.map((source: any, index: number) => (
+                        <li key={`${source.subjectCode}-${source.unitNumber}-${source.sectionTitle}-${index}`}>
+                          <span className="font-semibold text-foreground">{source.subjectCode} · Unit {source.unitNumber}</span>
+                          <span> — {source.unitTitle} / {source.sectionTitle}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
                 {aiResult.keyPoints && aiResult.keyPoints.length > 0 && (
                   <div className="bg-orange-50/60 dark:bg-orange-950/20 p-3 rounded-lg border border-orange-200/50 dark:border-orange-900/30">

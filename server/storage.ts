@@ -990,10 +990,10 @@ export class DatabaseStorage implements IStorage {
     const [attemptCount] = await db.select({ count: count() }).from(quizAttempts);
     
     return {
-      users: Number(userCount?.count || 0) + 1200, // Basing on real data + initial seed offset for "traction"
+      users: Number(userCount?.count || 0),
       resources: Number(resourceCount?.count || 0),
       quizzes: Number(quizCount?.count || 0),
-      attempts: Number(attemptCount?.count || 0) + 5000 // Real analytics + historical legacy
+      attempts: Number(attemptCount?.count || 0)
     };
   }
   // ── Admin security management ─────────────────────────────────
@@ -1636,8 +1636,8 @@ export class DatabaseStorage implements IStorage {
         id: c.id,
         code: c.code,
         name: c.name,
-        unitsCount: c.totalUnits || 5,
-        resourcesCount: c.resourcesCount || 12,
+        unitsCount: c.totalUnits || 0,
+        resourcesCount: c.resourcesCount || 0,
         coverage: 0,
       }));
 

@@ -136,15 +136,15 @@ async function runEcosystemIntegrationAudit() {
     assert(sanitized.includes("Hello classmates!"), "Legitimate academic text must be preserved");
   });
 
-  // ── 6. AI Concept Explainer Fallback & Disclaimers ─────────
-  await asyncTest("AI Tutor: Guaranteed offline fallback returns curated academic outline and disclaimer", async () => {
-    const res = await getConceptExplanation("Deadlock Prevention in Operating Systems", "CSE310");
-    assert.strictEqual(typeof res.explanation, "string", "Explanation must be a string");
-    assert(res.explanation.length > 50, "Explanation must contain comprehensive academic detail");
-    assert(Array.isArray(res.keyPoints), "Key points must be an array");
-    assert(res.keyPoints.length > 0, "Key points must not be empty");
-    assert(typeof res.disclaimer === "string", "Disclaimer must be provided");
-    assert(res.disclaimer.length > 10, "Disclaimer must clearly disclose that it is a reference guide");
+  // ── 6. Deterministic Academic Tutor Evidence Boundary ─────────────
+  await asyncTest("Academic tutor: missing evidence is reported without fabricated explanations", async () => {
+    const res = await getConceptExplanation("Deadlock Prevention in Operating Systems");
+    assert.strictEqual(typeof res.explanation, "string", "Tutor response must be a string");
+    assert.strictEqual(res.isAIGenerated, false, "Tutor must not call an external model by default");
+    assert.strictEqual(res.mode, "RULE_BASED_RETRIEVAL", "Tutor must identify deterministic retrieval mode");
+    assert.strictEqual(res.evidenceAvailable, false, "Missing subject context must not receive an invented explanation");
+    assert(res.explanation.includes("No matching syllabus material"), "Tutor must disclose missing evidence");
+    assert(res.disclaimer.includes("No external AI inference"), "Tutor must disclose the no-model boundary");
   });
 
   // ── 7. Notification IDOR & Ownership Protection ────────────

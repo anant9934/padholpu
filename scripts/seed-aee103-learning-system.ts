@@ -28,6 +28,34 @@ async function seedAee103LearningSystem() {
     .from(subjects)
     .where(eq(subjects.code, metadata.code));
 
+  // This one-time bootstrap seeder is intentionally non-destructive. If learning
+  // records already exist, leave question IDs, attempts, drafts, and review history
+  // untouched; subsequent content corrections must use the reviewed import pipeline.
+  if (existingSubj) {
+    const [existingTopics, existingMcqs, existingSubjective, existingDecks] = await Promise.all([
+      db.select({ id: topics.id }).from(topics)
+        .innerJoin(units, eq(topics.unitId, units.id))
+        .where(eq(units.subjectId, existingSubj.id)).limit(1),
+      db.select({ id: questions.id }).from(questions)
+        .where(eq(questions.subjectId, existingSubj.id)).limit(1),
+      db.select({ id: subjectiveQuestions.id }).from(subjectiveQuestions)
+        .where(eq(subjectiveQuestions.subjectId, existingSubj.id)).limit(1),
+      db.select({ id: flashcardDecks.id }).from(flashcardDecks)
+        .where(eq(flashcardDecks.subjectId, existingSubj.id)).limit(1)
+    ]);
+
+    if (existingTopics.length || existingMcqs.length || existingSubjective.length || existingDecks.length) {
+      console.log("[Seed] Existing AEE103 learning records detected. No changes made to preserve IDs and student progress.");
+      return;
+    }
+  }
+
+  const [firstUser] = await db.select().from(users).limit(1);
+  if (!firstUser) {
+    throw new Error("A valid user must exist before creating AEE103 resources and flashcard decks.");
+  }
+  const defaultUserId = firstUser.id;
+
   let subjectId: number;
   if (!existingSubj) {
     console.log(`[Subject] Creating new subject ${metadata.code}...`);
@@ -99,13 +127,6 @@ async function seedAee103LearningSystem() {
     }
   }
 
-  // 3. Ensure a valid creator user for decks and resources
-  let defaultUserId = 1;
-  const [firstUser] = await db.select().from(users).limit(1);
-  if (firstUser) {
-    defaultUserId = firstUser.id;
-  }
-
   // 4. Clean and synchronize the 6 Units
   const existingUnits = await db
     .select()
@@ -139,18 +160,15 @@ async function seedAee103LearningSystem() {
     }
   }
 
-  // Remove any obsolete units > 6
-  for (const eu of existingUnits) {
-    if (eu.unitNumber > 6) {
-      await db.delete(units).where(eq(units.id, eu.id));
-      console.log(`[Unit ${eu.unitNumber}] Removed obsolete unit (ID: ${eu.id})`);
-    }
+  // Preserve unexpected existing unit records for manual review; never delete from this seeder.
+  const obsoleteUnits = existingUnits.filter((unit) => unit.unitNumber > 6);
+  if (obsoleteUnits.length > 0) {
+    console.warn(`[Unit] ${obsoleteUnits.length} extra unit record(s) found. They were preserved for review.`);
   }
 
   // 5. Synchronize Topics for each unit
   for (const uData of unitDataList) {
     const unitId = unitMap.get(uData.unitNumber)!;
-    await db.delete(topics).where(eq(topics.unitId, unitId));
     for (const topicStr of uData.syllabusTopics) {
       await db.insert(topics).values({
         unitId,
@@ -162,8 +180,7 @@ async function seedAee103LearningSystem() {
 
   // 6. Synchronize MCQs into `questions` table
   console.log("\nSynchronizing MCQs into questions table...");
-  // Clear prior AEE103 questions to avoid duplicates
-  await db.delete(questions).where(eq(questions.subjectId, subjectId));
+  // Existing questions trigger the guard above; never delete question IDs or attempt history.
 
   let totalMcqsInserted = 0;
   for (const uData of unitDataList) {
@@ -197,7 +214,7 @@ async function seedAee103LearningSystem() {
 
   // 7. Synchronize Subjective Questions into `subjectiveQuestions` table
   console.log("\nSynchronizing Subjective Questions into subjective_questions table...");
-  await db.delete(subjectiveQuestions).where(eq(subjectiveQuestions.subjectId, subjectId));
+  // Existing subjective items trigger the guard above; never delete saved student drafts.
 
   let totalSubjInserted = 0;
   for (const uData of unitDataList) {
@@ -230,11 +247,6 @@ async function seedAee103LearningSystem() {
     .select()
     .from(flashcardDecks)
     .where(eq(flashcardDecks.subjectId, subjectId));
-
-  for (const d of existingDecks) {
-    await db.delete(flashcards).where(eq(flashcards.deckId, d.id));
-    await db.delete(flashcardDecks).where(eq(flashcardDecks.id, d.id));
-  }
 
   let totalFcInserted = 0;
   for (const uData of unitDataList) {
@@ -283,19 +295,7 @@ async function seedAee103LearningSystem() {
         type: "Syllabus",
         url: "/AEE103_Syllabus.pdf",
         filename: "AEE103_Syllabus.pdf",
-        fileSize: 147456,
-        uploaderId: defaultUserId,
-        uploaderName: "Academic Architecture",
-        uploaderUsername: "academic_admin",
-        uploadedBy: defaultUserId
-      },
-      {
-        title: "AEE103: Comprehensive 6-Unit Structured Lecture Notes",
-        subject: "AEE103",
-        type: "Notes",
-        url: "/AEE103_Syllabus.pdf",
-        filename: "AEE103_Complete_Study_Notes.pdf",
-        fileSize: 450560,
+        fileSize: 195393,
         uploaderId: defaultUserId,
         uploaderName: "Academic Architecture",
         uploaderUsername: "academic_admin",

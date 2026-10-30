@@ -14,18 +14,32 @@
 |---|---|
 | **Padho LPU 2.0 Ecosystem** | SM-2 Spaced Repetition Flashcards, Subjective Question Bank, Exam Study Planner, Private Workspace, Study Groups, Community Feedback |
 | **Flashcards (SM-2)** | SuperMemo SM-2 cognitive spaced repetition interval engine, 3D flip card, keyboard shortcuts (Space / 1-5), retention metrics |
-| **Subjective Bank** | Written answer drafting, model outlines checklist, marking schemes, self-evaluation scoring, AI concept explanation |
-| **Study Planner** | Dynamic syllabus milestone distribution based on exam countdown, target score, daily hours, and interactive checklist |
+| **Subjective Bank** | Written answer drafting, model-outline checklist, marking schemes, self-evaluation scoring, syllabus-grounded material retrieval |
+| **Study Planner** | Exam-date scheduling from registered syllabus units, selected subjects, and an interactive checklist |
 | **Contribution Pipeline** | Multi-state student notes submission (draft → pending → changes_requested → approved/published), self-approval prevention |
 | **Personal Workspace** | Private student notes, tagging, bookmarked resources/questions/flashcards, export/print view |
 | **Study Groups** | Subject-aligned peer collaboration rooms, discussion threads, pinned posts, spam controls |
-| **AI Learning Boundary** | Google Gemini tutor integration with guaranteed 100% offline syllabus-linked fallback and official academic disclaimers |
+| **AI Learning Boundary** | Deterministic syllabus retrieval that does not call paid inference APIs; unmatched topics receive an explicit no-evidence response |
 | **Accessibility & Comfort** | Study Comfort Bar with font sizing (A/A+/A++), distraction-free focus mode, print-friendly notes, WCAG 2.2 AA contrast |
 | **Auth & Security** | JWT cookie sessions, Google OAuth, Cloudflare Turnstile anti-bot, bcrypt passwords, role-based access control |
 | **Resources & Quizzes** | Cloudinary document storage, MCQs, time-constrained examination simulator with LPU marking blueprint |
 | **Gamification & PWA** | Daily streaks, coin rewards, class leaderboard, installable PWA with Workbox offline precaching |
 
 ---
+
+## Zero-Cost Academic Intelligence
+
+Padho LPU uses existing PostgreSQL data and deterministic TypeScript logic for core academic intelligence. No additional paid model API is required by the planner, recommendation engine, syllabus retrieval, or quality audit.
+
+- **Study planning:** Schedules only registered subject units. Invalid subjects and subjects without mapped units are rejected instead of receiving placeholder units. Plan and task creation is transactional.
+- **Recommendations:** Uses existing student performance/readiness data. Students without course context are directed to programme discovery; no default CSE course is assumed.
+- **Syllabus retrieval:** Uses lexical matching against structured AEE103 notes and registered subject/unit/topic metadata. It returns source unit/section information and explicitly reports when it lacks evidence. It is not generative AI.
+- **Academic quality audit:** Admin-only, read-only checks for invalid MCQ keys, missing explanations/model answers, duplicates, empty flashcard sides, broken subject/unit references, and incomplete resource metadata.
+- **Search:** Uses PostgreSQL-backed queries. The current implementation is not an embeddings-based or external-vector search system.
+- **Academic relationships:** Existing programme → subject → unit → topic relationships are stored relationally. Explicit prerequisite-edge authoring and dependency-aware scheduling remain future work.
+- **Local models:** No local Ollama model is downloaded or required by this release. A local-model adapter remains optional future work.
+
+The quality audit is bounded to 3,000 records per content type per scan and reports when that limit is reached. Its findings are review candidates, not automatic academic corrections. Hosting, database, Redis, and document-storage usage remain subject to their existing provider limits and billing terms.
 
 ## 🏗️ Tech Stack
 
