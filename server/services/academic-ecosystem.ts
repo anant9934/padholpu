@@ -481,10 +481,12 @@ export function distributeStudyPlanUnits(
 
   const startDay = Date.UTC(startDate.getUTCFullYear(), startDate.getUTCMonth(), startDate.getUTCDate());
   const examDay = Date.UTC(targetExamDate.getUTCFullYear(), targetExamDate.getUTCMonth(), targetExamDate.getUTCDate());
-  if (examDay < startDay) throw new Error("Exam date must not be in the past.");
+  if (examDay <= startDay) {
+    throw new Error("The exam date must be at least one day after the study-plan start date.");
+  }
 
   const dayMs = 24 * 60 * 60 * 1000;
-  const availableDays = Math.max(1, Math.ceil((examDay - startDay) / dayMs));
+  const availableDays = Math.ceil((examDay - startDay) / dayMs);
 
   return unitsToSchedule.map((unit, index) => {
     const dayOffset = Math.min(availableDays - 1, Math.floor((index * availableDays) / unitsToSchedule.length));
@@ -510,7 +512,7 @@ export async function generateStudyPlan(
 
   const todayUtc = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
   const examDayUtc = Date.UTC(targetExamDate.getUTCFullYear(), targetExamDate.getUTCMonth(), targetExamDate.getUTCDate());
-  if (examDayUtc < todayUtc) throw new Error("Exam date must be today or in the future.");
+  if (examDayUtc <= todayUtc) throw new Error("Exam date must be at least one day in the future to schedule revision tasks.");
 
   if (!Number.isFinite(dailyStudyHours) || dailyStudyHours < 0.5 || dailyStudyHours > 16) {
     throw new Error("Daily study hours must be between 0.5 and 16.");
